@@ -35,10 +35,11 @@ export async function iniciarSesionApi(datos: LoginDatos): Promise<void> {
     await api.post('/api/v1/auth/login', { email: datos.correo, password: datos.contrasena })
   } catch (error) {
     if (error instanceof ApiError) {
-      // Credenciales inválidas: Laravel responde 401 o 422.
-      if (error.status === 401 || error.status === 422) throw new ApiError(401, CREDENCIALES_INVALIDAS)
-      if (error.status === 429) throw new ApiError(429, mensajeBloqueo(error.reintentarEn), {}, error.reintentarEn)
+      if (error.status === 401) throw new ApiError(401, CREDENCIALES_INVALIDAS)
+      // Credenciales malas, cuenta pendiente o suspendida: Laravel responde 422 con el motivo en email.
+      if (error.status === 422) throw new ApiError(422, error.campos.email?.[0] ?? CREDENCIALES_INVALIDAS)
     }
+    // El bloqueo (429) y los demás errores llevan el mensaje del servidor tal cual.
     throw error
   }
 }
