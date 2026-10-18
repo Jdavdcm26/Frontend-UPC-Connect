@@ -1,4 +1,4 @@
-import type { NivelHabilidad } from '@/features/perfil/tipos'
+import type { NivelHabilidad, TipoHabilidad } from '@/features/perfil/tipos'
 
 type DatosAcademicos = {
   carrera: string
@@ -41,4 +41,15 @@ const ETIQUETAS_NIVEL: Record<NivelHabilidad, string> = {
 // Nivel de una habilidad para mostrar: «Avanzado».
 export function etiquetaNivel(nivel: NivelHabilidad): string {
   return ETIQUETAS_NIVEL[nivel]
+}
+
+const ETIQUETAS_TIPO: Record<TipoHabilidad, string> = {
+  TECNICA: 'Técnica',
+  BLANDA: 'Blanda',
+  IDIOMA: 'Idioma',
+}
+
+// Tipo de una habilidad para mostrar: «Técnica».
+export function etiquetaTipo(tipo: TipoHabilidad): string {
+  return ETIQUETAS_TIPO[tipo]
 }

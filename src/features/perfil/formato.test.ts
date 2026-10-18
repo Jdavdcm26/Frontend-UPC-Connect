@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { etiquetaNivel, resumenAcademico, slugDesdeNombre } from '@/features/perfil/formato'
+import { etiquetaNivel, etiquetaTipo, resumenAcademico, slugDesdeNombre } from '@/features/perfil/formato'
 
 describe('resumenAcademico', () => {
   it('un estudiante muestra el semestre', () => {
@@ -33,5 +33,13 @@ describe('etiquetaNivel', () => {
     expect(etiquetaNivel('BASICO')).toBe('Básico')
     expect(etiquetaNivel('INTERMEDIO')).toBe('Intermedio')
     expect(etiquetaNivel('AVANZADO')).toBe('Avanzado')
+  })
+})
+
+describe('etiquetaTipo', () => {
+  it('muestra el tipo de la habilidad en español', () => {
+    expect(etiquetaTipo('TECNICA')).toBe('Técnica')
+    expect(etiquetaTipo('BLANDA')).toBe('Blanda')
+    expect(etiquetaTipo('IDIOMA')).toBe('Idioma')
   })
 })
