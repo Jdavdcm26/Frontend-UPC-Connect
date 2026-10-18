@@ -1,8 +1,8 @@
-// Todas las rutas de la aplicación en un solo lugar (en español, RNF-27).
-// Si hay que renombrar una, se cambia aquí y se actualiza en todas partes.
+// Rutas de la app en español (RNF-27). Se usan desde un solo lugar.
 export const RUTAS = {
-  raiz: '/', // redirige según el rol de la persona
+  raiz: '/',
   registro: '/registro',
+  revisaCorreo: '/revisa-tu-correo',
   verificarCorreo: '/verificar-correo',
   iniciarSesion: '/iniciar-sesion',
   recuperarContrasena: '/recuperar-contrasena',
@@ -10,5 +10,7 @@ export const RUTAS = {
   politicaPrivacidad: '/politica-de-privacidad',
   inicioCandidato: '/inicio',
   inicioEmpresa: '/empresa',
+  perfil: '/perfil',
+  perfilEditar: '/perfil/editar',
   sinPermiso: '/sin-permiso',
 } as const

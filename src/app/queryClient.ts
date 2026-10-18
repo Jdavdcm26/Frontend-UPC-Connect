@@ -1,26 +1,25 @@
-import { QueryCache, QueryClient } from '@tanstack/react-query'
+import { MutationCache, QueryCache, QueryClient } from '@tanstack/react-query'
+import { CLAVE_SESION } from '@/features/auth/sesionApi'
 import { ApiError } from '@/shared/api/apiError'
 
 // Errores que NO se reintentan: repetir la petición daría el mismo resultado.
 const SIN_REINTENTO = [401, 403, 404, 419, 422, 429]
 
-// Mensaje por código HTTP. En FE-09 estos casos cerrarán sesión o redirigirán.
-const MENSAJES: Record<number, string> = {
-  401: 'Sesión no iniciada',
-  403: 'Sin permiso para esta acción',
-  419: 'Sesión vencida, inicia sesión de nuevo',
-  429: 'Demasiadas peticiones, intenta en unos segundos',
-}
-
-// Se ejecuta cuando cualquier consulta falla (manejo global).
+// Se ejecuta cuando cualquier consulta o acción falla (manejo global).
+// 401 y 419 significan que la sesión venció: se marca como cerrada y RequireAuth
+// lleva a iniciar sesión guardando la ruta de destino (FE-09).
 function manejarErrorGlobal(error: Error) {
-  if (error instanceof ApiError && MENSAJES[error.status]) {
-    console.warn(`[api] ${MENSAJES[error.status]} (${error.status})`)
+  if (!(error instanceof ApiError)) return
+  if (error.status === 401 || error.status === 419) {
+    queryClient.setQueryData(CLAVE_SESION, null)
+  } else if (error.status === 403 || error.status === 429) {
+    console.warn(`[api] ${error.message} (${error.status})`)
   }
 }
 
 export const queryClient = new QueryClient({
   queryCache: new QueryCache({ onError: manejarErrorGlobal }),
+  mutationCache: new MutationCache({ onError: manejarErrorGlobal }),
   defaultOptions: {
     queries: {
       // Máximo 2 reintentos, salvo en los errores de la lista anterior.
