@@ -38,8 +38,10 @@ export async function iniciarSesionApi(datos: LoginDatos): Promise<void> {
       if (error.status === 401) throw new ApiError(401, CREDENCIALES_INVALIDAS)
       // Credenciales malas, cuenta pendiente o suspendida: Laravel responde 422 con el motivo en email.
       if (error.status === 422) throw new ApiError(422, error.campos.email?.[0] ?? CREDENCIALES_INVALIDAS)
+      // El bloqueo por intentos (429) trae el tiempo de espera en errors.email.
+      if (error.status === 429) throw new ApiError(429, error.campos.email?.[0] ?? error.message, {}, error.reintentarEn)
     }
-    // El bloqueo (429) y los demás errores llevan el mensaje del servidor tal cual.
+    // Los demás errores llevan el mensaje del servidor tal cual.
     throw error
   }
 }
