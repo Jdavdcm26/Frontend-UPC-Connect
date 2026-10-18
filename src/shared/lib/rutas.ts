@@ -17,3 +17,6 @@ export const RUTAS = {
   perfilEditar: '/perfil/editar',
   sinPermiso: '/sin-permiso',
 } as const
+
+// Ruta para editar una vacante de la empresa.
+export const rutaEditarVacante = (id: string) => `/empresa/vacantes/${id}/editar`
