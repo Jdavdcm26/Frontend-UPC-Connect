@@ -23,6 +23,7 @@ import NuevaVacantePage from '@/features/vacantes/NuevaVacantePage'
 import PerfilEditarPage from '@/features/perfil/PerfilEditarPage'
 import RequirePerfil from '@/features/perfil/RequirePerfil'
 import PerfilPage from '@/features/perfil/PerfilPage'
+import VacantesPage from '@/features/vacantes/VacantesPage'
 import PerfilPrototipo from '@/prototipo/PerfilPrototipo'
 import RegistroPrototipo from '@/prototipo/RegistroPrototipo'
 import RevisaCorreoPrototipo from '@/prototipo/RevisaCorreoPrototipo'
@@ -94,6 +95,21 @@ export const router = createBrowserRouter([
               { path: 'editar', element: <PerfilEditarPage /> },
               { element: <RequirePerfil />, children: [{ index: true, element: <PerfilPage /> }] },
             ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    path: '/vacantes',
+    element: <RequireAuth />,
+    children: [
+      {
+        element: <RequireRole rol="candidato" />,
+        children: [
+          {
+            element: <CandidateLayout />,
+            children: [{ element: <RequirePerfil />, children: [{ index: true, element: <VacantesPage /> }] }],
           },
         ],
       },

@@ -12,6 +12,7 @@ export const RUTAS = {
   inicioEmpresa: '/empresa',
   empresaVacantes: '/empresa/vacantes',
   empresaNuevaVacante: '/empresa/vacantes/nueva',
+  vacantes: '/vacantes',
   perfil: '/perfil',
   perfilEditar: '/perfil/editar',
   sinPermiso: '/sin-permiso',
