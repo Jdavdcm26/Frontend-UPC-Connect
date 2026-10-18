@@ -22,6 +22,8 @@ export type Perfil = {
   anioGrado: number | null
   ciudad: string
   intereses: string[]
+  // Se agregan y se quitan una por una (HU-11 / FE-17), no con el formulario del perfil.
+  habilidades: HabilidadPerfil[]
 }
 
 // Tipo y nivel de una habilidad (catálogo de habilidades del servidor).
@@ -34,6 +36,13 @@ export type HabilidadPerfil = {
   nombre: string
   tipo: TipoHabilidad
   nivel: NivelHabilidad | null
+}
+
+// Habilidad del catálogo (GET /api/v1/habilidades), antes de agregarla a un perfil.
+export type HabilidadCatalogo = {
+  id: string
+  nombre: string
+  tipo: TipoHabilidad
 }
 
 // Perfil de otra persona (HU-27 / FE-26). Todos los datos llegan siempre: lo que no tiene valor

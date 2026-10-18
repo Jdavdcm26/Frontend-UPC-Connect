@@ -35,6 +35,7 @@ const perfilServidor: PerfilServidor = {
   anio_grado: null,
   ciudad: null,
   intereses: ['IA'],
+  habilidades: [{ id: 'h-1', nombre: 'Python', tipo: 'TECNICA', nivel: 'BASICO' }],
 }
 
 describe('conversiones del perfil', () => {
@@ -59,6 +60,15 @@ describe('conversiones del perfil', () => {
     expect(perfil.anioGrado).toBe(2025)
   })
 
+  it('conserva las habilidades que ya tenía el perfil', () => {
+    const habilidades = perfilDesdeServidor(perfilServidor).habilidades
+    expect(datosAPerfil(datosEstudiante, false, 'Derecho', habilidades).habilidades).toEqual(habilidades)
+  })
+
+  it('sin habilidades previas, el perfil nuevo no tiene ninguna', () => {
+    expect(datosAPerfil(datosEstudiante, false, 'Derecho').habilidades).toEqual([])
+  })
+
   it('ida y vuelta conserva los datos', () => {
     const estudiante = datosAPerfil(datosEstudiante, false, 'Derecho')
     expect(datosAPerfil(perfilAFormulario(estudiante), false, 'Derecho')).toEqual(estudiante)
@@ -79,6 +89,16 @@ describe('perfil del servidor', () => {
     expect(perfil.titular).toBe('')
     expect(perfil.descripcion).toBe('')
     expect(perfil.ciudad).toBe('')
+  })
+
+  it('toma las habilidades con su nivel', () => {
+    expect(perfilDesdeServidor(perfilServidor).habilidades).toEqual([
+      { id: 'h-1', nombre: 'Python', tipo: 'TECNICA', nivel: 'BASICO' },
+    ])
+  })
+
+  it('un perfil sin habilidades llega con la lista vacía', () => {
+    expect(perfilDesdeServidor({ ...perfilServidor, habilidades: [] }).habilidades).toEqual([])
   })
 
   it('un egresado llega sin semestre', () => {

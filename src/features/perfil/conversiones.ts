@@ -12,6 +12,7 @@ export type PerfilServidor = {
   anio_grado: number | null
   ciudad: string | null
   intereses: string[]
+  habilidades: HabilidadPerfil[]
 }
 
 // Del perfil del servidor al perfil de la interfaz.
@@ -27,6 +28,7 @@ export function perfilDesdeServidor(p: PerfilServidor): Perfil {
     anioGrado: p.anio_grado,
     ciudad: p.ciudad ?? '',
     intereses: p.intereses,
+    habilidades: p.habilidades,
   }
 }
 
@@ -48,7 +50,13 @@ export function cuerpoPerfil(perfil: Perfil) {
 
 // Del formulario (todo texto) al perfil real. Los egresados llevan año de grado y no semestre;
 // los estudiantes, al revés. La carrera es un UUID y su nombre se conoce al elegirla.
-export function datosAPerfil(datos: PerfilDatos, esEgresado: boolean, carreraNombre: string): Perfil {
+// Las habilidades no están en el formulario: se conservan las que ya tenía el perfil.
+export function datosAPerfil(
+  datos: PerfilDatos,
+  esEgresado: boolean,
+  carreraNombre: string,
+  habilidades: HabilidadPerfil[] = [],
+): Perfil {
   return {
     nombres: datos.nombres,
     apellidos: datos.apellidos,
@@ -60,6 +68,7 @@ export function datosAPerfil(datos: PerfilDatos, esEgresado: boolean, carreraNom
     anioGrado: esEgresado && datos.anioGrado !== '' ? Number(datos.anioGrado) : null,
     ciudad: datos.ciudad,
     intereses: datos.intereses,
+    habilidades,
   }
 }
 

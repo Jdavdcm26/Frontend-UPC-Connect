@@ -7,6 +7,8 @@ export const LIMITES = {
   ciudad: 80,
   interes: 50,
   intereses: 10,
+  // Máximo de habilidades por perfil (AgregarHabilidad del backend).
+  habilidades: 30,
 } as const
 
 export const SEMESTRE_MAX = 12

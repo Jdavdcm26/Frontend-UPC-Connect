@@ -3,6 +3,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useSession } from '@/features/auth/useSession'
 import ProfileForm from '@/features/perfil/ProfileForm'
 import { CLAVE_CARRERAS, CLAVE_PERFIL, obtenerCarreras, obtenerPerfil } from '@/features/perfil/perfilApi'
+import SkillsEditor from '@/features/perfil/SkillsEditor'
 
 // Alta y edición del perfil (HU-09 / FE-15).
 export default function PerfilEditarPage() {
@@ -41,6 +42,12 @@ export default function PerfilEditarPage() {
         </p>
       )}
       <ProfileForm carreras={carreras.data} perfil={perfil.data} esEgresado={esEgresado} />
+      {/* Las habilidades se agregan a un perfil que ya existe (HU-11 / FE-17). */}
+      {perfil.data ? (
+        <SkillsEditor habilidades={perfil.data.habilidades} />
+      ) : (
+        <p className="text-sm text-muted-foreground">Guarda tu perfil para poder agregar habilidades.</p>
+      )}
     </section>
   )
 }
