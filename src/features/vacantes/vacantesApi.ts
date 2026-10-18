@@ -1,5 +1,6 @@
 import { obtenerSesion, USAR_FIXTURES } from '@/features/auth/sesionApi'
-import type { EstadoVacante, Vacante } from '@/features/vacantes/tipos'
+import type { FiltrosVacantes } from '@/features/vacantes/filtros'
+import { MODALIDADES, TIPOS_VACANTE, type EstadoVacante, type Vacante } from '@/features/vacantes/tipos'
 import type { VacanteDatos } from '@/features/vacantes/vacanteEsquema'
 import { ApiError } from '@/shared/api/apiError'
 import { api } from '@/shared/api/client'
@@ -178,4 +179,76 @@ export async function cambiarEstadoVacante(id: string, estado: EstadoVacante): P
     return
   }
   await api.patch(`/api/v1/empresa/vacantes/${id}/estado`, { estado })
+}
+
+// Cantidad de vacantes por página en el listado.
+export const TAMANO_PAGINA = 5
+
+export type PaginaVacantes = {
+  vacantes: Vacante[]
+  // Cursor de la página siguiente; null si no hay más.
+  siguiente: string | null
+}
+
+// Con fixtures: ofertas de ejemplo de otras empresas para probar filtros y paginación.
+const TITULOS_EJEMPLO = [
+  'Desarrollador web',
+  'Analista de datos',
+  'Soporte técnico',
+  'Asistente administrativo',
+  'Diseñador gráfico',
+  'Auxiliar contable',
+]
+const CIUDADES_EJEMPLO = ['Valledupar', 'Bogotá', 'Barranquilla']
+
+const CATALOGO: Vacante[] = Array.from({ length: 12 }, (_, i) => ({
+  id: `catalogo-${i + 1}`,
+  tipo: TIPOS_VACANTE[i % 3],
+  titulo: `${TITULOS_EJEMPLO[i % 6]} (${i + 1})`,
+  descripcion: `Oferta de ejemplo número ${i + 1} para probar el listado.`,
+  requisitos: 'Requisitos de ejemplo.',
+  ciudad: CIUDADES_EJEMPLO[i % 3],
+  modalidad: MODALIDADES[i % 3],
+  estado: 'ACTIVA',
+  fechaCierre: '2026-12-31',
+  carreraIds: [1 + (i % 3)],
+  empresa: `Empresa de ejemplo ${(i % 4) + 1}`,
+}))
+
+// Listado de vacantes activas con filtros y paginación por cursor (FE-21).
+export async function listarVacantes(filtros: FiltrosVacantes, cursor: string | null): Promise<PaginaVacantes> {
+  if (USAR_FIXTURES) {
+    await pausa(400)
+    const texto = filtros.texto.toLowerCase()
+    const ciudad = filtros.ciudad.toLowerCase()
+    const coinciden = [...leerGuardadas(), ...CATALOGO].filter(
+      (v) =>
+        v.estado === 'ACTIVA' &&
+        (!texto || `${v.titulo} ${v.descripcion}`.toLowerCase().includes(texto)) &&
+        (!filtros.tipo || v.tipo === filtros.tipo) &&
+        (!filtros.modalidad || v.modalidad === filtros.modalidad) &&
+        (!ciudad || v.ciudad.toLowerCase().includes(ciudad)) &&
+        (!filtros.carreraId || v.carreraIds.includes(Number(filtros.carreraId))),
+    )
+    const inicio = Number(cursor ?? 0)
+    const fin = inicio + TAMANO_PAGINA
+    return {
+      vacantes: coinciden.slice(inicio, fin),
+      siguiente: fin < coinciden.length ? String(fin) : null,
+    }
+  }
+  const params = new URLSearchParams()
+  if (filtros.texto) params.set('q', filtros.texto)
+  if (filtros.tipo) params.set('tipo', filtros.tipo)
+  if (filtros.modalidad) params.set('modalidad', filtros.modalidad)
+  if (filtros.ciudad) params.set('ciudad', filtros.ciudad)
+  if (filtros.carreraId) params.set('carrera_id', filtros.carreraId)
+  if (cursor) params.set('cursor', cursor)
+  const respuesta = await api.get<{ data: VacanteServidor[]; meta: { next_cursor: string | null } }>(
+    `/api/v1/vacantes?${params.toString()}`,
+  )
+  return {
+    vacantes: respuesta.data.map(vacanteDesdeServidor),
+    siguiente: respuesta.meta.next_cursor,
+  }
 }
