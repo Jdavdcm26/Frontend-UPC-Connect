@@ -1,3 +1,4 @@
+import { VERSION_POLITICA } from '@/features/auth/politica'
 import { USAR_FIXTURES } from '@/features/auth/sesionApi'
 import type { RegistroDatos } from '@/features/auth/registroEsquema'
 import { api } from '@/shared/api/client'
@@ -8,6 +9,7 @@ const CAMPOS: Record<string, string> = {
   email: 'correo',
   password: 'contrasena',
   password_confirmation: 'confirmacion',
+  acepta_politica: 'aceptaPolitica',
 }
 
 function traducirCampos(campos: Record<string, string[]>): Record<string, string[]> {
@@ -30,6 +32,8 @@ export async function registrarApi(datos: RegistroDatos): Promise<void> {
       email: datos.correo,
       password: datos.contrasena,
       password_confirmation: datos.confirmacion,
+      acepta_politica: datos.aceptaPolitica,
+      version_politica: VERSION_POLITICA,
     })
   } catch (error) {
     if (error instanceof ApiError && error.status === 422) {
