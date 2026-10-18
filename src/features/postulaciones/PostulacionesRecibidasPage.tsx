@@ -1,8 +1,9 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
-import { Link, Navigate, useParams } from 'react-router'
+import { Link, Navigate, useParams, useSearchParams } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import CandidateList from '@/features/postulaciones/CandidateList'
+import CandidateProfilePanel from '@/features/postulaciones/CandidateProfilePanel'
 import { claveRecibidas, listarPostulacionesRecibidas } from '@/features/postulaciones/postulacionesEmpresaApi'
 import { claveMiVacante, obtenerMiVacante } from '@/features/vacantes/vacantesApi'
 import { ApiError } from '@/shared/api/apiError'
@@ -16,6 +17,9 @@ const esAjena = (error: unknown) => error instanceof ApiError && (error.status =
 // Candidatos que se postularon a una vacante de la empresa (HU-47 / FE-25).
 export default function PostulacionesRecibidasPage() {
   const { id = '' } = useParams()
+  // La postulación abierta en el panel vive en la URL, para que «atrás» la cierre y se pueda compartir.
+  const [params, setParams] = useSearchParams()
+  const seleccionada = params.get('postulacion')
   const vacante = useQuery({ queryKey: claveMiVacante(id), queryFn: () => obtenerMiVacante(id) })
   const postulaciones = useInfiniteQuery({
     queryKey: claveRecibidas(id),
@@ -30,8 +34,11 @@ export default function PostulacionesRecibidasPage() {
 
   const lista = postulaciones.data?.pages.flatMap((pagina) => pagina.postulaciones) ?? []
 
+  const seleccionar = (postulacionId: string) => setParams({ postulacion: postulacionId })
+  const cerrarPanel = () => setParams({})
+
   return (
-    <section className="mx-auto max-w-3xl space-y-4">
+    <section className="mx-auto max-w-5xl space-y-4">
       <Link to={RUTAS.empresaVacantes} className="text-sm underline">
         ← Volver a mis vacantes
       </Link>
@@ -40,40 +47,52 @@ export default function PostulacionesRecibidasPage() {
         {vacante.isSuccess && <p className="text-muted-foreground">{vacante.data.titulo}</p>}
       </div>
 
-      {postulaciones.isPending && (
-        <div className="space-y-3" role="status" aria-label="Cargando postulaciones">
-          <Skeleton className="h-24 w-full" />
-          <Skeleton className="h-24 w-full" />
+      <div className={seleccionada ? 'grid gap-4 lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-start' : 'mx-auto max-w-3xl'}>
+        {/* En pantallas angostas el panel aparece arriba de la lista; en anchas, a su lado. */}
+        {seleccionada && (
+          <div className="lg:order-last">
+            <CandidateProfilePanel key={seleccionada} postulacionId={seleccionada} onCerrar={cerrarPanel} />
+          </div>
+        )}
+        <div className="space-y-4">
+          {postulaciones.isPending && (
+            <div className="space-y-3" role="status" aria-label="Cargando postulaciones">
+              <Skeleton className="h-24 w-full" />
+              <Skeleton className="h-24 w-full" />
+            </div>
+          )}
+
+          {postulaciones.isError && (
+            <ErrorState
+              mensaje="No pudimos cargar las postulaciones. Intenta de nuevo en un momento."
+              onReintentar={() => void postulaciones.refetch()}
+            />
+          )}
+
+          {postulaciones.isSuccess && lista.length === 0 && (
+            <EmptyState
+              titulo="Aún no hay postulaciones"
+              descripcion="Cuando un candidato se postule a esta vacante, aparecerá aquí."
+            />
+          )}
+
+          {lista.length > 0 && (
+            <CandidateList postulaciones={lista} seleccionadaId={seleccionada} onSeleccionar={seleccionar} />
+          )}
+
+          {postulaciones.hasNextPage && (
+            <div className="text-center">
+              <Button
+                variant="outline"
+                disabled={postulaciones.isFetchingNextPage}
+                onClick={() => void postulaciones.fetchNextPage()}
+              >
+                {postulaciones.isFetchingNextPage ? 'Cargando...' : 'Cargar más'}
+              </Button>
+            </div>
+          )}
         </div>
-      )}
-
-      {postulaciones.isError && (
-        <ErrorState
-          mensaje="No pudimos cargar las postulaciones. Intenta de nuevo en un momento."
-          onReintentar={() => void postulaciones.refetch()}
-        />
-      )}
-
-      {postulaciones.isSuccess && lista.length === 0 && (
-        <EmptyState
-          titulo="Aún no hay postulaciones"
-          descripcion="Cuando un candidato se postule a esta vacante, aparecerá aquí."
-        />
-      )}
-
-      {lista.length > 0 && <CandidateList postulaciones={lista} />}
-
-      {postulaciones.hasNextPage && (
-        <div className="text-center">
-          <Button
-            variant="outline"
-            disabled={postulaciones.isFetchingNextPage}
-            onClick={() => void postulaciones.fetchNextPage()}
-          >
-            {postulaciones.isFetchingNextPage ? 'Cargando...' : 'Cargar más'}
-          </Button>
-        </div>
-      )}
+      </div>
     </section>
   )
 }
