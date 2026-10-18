@@ -26,8 +26,8 @@ export default function VacancySummaryTable({ vacantes }: { vacantes: Vacante[] 
             <TableCell>
               <VacancyStateBadge estado={vacante.estado} />
             </TableCell>
-            {/* Si el servidor aún no envía el conteo, se muestra un guion y no un cero falso. */}
-            <TableCell className="text-right">{vacante.postulacionesTotal ?? '—'}</TableCell>
+            {/* Si el servidor aún no envía el conteo (llega con BE-32), se cuenta como 0. */}
+            <TableCell className="text-right">{vacante.postulacionesTotal ?? 0}</TableCell>
             <TableCell className="text-right">
               <Button asChild variant="outline" size="sm">
                 <Link to={rutaPostulacionesVacante(vacante.id)} aria-label={`Ver candidatos de ${vacante.titulo}`}>

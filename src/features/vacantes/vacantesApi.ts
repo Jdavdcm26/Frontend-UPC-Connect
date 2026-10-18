@@ -38,7 +38,7 @@ type VacanteServidor = {
   empresa?: { id: string | number; razon_social: string; ciudad?: string }
   // Provisional: pendiente de confirmar con José.
   ya_postulado?: boolean
-  // Solo en GET /empresa/vacantes. Provisional: lo agrega BE-32.
+  // Solo en GET /empresa/vacantes (llega con BE-32). Si no viene, se toma como 0.
   postulaciones_total?: number
 }
 
@@ -61,7 +61,7 @@ function vacanteDesdeServidor(v: VacanteServidor): Vacante {
     carreraIds: (v.carreras ?? []).map((c) => c.id),
     empresa: v.empresa?.razon_social ?? '',
     yaPostulado: v.ya_postulado ?? false,
-    postulacionesTotal: v.postulaciones_total,
+    postulacionesTotal: v.postulaciones_total ?? 0,
   }
 }
 
