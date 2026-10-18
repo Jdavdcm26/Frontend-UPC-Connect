@@ -15,6 +15,7 @@ describe('formatearFecha', () => {
 
 describe('formatearFechaHora', () => {
   it('escribe la fecha y la hora en español', () => {
-    expect(formatearFechaHora('2026-10-17T12:00:00Z')).toMatch(/^17 de octubre de 2026,? \d{1,2}:\d{2}/)
+    // El separador entre la fecha y la hora cambia según la versión de Node («,» o «a las»).
+    expect(formatearFechaHora('2026-10-17T12:00:00Z')).toMatch(/^17 de octubre de 2026.*\d{1,2}:\d{2}/)
   })
 })
