@@ -30,16 +30,17 @@ export default function PerfilEditarPage() {
   }
 
   const esPrimerAcceso = perfil.data === null
+  const esEgresado = usuario?.esEgresado ?? false
 
   return (
     <section className="mx-auto max-w-2xl space-y-4">
       <h1 className="text-2xl font-bold">{esPrimerAcceso ? 'Crea tu perfil' : 'Editar perfil'}</h1>
       {esPrimerAcceso && (
         <p className="text-muted-foreground">
-          Cuéntanos tu carrera y tu semestre para empezar. Son obligatorios.
+          Cuéntanos tu carrera y {esEgresado ? 'tu año de grado' : 'tu semestre'} para empezar. Son obligatorios.
         </p>
       )}
-      <ProfileForm carreras={carreras.data} perfil={perfil.data} esEgresado={usuario?.esEgresado ?? false} />
+      <ProfileForm carreras={carreras.data} perfil={perfil.data} esEgresado={esEgresado} />
     </section>
   )
 }

@@ -1,5 +1,6 @@
-// Rol que usa la interfaz: candidato (estudiante o egresado) o empresa.
-export type Rol = 'candidato' | 'empresa'
+// Rol que usa la interfaz: candidato (estudiante o egresado), empresa, o una cuenta
+// administrativa (moderador o admin), que no tiene pantallas en la aplicación.
+export type Rol = 'candidato' | 'empresa' | 'moderador' | 'admin'
 
 export type EstadoCuenta = 'ACTIVO' | 'PENDIENTE' | 'SUSPENDIDO'
 

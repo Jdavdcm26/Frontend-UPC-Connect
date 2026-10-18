@@ -10,8 +10,11 @@ export const vacanteEsquema = z.object({
   titulo: textoObligatorio('título', LIMITES_VACANTE.titulo),
   descripcion: textoObligatorio('descripción', LIMITES_VACANTE.descripcion),
   requisitos: textoObligatorio('requisitos', LIMITES_VACANTE.requisitos),
-  // Identificadores de carrera como texto, porque vienen de casillas de verificación.
-  carreraIds: z.array(z.string()).min(1, 'Elige al menos una carrera objetivo.'),
+  // Identificadores de carrera (UUID) como texto, porque vienen de casillas de verificación.
+  carreraIds: z
+    .array(z.string())
+    .min(1, 'Elige al menos una carrera objetivo.')
+    .max(LIMITES_VACANTE.carreras, `Puedes elegir máximo ${LIMITES_VACANTE.carreras} carreras.`),
   ciudad: textoObligatorio('ciudad', LIMITES_VACANTE.ciudad),
   modalidad: z.enum(MODALIDADES, 'Elige la modalidad.'),
   // Texto AAAA-MM-DD; no puede ser anterior a hoy.

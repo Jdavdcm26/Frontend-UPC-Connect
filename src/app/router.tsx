@@ -8,6 +8,7 @@ import ErrorPage from '@/app/pages/ErrorPage'
 import ForbiddenPage from '@/app/pages/ForbiddenPage'
 import HomePage from '@/app/pages/HomePage'
 import NotFoundPage from '@/app/pages/NotFoundPage'
+import CuentaAdministrativaPage from '@/features/auth/CuentaAdministrativaPage'
 import LoginPage from '@/features/auth/LoginPage'
 import PoliticaPrivacidadPage from '@/features/auth/PoliticaPrivacidadPage'
 import RecuperarContrasenaPage from '@/features/auth/RecuperarContrasenaPage'
@@ -21,6 +22,8 @@ import RequireRole from '@/features/auth/RequireRole'
 import EditarVacantePage from '@/features/vacantes/EditarVacantePage'
 import MisVacantesPage from '@/features/vacantes/MisVacantesPage'
 import NuevaVacantePage from '@/features/vacantes/NuevaVacantePage'
+import PostulacionesRecibidasPage from '@/features/postulaciones/PostulacionesRecibidasPage'
+import MisPostulacionesPage from '@/features/postulaciones/MisPostulacionesPage'
 import PerfilEditarPage from '@/features/perfil/PerfilEditarPage'
 import RequirePerfil from '@/features/perfil/RequirePerfil'
 import PerfilPage from '@/features/perfil/PerfilPage'
@@ -55,6 +58,10 @@ export const router = createBrowserRouter([
         ],
       },
       { path: 'sin-permiso', element: <ForbiddenPage /> },
+      {
+        element: <RequireAuth />,
+        children: [{ path: 'cuenta-administrativa', element: <CuentaAdministrativaPage /> }],
+      },
       // Prototipo navegable de baja fidelidad (FE-08). Se elimina al terminar el Sprint 4.
       { path: 'prototipo/registro', element: <RegistroPrototipo /> },
       { path: 'prototipo/revisa-correo', element: <RevisaCorreoPrototipo /> },
@@ -126,6 +133,26 @@ export const router = createBrowserRouter([
     ],
   },
   {
+    path: '/mis-postulaciones',
+    element: <RequireAuth />,
+    children: [
+      {
+        element: <RequireRole rol="candidato" />,
+        children: [
+          {
+            element: <CandidateLayout />,
+            children: [
+              {
+                element: <RequirePerfil />,
+                children: [{ index: true, element: <MisPostulacionesPage /> }],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
     path: '/empresa',
     element: <RequireAuth />,
     children: [
@@ -139,6 +166,7 @@ export const router = createBrowserRouter([
               { path: 'vacantes', element: <MisVacantesPage /> },
               { path: 'vacantes/nueva', element: <NuevaVacantePage /> },
               { path: 'vacantes/:id/editar', element: <EditarVacantePage /> },
+              { path: 'vacantes/:id/postulaciones', element: <PostulacionesRecibidasPage /> },
             ],
           },
         ],

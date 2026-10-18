@@ -11,6 +11,11 @@ describe('destinoPermitido', () => {
     expect(destinoPermitido('/perfil/editar', 'candidato')).toBe('/perfil/editar')
   })
 
+  it('el candidato vuelve a Mis postulaciones y la empresa no', () => {
+    expect(destinoPermitido('/mis-postulaciones', 'candidato')).toBe('/mis-postulaciones')
+    expect(destinoPermitido('/mis-postulaciones', 'empresa')).toBeNull()
+  })
+
   it('la empresa vuelve a /empresa', () => {
     expect(destinoPermitido('/empresa', 'empresa')).toBe('/empresa')
   })

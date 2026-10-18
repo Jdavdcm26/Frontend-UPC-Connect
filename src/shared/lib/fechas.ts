@@ -6,3 +6,19 @@ export function hoyLocal(): string {
   const dia = String(ahora.getDate()).padStart(2, '0')
   return `${ahora.getFullYear()}-${mes}-${dia}`
 }
+
+// Fecha para mostrar (por ejemplo, «17 de octubre de 2026») a partir de una fecha y hora ISO.
+export function formatearFecha(iso: string): string {
+  return new Date(iso).toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' })
+}
+
+// Fecha y hora para mostrar (por ejemplo, «17 de octubre de 2026 a las 3:00 p. m.») a partir de una fecha y hora ISO.
+export function formatearFechaHora(iso: string): string {
+  return new Date(iso).toLocaleString('es-CO', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  })
+}

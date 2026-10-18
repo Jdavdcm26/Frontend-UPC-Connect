@@ -9,7 +9,7 @@ import CareerSelect from '@/features/perfil/CareerSelect'
 import { perfilAFormulario } from '@/features/perfil/conversiones'
 import InterestsField from '@/features/perfil/InterestsField'
 import { LIMITES } from '@/features/perfil/limites'
-import { perfilEsquema, type PerfilDatos } from '@/features/perfil/perfilEsquema'
+import { esquemaPerfil, type PerfilDatos } from '@/features/perfil/perfilEsquema'
 import { CLAVE_PERFIL, guardarPerfil } from '@/features/perfil/perfilApi'
 import SemesterField from '@/features/perfil/SemesterField'
 import type { Carrera, Perfil } from '@/features/perfil/tipos'
@@ -20,7 +20,7 @@ type Props = {
   carreras: Carrera[]
   // null en el primer acceso: el formulario empieza vacío.
   perfil: Perfil | null
-  // El año de grado solo aplica a egresados.
+  // Los egresados escriben su año de grado y no tienen semestre; los estudiantes, al revés.
   esEgresado: boolean
 }
 
@@ -33,12 +33,19 @@ export default function ProfileForm({ carreras, perfil, esEgresado }: Props) {
     handleSubmit,
     formState: { errors },
   } = useForm<PerfilDatos>({
-    resolver: zodResolver(perfilEsquema),
+    resolver: zodResolver(esquemaPerfil(esEgresado)),
     defaultValues: perfilAFormulario(perfil),
   })
 
+  // El servidor solo lista las carreras activas. Si la carrera del perfil ya se desactivó,
+  // se agrega para que siga elegida (el servidor la acepta).
+  const carrerasConActual =
+    perfil && !carreras.some((c) => c.id === perfil.carreraId)
+      ? [...carreras, { id: perfil.carreraId, nombre: perfil.carreraNombre, facultad: '', activa: false }]
+      : carreras
+
   const guardado = useMutation({
-    mutationFn: guardarPerfil,
+    mutationFn: (datos: PerfilDatos) => guardarPerfil(datos, esEgresado),
     // Los cambios se ven de inmediato: se actualiza el perfil que tiene la app.
     onSuccess: (nuevo) => {
       queryClient.setQueryData(CLAVE_PERFIL, nuevo)
@@ -75,27 +82,27 @@ export default function ProfileForm({ carreras, perfil, esEgresado }: Props) {
           name="carreraId"
           render={({ field }) => (
             <CareerSelect
-              carreras={carreras}
+              carreras={carrerasConActual}
               valor={field.value}
               onChange={field.onChange}
               error={errors.carreraId?.message}
             />
           )}
         />
-        <Controller
-          control={control}
-          name="semestre"
-          render={({ field }) => (
-            <SemesterField valor={field.value} onChange={field.onChange} error={errors.semestre?.message} />
-          )}
-        />
+        {esEgresado ? (
+          <FormField id="anioGrado" etiqueta="Año de grado" ayuda="Por ejemplo, 2025." error={errors.anioGrado?.message}>
+            {(campo) => <Input inputMode="numeric" maxLength={4} {...campo} {...register('anioGrado')} />}
+          </FormField>
+        ) : (
+          <Controller
+            control={control}
+            name="semestre"
+            render={({ field }) => (
+              <SemesterField valor={field.value} onChange={field.onChange} error={errors.semestre?.message} />
+            )}
+          />
+        )}
       </div>
-
-      {esEgresado && (
-        <FormField id="anioGrado" etiqueta="Año de grado" ayuda="Por ejemplo, 2025." error={errors.anioGrado?.message}>
-          {(campo) => <Input inputMode="numeric" maxLength={4} {...campo} {...register('anioGrado')} />}
-        </FormField>
-      )}
 
       <FormField
         id="titular"

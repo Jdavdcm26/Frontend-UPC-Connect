@@ -22,6 +22,9 @@ export const FILTROS_VACIOS: FiltrosVacantes = {
   carreraId: '',
 }
 
+// Los ids de carrera del servidor son UUID.
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
 // Solo acepta valores válidos; cualquier otra cosa en la URL se descarta.
 function valorValido<T extends string>(valor: string | null, permitidos: readonly T[]): T | '' {
   return permitidos.find((p) => p === valor) ?? ''
@@ -35,7 +38,7 @@ export function filtrosDesdeUrl(params: URLSearchParams): FiltrosVacantes {
     tipo: valorValido(params.get('tipo'), TIPOS_VACANTE),
     modalidad: valorValido(params.get('modalidad'), MODALIDADES),
     ciudad: (params.get('ciudad') ?? '').trim(),
-    carreraId: /^\d+$/.test(carrera) ? carrera : '',
+    carreraId: UUID.test(carrera) ? carrera : '',
   }
 }
 
