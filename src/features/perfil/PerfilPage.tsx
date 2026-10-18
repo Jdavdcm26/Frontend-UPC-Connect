@@ -43,7 +43,12 @@ export default function PerfilPage() {
     <article className="mx-auto max-w-2xl space-y-6">
       <ProfileHeader nombre={`${datos.nombres} ${datos.apellidos}`} titular={datos.titular} detalle={detalle} />
 
-      <ProfileDetails descripcion={datos.descripcion} ciudad={datos.ciudad} intereses={datos.intereses} />
+      <ProfileDetails
+        descripcion={datos.descripcion}
+        ciudad={datos.ciudad}
+        intereses={datos.intereses}
+        habilidades={datos.habilidades}
+      />
     </article>
   )
 }
