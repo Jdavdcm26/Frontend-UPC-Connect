@@ -1,3 +1,4 @@
+import { CARRERAS_DEMO } from '@/features/perfil/carrerasDemo'
 import { datosAPerfil } from '@/features/perfil/conversiones'
 import type { PerfilDatos } from '@/features/perfil/perfilEsquema'
 import type { Carrera, Perfil } from '@/features/perfil/tipos'
@@ -18,7 +19,7 @@ type PerfilServidor = {
   apellidos: string
   titular: string | null
   descripcion: string | null
-  carrera_id: number
+  carrera_id: string
   semestre: number
   anio_grado: number | null
   ciudad: string | null
@@ -38,16 +39,6 @@ function desdeServidor(p: PerfilServidor): Perfil {
     intereses: p.intereses,
   }
 }
-
-// Carreras de ejemplo para el modo demo (una desactivada, para probar esa regla).
-const CARRERAS_DEMO: Carrera[] = [
-  { id: 1, nombre: 'Ingeniería de Sistemas', facultad: 'Ingenierías y Tecnologías', activa: true },
-  { id: 2, nombre: 'Ingeniería Electrónica', facultad: 'Ingenierías y Tecnologías', activa: true },
-  { id: 3, nombre: 'Administración de Empresas', facultad: 'Ciencias Administrativas', activa: true },
-  { id: 4, nombre: 'Contaduría Pública', facultad: 'Ciencias Administrativas', activa: true },
-  { id: 5, nombre: 'Derecho', facultad: 'Ciencias Jurídicas', activa: true },
-  { id: 6, nombre: 'Tecnología en Sistemas (programa cerrado)', facultad: 'Ingenierías y Tecnologías', activa: false },
-]
 
 // Catálogo de carreras (API-10).
 export async function obtenerCarreras(): Promise<Carrera[]> {

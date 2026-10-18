@@ -1,7 +1,7 @@
 // Programa académico del catálogo (GET /api/v1/carreras).
 // Una carrera desactivada sigue visible en perfiles existentes, pero no se ofrece en altas nuevas.
 export type Carrera = {
-  id: number
+  id: string
   nombre: string
   facultad: string
   activa: boolean
@@ -13,7 +13,7 @@ export type Perfil = {
   apellidos: string
   titular: string
   descripcion: string
-  carreraId: number
+  carreraId: string
   semestre: number
   // Solo para egresados.
   anioGrado: number | null

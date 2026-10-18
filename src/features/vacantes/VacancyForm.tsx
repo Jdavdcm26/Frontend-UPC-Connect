@@ -53,7 +53,7 @@ function valoresDesdeVacante(vacante: Vacante): VacanteDatos {
     titulo: vacante.titulo,
     descripcion: vacante.descripcion,
     requisitos: vacante.requisitos,
-    carreraIds: vacante.carreraIds.map(String),
+    carreraIds: [...vacante.carreraIds],
     ciudad: vacante.ciudad,
     modalidad: vacante.modalidad,
     fechaCierre: vacante.fechaCierre,

@@ -1,4 +1,5 @@
 import { obtenerSesion, USAR_FIXTURES } from '@/features/auth/sesionApi'
+import { CARRERAS_DEMO } from '@/features/perfil/carrerasDemo'
 import { leerPostulacionesDemo } from '@/features/postulaciones/postulacionesDemo'
 import type { FiltrosVacantes } from '@/features/vacantes/filtros'
 import { MODALIDADES, TIPOS_VACANTE, type EstadoVacante, type Vacante } from '@/features/vacantes/tipos'
@@ -32,7 +33,8 @@ type VacanteServidor = {
   modalidad: Vacante['modalidad']
   estado: EstadoVacante
   fecha_cierre: string
-  carreras: { id: number; nombre: string }[]
+  // Solo viene si el servidor cargó las carreras de la vacante.
+  carreras?: { id: string; nombre: string }[]
   empresa?: { id: string | number; razon_social: string; ciudad?: string }
   // Provisional: pendiente de confirmar con José.
   ya_postulado?: boolean
@@ -54,7 +56,7 @@ function vacanteDesdeServidor(v: VacanteServidor): Vacante {
     modalidad: v.modalidad,
     estado: v.estado,
     fechaCierre: v.fecha_cierre,
-    carreraIds: v.carreras.map((c) => c.id),
+    carreraIds: (v.carreras ?? []).map((c) => c.id),
     empresa: v.empresa?.razon_social ?? '',
     yaPostulado: v.ya_postulado ?? false,
   }
@@ -77,7 +79,7 @@ function cuerpoVacante(datos: VacanteDatos) {
     ciudad: datos.ciudad,
     modalidad: datos.modalidad,
     fecha_cierre: datos.fechaCierre,
-    carreras: datos.carreraIds.map(Number),
+    carreras: datos.carreraIds,
   }
 }
 
@@ -113,6 +115,9 @@ function relanzarError(error: unknown, mensaje403: string): never {
 
 // ---------- Datos de prueba (fixtures) ----------
 
+// Ids de las carreras activas de ejemplo.
+const IDS_CARRERAS_DEMO = CARRERAS_DEMO.filter((c) => c.activa).map((c) => c.id)
+
 // Ejemplos que aparecen la primera vez que se abre la lista de la empresa.
 const EJEMPLOS: Vacante[] = [
   {
@@ -125,7 +130,7 @@ const EJEMPLOS: Vacante[] = [
     modalidad: 'HIBRIDA',
     estado: 'ACTIVA',
     fechaCierre: '2026-12-31',
-    carreraIds: [1],
+    carreraIds: [IDS_CARRERAS_DEMO[0]],
     empresa: 'Mi empresa (demo)',
   },
   {
@@ -138,7 +143,7 @@ const EJEMPLOS: Vacante[] = [
     modalidad: 'PRESENCIAL',
     estado: 'PAUSADA',
     fechaCierre: '2026-11-30',
-    carreraIds: [1],
+    carreraIds: [IDS_CARRERAS_DEMO[0]],
     empresa: 'Mi empresa (demo)',
   },
   {
@@ -151,7 +156,7 @@ const EJEMPLOS: Vacante[] = [
     modalidad: 'REMOTA',
     estado: 'CERRADA',
     fechaCierre: '2026-10-01',
-    carreraIds: [1],
+    carreraIds: [IDS_CARRERAS_DEMO[0]],
     empresa: 'Mi empresa (demo)',
   },
 ]
@@ -177,7 +182,7 @@ const CATALOGO: Vacante[] = Array.from({ length: 12 }, (_, i) => ({
   modalidad: MODALIDADES[i % 3],
   estado: 'ACTIVA',
   fechaCierre: '2026-12-31',
-  carreraIds: [1 + (i % 3)],
+  carreraIds: [IDS_CARRERAS_DEMO[i % 3]],
   empresa: `Empresa de ejemplo ${(i % 4) + 1}`,
 }))
 
@@ -226,7 +231,7 @@ export async function crearVacante(datos: VacanteDatos): Promise<void> {
       modalidad: datos.modalidad,
       estado: 'ACTIVA',
       fechaCierre: datos.fechaCierre,
-      carreraIds: datos.carreraIds.map(Number),
+      carreraIds: datos.carreraIds,
       empresa: 'Mi empresa (demo)',
     }
     guardar([nueva, ...leerGuardadas()])
@@ -291,7 +296,7 @@ export async function actualizarVacante(id: string, datos: VacanteDatos): Promis
               ciudad: datos.ciudad,
               modalidad: datos.modalidad,
               fechaCierre: datos.fechaCierre,
-              carreraIds: datos.carreraIds.map(Number),
+              carreraIds: datos.carreraIds,
             }
           : v,
       ),
@@ -338,7 +343,7 @@ export async function listarVacantes(filtros: FiltrosVacantes, cursor: string | 
         (!filtros.tipo || v.tipo === filtros.tipo) &&
         (!filtros.modalidad || v.modalidad === filtros.modalidad) &&
         (!ciudad || v.ciudad.toLowerCase().includes(ciudad)) &&
-        (!filtros.carreraId || v.carreraIds.includes(Number(filtros.carreraId))),
+        (!filtros.carreraId || v.carreraIds.includes(filtros.carreraId)),
     )
     return paginar(coinciden, cursor)
   }

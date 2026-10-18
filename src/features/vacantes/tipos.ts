@@ -37,7 +37,7 @@ export type Vacante = {
   estado: EstadoVacante
   // Fecha en formato AAAA-MM-DD.
   fechaCierre: string
-  carreraIds: number[]
+  carreraIds: string[]
   // Nombre de la empresa que publica.
   empresa: string
   // Solo en el detalle para el candidato: si ya se postuló a esta vacante.
