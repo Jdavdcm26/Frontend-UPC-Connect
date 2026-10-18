@@ -10,7 +10,8 @@ export default function ApplyButton({ vacante }: { vacante: Vacante }) {
   }
 
   // El motivo ya aparece en el aviso de la página; aquí solo se deshabilita la acción.
-  if (vacante.estado !== 'ACTIVA') {
+  // «abierta» la decide el servidor: también cubre la vacante activa con la fecha de cierre vencida.
+  if (!vacante.abierta) {
     return <Button disabled>Postularme</Button>
   }
 

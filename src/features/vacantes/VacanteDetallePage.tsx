@@ -58,9 +58,11 @@ export default function VacanteDetallePage() {
     <article className="mx-auto max-w-3xl space-y-4">
       <VolverAlListado />
 
-      {datos.estado !== 'ACTIVA' && (
+      {!datos.abierta && (
         <p role="status" className="rounded-md border p-3 text-sm">
-          Esta vacante está {ETIQUETA_ESTADO[datos.estado].toLowerCase()} y no recibe postulaciones.
+          {datos.estado === 'ACTIVA'
+            ? 'La fecha de cierre de esta vacante ya pasó y no recibe postulaciones.'
+            : `Esta vacante está ${ETIQUETA_ESTADO[datos.estado].toLowerCase()} y no recibe postulaciones.`}
         </p>
       )}
 

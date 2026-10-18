@@ -37,6 +37,8 @@ export type Vacante = {
   estado: EstadoVacante
   // Fecha en formato AAAA-MM-DD.
   fechaCierre: string
+  // Si recibe postulaciones hoy. La decide el servidor: una vacante ACTIVA con la fecha vencida viene en false.
+  abierta: boolean
   carreraIds: string[]
   // Nombre de la empresa que publica.
   empresa: string
