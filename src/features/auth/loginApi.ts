@@ -22,6 +22,7 @@ export async function iniciarSesionApi(datos: LoginDatos): Promise<void> {
       id: 1,
       correo: datos.correo,
       rol: datos.correo.includes('empresa') ? 'empresa' : 'candidato',
+      esEgresado: datos.correo.includes('egresado'),
       estado: datos.correo.includes('pendiente')
         ? 'PENDIENTE'
         : datos.correo.includes('suspendido')
