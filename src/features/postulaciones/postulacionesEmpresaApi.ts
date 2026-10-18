@@ -28,37 +28,38 @@ export type PaginaRecibidas = {
   siguiente: string | null
 }
 
-// Formas PROVISIONALES de la API de la empresa (API-26, API-27 y API-28):
-// se ajustan cuando José entregue el contrato (BE-32 y BE-33).
+// Formas de la API de la empresa (API-26, API-27 y API-28), según el contrato de José (BE-32 y BE-33).
+// El candidato también trae «habilidades», que todavía no se muestra.
 type CandidatoServidor = {
   nombres: string
   apellidos: string
   titular: string | null
   descripcion: string | null
-  carrera: { nombre: string }
+  carrera: { id: string; nombre: string }
   semestre: number | null
   anio_grado: number | null
   ciudad: string | null
   intereses: string[]
 }
 
-type RecibidaServidor = {
+export type RecibidaServidor = {
   id: string
   estado: EstadoPostulacion
-  created_at: string
+  creada_en: string
   candidato: CandidatoServidor
 }
 
-type DetalleServidor = RecibidaServidor & {
+// «responsable» es el nombre de la cuenta que hizo el cambio.
+export type DetalleServidor = RecibidaServidor & {
   mensaje: string | null
-  historial: { estado: EstadoPostulacion; created_at: string; responsable: string }[]
+  historial: { estado: EstadoPostulacion; cambiado_en: string; responsable: string }[]
 }
 
-function recibidaDesdeServidor(p: RecibidaServidor): PostulacionRecibida {
+export function recibidaDesdeServidor(p: RecibidaServidor): PostulacionRecibida {
   return {
     id: p.id,
     estado: p.estado,
-    creadaEn: p.created_at,
+    creadaEn: p.creada_en,
     nombre: `${p.candidato.nombres} ${p.candidato.apellidos}`,
     carrera: p.candidato.carrera.nombre,
     semestre: p.candidato.semestre,
@@ -66,12 +67,12 @@ function recibidaDesdeServidor(p: RecibidaServidor): PostulacionRecibida {
   }
 }
 
-function detalleDesdeServidor(p: DetalleServidor): DetallePostulacionRecibida {
+export function detalleDesdeServidor(p: DetalleServidor): DetallePostulacionRecibida {
   const c = p.candidato
   return {
     id: p.id,
     estado: p.estado,
-    creadaEn: p.created_at,
+    creadaEn: p.creada_en,
     mensaje: p.mensaje ?? '',
     candidato: {
       nombres: c.nombres,
@@ -84,7 +85,7 @@ function detalleDesdeServidor(p: DetalleServidor): DetallePostulacionRecibida {
       ciudad: c.ciudad ?? '',
       intereses: c.intereses,
     },
-    historial: p.historial.map((h) => ({ estado: h.estado, fecha: h.created_at, responsable: h.responsable })),
+    historial: p.historial.map((h) => ({ estado: h.estado, fecha: h.cambiado_en, responsable: h.responsable })),
   }
 }
 

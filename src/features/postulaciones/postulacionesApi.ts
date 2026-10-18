@@ -16,13 +16,13 @@ export const CLAVE_MIS_POSTULACIONES = [...CLAVE_POSTULACIONES, 'mias'] as const
 const pausa = (ms: number) => new Promise((resolver) => setTimeout(resolver, ms))
 
 // Postularse a una vacante con un mensaje opcional (HU-45 / FE-23, API-24).
-// Con fixtures solo se acepta una vacante activa y una sola postulación por vacante.
+// Con fixtures solo se acepta una vacante abierta y una sola postulación por vacante.
 export async function postularse(vacanteId: string, mensaje: string): Promise<void> {
   if (USAR_FIXTURES) {
     await pausa(600)
     const usuario = await obtenerSesion()
     const vacante = await obtenerVacante(vacanteId)
-    if (vacante.estado !== 'ACTIVA') {
+    if (!vacante.abierta) {
       throw new ApiError(422, 'Esta vacante ya no recibe postulaciones.')
     }
     const perfil = await obtenerPerfil()
@@ -70,13 +70,20 @@ export type PaginaPostulaciones = {
   siguiente: string | null
 }
 
-// Forma PROVISIONAL de GET /api/v1/me/postulaciones: se ajusta cuando José entregue el contrato (BE-31).
-type PostulacionServidor = {
+// Forma de cada postulación en GET /api/v1/me/postulaciones, según el contrato de José (BE-31).
+// «actualizada_en» y «vacante.abierta» todavía no se muestran.
+export type PostulacionServidor = {
   id: string
   estado: Postulacion['estado']
   mensaje: string | null
-  created_at: string
-  vacante: { id: string; titulo: string; empresa?: { razon_social: string } }
+  creada_en: string
+  actualizada_en: string
+  vacante: {
+    id: string
+    titulo: string
+    abierta: boolean
+    empresa: { id: string | number; razon_social: string }
+  }
 }
 
 type PaginaServidor = {
@@ -84,15 +91,15 @@ type PaginaServidor = {
   meta: { next_cursor: string | null }
 }
 
-function postulacionDesdeServidor(p: PostulacionServidor): Postulacion {
+export function postulacionDesdeServidor(p: PostulacionServidor): Postulacion {
   return {
     id: p.id,
     vacanteId: p.vacante.id,
     vacanteTitulo: p.vacante.titulo,
-    empresa: p.vacante.empresa?.razon_social ?? '',
+    empresa: p.vacante.empresa.razon_social,
     mensaje: p.mensaje ?? '',
     estado: p.estado,
-    creadaEn: p.created_at,
+    creadaEn: p.creada_en,
   }
 }
 

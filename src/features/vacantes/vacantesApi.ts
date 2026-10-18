@@ -23,7 +23,7 @@ export type PaginaVacantes = {
 // ---------- Contrato con el servidor ----------
 
 // Forma de una vacante en el servidor. «empresa» solo viene en las vacantes públicas.
-type VacanteServidor = {
+export type VacanteServidor = {
   id: string
   tipo: Vacante['tipo']
   titulo: string
@@ -33,10 +33,11 @@ type VacanteServidor = {
   modalidad: Vacante['modalidad']
   estado: EstadoVacante
   fecha_cierre: string
+  abierta: boolean
   // Solo viene si el servidor cargó las carreras de la vacante.
   carreras?: { id: string; nombre: string }[]
   empresa?: { id: string | number; razon_social: string; ciudad?: string }
-  // Provisional: pendiente de confirmar con José.
+  // Solo viene en el detalle público, para estudiantes y egresados.
   ya_postulado?: boolean
 }
 
@@ -45,7 +46,7 @@ type PaginaServidor = {
   meta: { next_cursor: string | null }
 }
 
-function vacanteDesdeServidor(v: VacanteServidor): Vacante {
+export function vacanteDesdeServidor(v: VacanteServidor): Vacante {
   return {
     id: v.id,
     tipo: v.tipo,
@@ -56,6 +57,7 @@ function vacanteDesdeServidor(v: VacanteServidor): Vacante {
     modalidad: v.modalidad,
     estado: v.estado,
     fechaCierre: v.fecha_cierre,
+    abierta: v.abierta,
     carreraIds: (v.carreras ?? []).map((c) => c.id),
     empresa: v.empresa?.razon_social ?? '',
     yaPostulado: v.ya_postulado ?? false,
@@ -115,11 +117,19 @@ function relanzarError(error: unknown, mensaje403: string): never {
 
 // ---------- Datos de prueba (fixtures) ----------
 
+// En los datos de prueba «abierta» no se guarda: se calcula al leer, como lo hace el servidor
+// (una vacante ACTIVA con la fecha de cierre vencida no recibe postulaciones).
+type VacanteDemo = Omit<Vacante, 'abierta'>
+
+function conAbierta(v: VacanteDemo): Vacante {
+  return { ...v, abierta: v.estado === 'ACTIVA' && v.fechaCierre >= hoyLocal() }
+}
+
 // Ids de las carreras activas de ejemplo.
 const IDS_CARRERAS_DEMO = CARRERAS_DEMO.filter((c) => c.activa).map((c) => c.id)
 
 // Ejemplos que aparecen la primera vez que se abre la lista de la empresa.
-const EJEMPLOS: Vacante[] = [
+const EJEMPLOS: VacanteDemo[] = [
   {
     id: 'demo-1',
     tipo: 'VACANTE',
@@ -172,7 +182,7 @@ const TITULOS_EJEMPLO = [
 ]
 const CIUDADES_EJEMPLO = ['Valledupar', 'Bogotá', 'Barranquilla']
 
-const CATALOGO: Vacante[] = Array.from({ length: 12 }, (_, i) => ({
+const CATALOGO: VacanteDemo[] = Array.from({ length: 12 }, (_, i) => ({
   id: `catalogo-${i + 1}`,
   tipo: TIPOS_VACANTE[i % 3],
   titulo: `${TITULOS_EJEMPLO[i % 6]} (${i + 1})`,
@@ -187,25 +197,25 @@ const CATALOGO: Vacante[] = Array.from({ length: 12 }, (_, i) => ({
 }))
 
 // Lee las vacantes guardadas en la pestaña; si no hay, guarda los ejemplos.
-function leerGuardadas(): Vacante[] {
+function leerGuardadas(): VacanteDemo[] {
   const texto = sessionStorage.getItem(CLAVE_DEMO)
   if (texto === null) {
     sessionStorage.setItem(CLAVE_DEMO, JSON.stringify(EJEMPLOS))
     return EJEMPLOS
   }
-  return JSON.parse(texto) as Vacante[]
+  return JSON.parse(texto) as VacanteDemo[]
 }
 
-function guardar(vacantes: Vacante[]): void {
+function guardar(vacantes: VacanteDemo[]): void {
   sessionStorage.setItem(CLAVE_DEMO, JSON.stringify(vacantes))
 }
 
 // Corta una lista en páginas; el cursor de los fixtures es la posición de inicio.
-function paginar(lista: Vacante[], cursor: string | null): PaginaVacantes {
+function paginar(lista: VacanteDemo[], cursor: string | null): PaginaVacantes {
   const inicio = Number(cursor ?? 0)
   const fin = inicio + TAMANO_PAGINA
   return {
-    vacantes: lista.slice(inicio, fin),
+    vacantes: lista.slice(inicio, fin).map(conAbierta),
     siguiente: fin < lista.length ? String(fin) : null,
   }
 }
@@ -221,7 +231,7 @@ export async function crearVacante(datos: VacanteDatos): Promise<void> {
     if (usuario?.correo.includes('noaprobada')) {
       throw new ApiError(403, 'Tu empresa aún no ha sido aprobada, así que todavía no puedes publicar vacantes.')
     }
-    const nueva: Vacante = {
+    const nueva: VacanteDemo = {
       id: crypto.randomUUID(),
       tipo: datos.tipo,
       titulo: datos.titulo,
@@ -269,7 +279,7 @@ export async function obtenerMiVacante(id: string): Promise<Vacante> {
     await pausa(400)
     const vacante = leerGuardadas().find((v) => v.id === id)
     if (!vacante) throw new ApiError(404, 'No encontramos esa vacante.')
-    return vacante
+    return conAbierta(vacante)
   }
   const respuesta = await api.get<{ data: VacanteServidor }>(`/api/v1/empresa/vacantes/${encodeURIComponent(id)}`)
   return vacanteDesdeServidor(respuesta.data)
@@ -369,7 +379,7 @@ export async function obtenerVacante(id: string): Promise<Vacante> {
     if (!vacante) throw new ApiError(404, 'No encontramos esa vacante.')
     const correo = (await obtenerSesion())?.correo ?? ''
     const yaPostulado = leerPostulacionesDemo().some((p) => p.vacanteId === id && p.candidatoCorreo === correo)
-    return { ...vacante, yaPostulado }
+    return { ...conAbierta(vacante), yaPostulado }
   }
   const respuesta = await api.get<{ data: VacanteServidor }>(`/api/v1/vacantes/${encodeURIComponent(id)}`)
   return vacanteDesdeServidor(respuesta.data)
