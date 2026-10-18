@@ -9,7 +9,7 @@ import CareerSelect from '@/features/perfil/CareerSelect'
 import { perfilAFormulario } from '@/features/perfil/conversiones'
 import InterestsField from '@/features/perfil/InterestsField'
 import { LIMITES } from '@/features/perfil/limites'
-import { perfilEsquema, type PerfilDatos } from '@/features/perfil/perfilEsquema'
+import { esquemaPerfil, type PerfilDatos } from '@/features/perfil/perfilEsquema'
 import { CLAVE_PERFIL, guardarPerfil } from '@/features/perfil/perfilApi'
 import SemesterField from '@/features/perfil/SemesterField'
 import type { Carrera, Perfil } from '@/features/perfil/tipos'
@@ -20,7 +20,7 @@ type Props = {
   carreras: Carrera[]
   // null en el primer acceso: el formulario empieza vacío.
   perfil: Perfil | null
-  // El año de grado solo aplica a egresados.
+  // Los egresados escriben su año de grado y no tienen semestre; los estudiantes, al revés.
   esEgresado: boolean
 }
 
@@ -33,7 +33,7 @@ export default function ProfileForm({ carreras, perfil, esEgresado }: Props) {
     handleSubmit,
     formState: { errors },
   } = useForm<PerfilDatos>({
-    resolver: zodResolver(perfilEsquema),
+    resolver: zodResolver(esquemaPerfil(esEgresado)),
     defaultValues: perfilAFormulario(perfil),
   })
 
@@ -89,20 +89,20 @@ export default function ProfileForm({ carreras, perfil, esEgresado }: Props) {
             />
           )}
         />
-        <Controller
-          control={control}
-          name="semestre"
-          render={({ field }) => (
-            <SemesterField valor={field.value} onChange={field.onChange} error={errors.semestre?.message} />
-          )}
-        />
+        {esEgresado ? (
+          <FormField id="anioGrado" etiqueta="Año de grado" ayuda="Por ejemplo, 2025." error={errors.anioGrado?.message}>
+            {(campo) => <Input inputMode="numeric" maxLength={4} {...campo} {...register('anioGrado')} />}
+          </FormField>
+        ) : (
+          <Controller
+            control={control}
+            name="semestre"
+            render={({ field }) => (
+              <SemesterField valor={field.value} onChange={field.onChange} error={errors.semestre?.message} />
+            )}
+          />
+        )}
       </div>
-
-      {esEgresado && (
-        <FormField id="anioGrado" etiqueta="Año de grado" ayuda="Por ejemplo, 2025." error={errors.anioGrado?.message}>
-          {(campo) => <Input inputMode="numeric" maxLength={4} {...campo} {...register('anioGrado')} />}
-        </FormField>
-      )}
 
       <FormField
         id="titular"

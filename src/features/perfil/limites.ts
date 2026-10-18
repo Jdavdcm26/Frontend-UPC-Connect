@@ -10,3 +10,6 @@ export const LIMITES = {
 } as const
 
 export const SEMESTRE_MAX = 12
+
+// El año de grado va desde la fundación de la UPC hasta el año actual (regla del backend).
+export const ANIO_GRADO_MIN = 1976
