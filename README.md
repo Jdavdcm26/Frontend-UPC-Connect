@@ -73,3 +73,21 @@ export default defineConfig([
 ])
 
 ```
+
+## PWA instalable (FE-31)
+
+La app se puede instalar en el celular o el escritorio. Para eso lleva:
+
+- `public/manifest.webmanifest`: nombre, colores e íconos (`public/icons/`).
+- `public/sw.js`: service worker que guarda solo el shell (la página base y los archivos de `/assets/`).
+  Nunca toca `/api`, `/sanctum`, `/admin` ni otras rutas del servidor, así que no guarda respuestas con sesión.
+- `public/offline.html`: página que se muestra si no hay conexión y la app todavía no se guardó.
+
+Solo se registra en producción (`npm run build`). Para probarlo en local: `npm run build` y luego `npm run preview`.
+
+Lo que necesita el servidor (Nginx, BE-36):
+
+- HTTPS en el dominio de producción (los service workers no funcionan sin él; `localhost` sí).
+- Servir `index.html` en cualquier ruta de la app (SPA) y excluir de eso `/api`, `/sanctum` y `/admin`.
+- `sw.js` y `manifest.webmanifest` con `Cache-Control: no-cache`, para que las actualizaciones lleguen.
+- En la CSP: `worker-src 'self'` y `manifest-src 'self'`. Los estilos de `offline.html` están en un archivo aparte, sin código en línea.
