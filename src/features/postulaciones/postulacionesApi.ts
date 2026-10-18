@@ -3,12 +3,14 @@ import {
   guardarPostulacionesDemo,
   leerPostulacionesDemo,
 } from '@/features/postulaciones/postulacionesDemo'
-import { obtenerVacante } from '@/features/vacantes/vacantesApi'
+import type { Postulacion } from '@/features/postulaciones/tipos'
+import { obtenerVacante, TAMANO_PAGINA } from '@/features/vacantes/vacantesApi'
 import { ApiError } from '@/shared/api/apiError'
 import { api } from '@/shared/api/client'
 
 // Clave de TanStack Query para las listas de postulaciones (FE-24 y FE-25).
 export const CLAVE_POSTULACIONES = ['postulaciones'] as const
+export const CLAVE_MIS_POSTULACIONES = [...CLAVE_POSTULACIONES, 'mias'] as const
 
 const pausa = (ms: number) => new Promise((resolver) => setTimeout(resolver, ms))
 
@@ -44,4 +46,59 @@ export async function postularse(vacanteId: string, mensaje: string): Promise<vo
   }
   const cuerpo = mensaje.trim() ? { mensaje: mensaje.trim() } : {}
   await api.post(`/api/v1/vacantes/${encodeURIComponent(vacanteId)}/postulaciones`, cuerpo)
+}
+
+export type PaginaPostulaciones = {
+  postulaciones: Postulacion[]
+  // Cursor de la página siguiente; null si no hay más.
+  siguiente: string | null
+}
+
+// Forma PROVISIONAL de GET /api/v1/me/postulaciones: se ajusta cuando José entregue el contrato (BE-31).
+type PostulacionServidor = {
+  id: string
+  estado: Postulacion['estado']
+  mensaje: string | null
+  created_at: string
+  vacante: { id: string; titulo: string; empresa?: { razon_social: string } }
+}
+
+type PaginaServidor = {
+  data: PostulacionServidor[]
+  meta: { next_cursor: string | null }
+}
+
+function postulacionDesdeServidor(p: PostulacionServidor): Postulacion {
+  return {
+    id: p.id,
+    vacanteId: p.vacante.id,
+    vacanteTitulo: p.vacante.titulo,
+    empresa: p.vacante.empresa?.razon_social ?? '',
+    mensaje: p.mensaje ?? '',
+    estado: p.estado,
+    creadaEn: p.created_at,
+  }
+}
+
+// Postulaciones de la persona con sesión, de la más reciente a la más antigua, por cursor (HU-46 / FE-24, API-25).
+export async function listarMisPostulaciones(cursor: string | null): Promise<PaginaPostulaciones> {
+  if (USAR_FIXTURES) {
+    await pausa(400)
+    const usuario = await obtenerSesion()
+    const propias = leerPostulacionesDemo().filter((p) => p.candidatoCorreo === (usuario?.correo ?? ''))
+    // El cursor de los fixtures es la posición de inicio.
+    const inicio = Number(cursor ?? 0)
+    const fin = inicio + TAMANO_PAGINA
+    return {
+      postulaciones: propias.slice(inicio, fin),
+      siguiente: fin < propias.length ? String(fin) : null,
+    }
+  }
+  const params = new URLSearchParams()
+  if (cursor) params.set('cursor', cursor)
+  const respuesta = await api.get<PaginaServidor>(`/api/v1/me/postulaciones?${params.toString()}`)
+  return {
+    postulaciones: respuesta.data.map(postulacionDesdeServidor),
+    siguiente: respuesta.meta.next_cursor,
+  }
 }
