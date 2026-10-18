@@ -3,11 +3,15 @@ import { restablecerEsquema, solicitarRecuperacionEsquema } from '@/features/aut
 
 describe('solicitarRecuperacionEsquema', () => {
   it('acepta un correo válido', () => {
-    expect(solicitarRecuperacionEsquema.safeParse({ correo: 'ana@upc.edu.co' }).success).toBe(true)
+    expect(solicitarRecuperacionEsquema.safeParse({ correo: 'ana@upc.edu.co', captcha: 'token' }).success).toBe(true)
   })
 
   it('rechaza un correo mal escrito', () => {
-    expect(solicitarRecuperacionEsquema.safeParse({ correo: 'ana' }).success).toBe(false)
+    expect(solicitarRecuperacionEsquema.safeParse({ correo: 'ana', captcha: 'token' }).success).toBe(false)
+  })
+
+  it('rechaza cuando falta la verificación de seguridad', () => {
+    expect(solicitarRecuperacionEsquema.safeParse({ correo: 'ana@upc.edu.co', captcha: '' }).success).toBe(false)
   })
 })
 
