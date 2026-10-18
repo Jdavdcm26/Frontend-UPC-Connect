@@ -32,6 +32,11 @@ export default function RegistroPage() {
 
   const contrasenaEscrita = useWatch({ control, name: 'contrasena' })
 
+  // Se registran en el orden en que se ven: así, al fallar el envío, el foco va al primer campo con error.
+  const campoCorreo = register('correo')
+  const campoContrasena = register('contrasena')
+  const campoConfirmacion = register('confirmacion')
+
   // El token de la verificación sirve una sola vez: si el registro falla, se pide uno nuevo.
   const [intento, setIntento] = useState(0)
 
@@ -68,20 +73,20 @@ export default function RegistroPage() {
       )}
 
       <FormField id="correo" etiqueta="Correo institucional" error={errors.correo?.message}>
-        {(campo) => <Input type="email" autoComplete="email" {...campo} {...register('correo')} />}
+        {(campo) => <Input type="email" autoComplete="email" {...campo} {...campoCorreo} />}
       </FormField>
 
       <PasswordField
         id="contrasena"
         etiqueta="Contraseña"
         valor={contrasenaEscrita}
-        registro={register('contrasena')}
+        registro={campoContrasena}
         error={errors.contrasena?.message}
       />
 
       <FormField id="confirmacion" etiqueta="Confirmar contraseña" error={errors.confirmacion?.message}>
         {(campo) => (
-          <Input type="password" autoComplete="new-password" {...campo} {...register('confirmacion')} />
+          <Input type="password" autoComplete="new-password" {...campo} {...campoConfirmacion} />
         )}
       </FormField>
 
