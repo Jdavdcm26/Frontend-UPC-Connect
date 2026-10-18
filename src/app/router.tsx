@@ -10,6 +10,7 @@ import NotFoundPage from '@/app/pages/NotFoundPage'
 import RegistroPage from '@/features/auth/RegistroPage'
 import RequireAuth from '@/features/auth/RequireAuth'
 import RevisaCorreoPage from '@/features/auth/RevisaCorreoPage'
+import VerificarCorreoPage from '@/features/auth/VerificarCorreoPage'
 import RequireRole from '@/features/auth/RequireRole'
 import PerfilPrototipo from '@/prototipo/PerfilPrototipo'
 import RegistroPrototipo from '@/prototipo/RegistroPrototipo'
@@ -30,6 +31,7 @@ export const router = createBrowserRouter([
       { path: 'sin-permiso', element: <ForbiddenPage /> },
       { path: 'registro', element: <RegistroPage /> },
       { path: 'revisa-tu-correo', element: <RevisaCorreoPage /> },
+      { path: 'verificar-correo', element: <VerificarCorreoPage /> },
       // Prototipo navegable de baja fidelidad (FE-08). Se elimina al terminar el Sprint 4.
       { path: 'prototipo/registro', element: <RegistroPrototipo /> },
       { path: 'prototipo/revisa-correo', element: <RevisaCorreoPrototipo /> },
