@@ -1,10 +1,17 @@
+import { Navigate } from 'react-router-dom'
 import CerrarSesionBoton from '@/features/auth/CerrarSesionBoton'
+import { rutaInicioPorRol } from '@/features/auth/rutaPorRol'
 import { useSession } from '@/features/auth/useSession'
 import { RUTAS } from '@/shared/lib/rutas'
 
 // Aviso para cuentas de administración y moderación, que no usan esta aplicación.
+// Un candidato o una empresa que llegue aquí va a su propio inicio.
 export default function CuentaAdministrativaPage() {
   const { usuario } = useSession()
+
+  if (usuario && usuario.rol !== 'admin' && usuario.rol !== 'moderador') {
+    return <Navigate to={rutaInicioPorRol(usuario.rol)} replace />
+  }
 
   return (
     <section className="mx-auto max-w-md space-y-4 text-center">

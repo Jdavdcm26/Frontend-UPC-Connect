@@ -28,6 +28,13 @@ describe('roles administrativos', () => {
     expect(destinoPermitido('/empresa/vacantes', 'moderador')).toBeNull()
   })
 
+  it('/cuenta-administrativa es solo de admin y moderador', () => {
+    expect(destinoPermitido('/cuenta-administrativa', 'admin')).toBe('/cuenta-administrativa')
+    expect(destinoPermitido('/cuenta-administrativa', 'moderador')).toBe('/cuenta-administrativa')
+    expect(destinoPermitido('/cuenta-administrativa', 'candidato')).toBeNull()
+    expect(destinoPermitido('/cuenta-administrativa', 'empresa')).toBeNull()
+  })
+
   it('/vacantes es solo de candidatos', () => {
     expect(destinoPermitido('/vacantes?q=web', 'candidato')).toBe('/vacantes?q=web')
     expect(destinoPermitido('/vacantes/abc', 'empresa')).toBeNull()

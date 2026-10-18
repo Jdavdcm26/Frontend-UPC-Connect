@@ -9,12 +9,15 @@ export function rutaInicioPorRol(rol: Rol): string {
   return RUTAS.inicioCandidato
 }
 
-// Zonas exclusivas de un rol: /empresa es de empresas; /inicio, /vacantes y /perfil, de candidatos.
-function rolDeLaRuta(ruta: string): Rol | null {
+// Zonas exclusivas y los roles que pueden entrar a cada una:
+// /empresa es de empresas; /inicio, /vacantes y /perfil, de candidatos;
+// /cuenta-administrativa, de admin y moderador.
+function rolesDeLaRuta(ruta: string): Rol[] | null {
   const esZona = (prefijo: string) =>
     ruta === prefijo || ruta.startsWith(`${prefijo}/`) || ruta.startsWith(`${prefijo}?`)
-  if (esZona(RUTAS.inicioEmpresa)) return 'empresa'
-  if (esZona(RUTAS.inicioCandidato) || esZona(RUTAS.vacantes) || esZona(RUTAS.perfil)) return 'candidato'
+  if (esZona(RUTAS.inicioEmpresa)) return ['empresa']
+  if (esZona(RUTAS.inicioCandidato) || esZona(RUTAS.vacantes) || esZona(RUTAS.perfil)) return ['candidato']
+  if (esZona(RUTAS.cuentaAdministrativa)) return ['admin', 'moderador']
   return null
 }
 
@@ -22,6 +25,6 @@ function rolDeLaRuta(ruta: string): Rol | null {
 // Si no, devuelve null y se usa la página de inicio de su rol.
 export function destinoPermitido(ruta: string | null, rol: Rol): string | null {
   if (!ruta) return null
-  const duenio = rolDeLaRuta(ruta)
-  return duenio === null || duenio === rol ? ruta : null
+  const permitidos = rolesDeLaRuta(ruta)
+  return permitidos === null || permitidos.includes(rol) ? ruta : null
 }
