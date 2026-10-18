@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { loginEsquema, type LoginDatos } from '@/features/auth/loginEsquema'
 import { iniciarSesionApi } from '@/features/auth/loginApi'
-import { rutaInicioPorRol } from '@/features/auth/rutaPorRol'
+import { destinoPermitido, rutaInicioPorRol } from '@/features/auth/rutaPorRol'
 import { CLAVE_SESION } from '@/features/auth/sesionApi'
 import type { Usuario } from '@/features/auth/tipos'
 import { ApiError } from '@/shared/api/apiError'
@@ -40,7 +40,8 @@ export default function LoginPage() {
       // Vuelve a consultar la sesión y, con el rol, decide a dónde ir.
       await queryClient.invalidateQueries({ queryKey: CLAVE_SESION })
       const usuario = queryClient.getQueryData<Usuario | null>(CLAVE_SESION)
-      navegar(desde ?? (usuario ? rutaInicioPorRol(usuario.rol) : RUTAS.raiz), { replace: true })
+      const destino = usuario ? (destinoPermitido(desde, usuario.rol) ?? rutaInicioPorRol(usuario.rol)) : (desde ?? RUTAS.raiz)
+      navegar(destino, { replace: true })
     },
   })
 
