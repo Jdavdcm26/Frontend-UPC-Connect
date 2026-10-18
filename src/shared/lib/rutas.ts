@@ -10,5 +10,7 @@ export const RUTAS = {
   politicaPrivacidad: '/politica-de-privacidad',
   inicioCandidato: '/inicio',
   inicioEmpresa: '/empresa',
+  perfil: '/perfil',
+  perfilEditar: '/perfil/editar',
   sinPermiso: '/sin-permiso',
 } as const
