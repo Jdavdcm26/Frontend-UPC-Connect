@@ -1,5 +1,6 @@
 import { iniciarSesionDemo, USAR_FIXTURES } from '@/features/auth/sesionApi'
 import type { LoginDatos } from '@/features/auth/loginEsquema'
+import type { Rol } from '@/features/auth/tipos'
 import { api } from '@/shared/api/client'
 import { ApiError } from '@/shared/api/apiError'
 
@@ -11,6 +12,13 @@ function mensajeBloqueo(segundos?: number): string {
 
 const CREDENCIALES_INVALIDAS = 'Correo o contraseña incorrectos. Revísalos e intenta de nuevo.'
 
+// Con fixtures: un correo con «admin» o «moderador» entra con ese rol, y con «empresa», como empresa.
+function rolDemo(correo: string): Rol {
+  if (correo.includes('admin')) return 'admin'
+  if (correo.includes('moderador')) return 'moderador'
+  return correo.includes('empresa') ? 'empresa' : 'candidato'
+}
+
 // Inicia sesión (HU-02 / FE-12). La sesión queda en una cookie, no en el navegador.
 // Con fixtures: contraseña "incorrecta" falla y "bloqueada" simula el bloqueo de 5 intentos.
 export async function iniciarSesionApi(datos: LoginDatos): Promise<void> {
@@ -21,7 +29,7 @@ export async function iniciarSesionApi(datos: LoginDatos): Promise<void> {
     iniciarSesionDemo({
       id: '1',
       correo: datos.correo,
-      rol: datos.correo.includes('empresa') ? 'empresa' : 'candidato',
+      rol: rolDemo(datos.correo),
       esEgresado: datos.correo.includes('egresado'),
       estado: datos.correo.includes('pendiente')
         ? 'PENDIENTE'
