@@ -6,6 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import ProfileSection from '@/features/perfil/ProfileSection'
 import ApplicationStateBadge from '@/features/postulaciones/ApplicationStateBadge'
 import { claveDetalleRecibida, obtenerPostulacionRecibida } from '@/features/postulaciones/postulacionesEmpresaApi'
+import StateChangeSelect from '@/features/postulaciones/StateChangeSelect'
 import StateHistory from '@/features/postulaciones/StateHistory'
 import type { DetallePostulacionRecibida } from '@/features/postulaciones/tipos'
 import { ApiError } from '@/shared/api/apiError'
@@ -13,11 +14,13 @@ import { RUTAS } from '@/shared/lib/rutas'
 
 type Props = {
   postulacionId: string
+  // Vacante a la que pertenece la postulación (para actualizar su lista al cambiar el estado).
+  vacanteId: string
   onCerrar: () => void
 }
 
 // Panel lateral con el perfil visible del candidato, su mensaje y el historial (HU-47 / FE-25).
-export default function CandidateProfilePanel({ postulacionId, onCerrar }: Props) {
+export default function CandidateProfilePanel({ postulacionId, vacanteId, onCerrar }: Props) {
   const detalle = useQuery({
     queryKey: claveDetalleRecibida(postulacionId),
     queryFn: () => obtenerPostulacionRecibida(postulacionId),
@@ -49,7 +52,9 @@ export default function CandidateProfilePanel({ postulacionId, onCerrar }: Props
         </p>
       )}
 
-      {detalle.isSuccess && <Contenido detalle={detalle.data} titulo={titulo} onCerrar={onCerrar} />}
+      {detalle.isSuccess && (
+        <Contenido detalle={detalle.data} vacanteId={vacanteId} titulo={titulo} onCerrar={onCerrar} />
+      )}
 
       {!detalle.isSuccess && (
         <Button variant="outline" size="sm" onClick={onCerrar}>
@@ -62,11 +67,12 @@ export default function CandidateProfilePanel({ postulacionId, onCerrar }: Props
 
 type ContenidoProps = {
   detalle: DetallePostulacionRecibida
+  vacanteId: string
   titulo: RefObject<HTMLHeadingElement | null>
   onCerrar: () => void
 }
 
-function Contenido({ detalle, titulo, onCerrar }: ContenidoProps) {
+function Contenido({ detalle, vacanteId, titulo, onCerrar }: ContenidoProps) {
   const c = detalle.candidato
   const datosAcademicos = [c.carrera, `Semestre ${c.semestre}`, c.anioGrado ? `Egresado en ${c.anioGrado}` : null]
     .filter(Boolean)
@@ -85,6 +91,13 @@ function Contenido({ detalle, titulo, onCerrar }: ContenidoProps) {
         <p className="text-sm text-muted-foreground">{datosAcademicos}</p>
         {c.ciudad && <p className="text-sm text-muted-foreground">{c.ciudad}</p>}
       </header>
+
+      <StateChangeSelect
+        key={detalle.estado}
+        postulacionId={detalle.id}
+        vacanteId={vacanteId}
+        estadoActual={detalle.estado}
+      />
 
       {detalle.mensaje && (
         <ProfileSection titulo="Mensaje de la postulación">

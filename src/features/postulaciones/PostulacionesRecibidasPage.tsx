@@ -51,7 +51,12 @@ export default function PostulacionesRecibidasPage() {
         {/* En pantallas angostas el panel aparece arriba de la lista; en anchas, a su lado. */}
         {seleccionada && (
           <div className="lg:order-last">
-            <CandidateProfilePanel key={seleccionada} postulacionId={seleccionada} onCerrar={cerrarPanel} />
+            <CandidateProfilePanel
+              key={seleccionada}
+              postulacionId={seleccionada}
+              vacanteId={id}
+              onCerrar={cerrarPanel}
+            />
           </div>
         )}
         <div className="space-y-4">
