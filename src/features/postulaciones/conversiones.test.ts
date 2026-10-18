@@ -23,21 +23,23 @@ const mia: PostulacionServidor = {
   },
 }
 
+const candidato: NonNullable<RecibidaServidor['candidato']> = {
+  nombres: 'Ana',
+  apellidos: 'Pérez',
+  titular: null,
+  descripcion: null,
+  carrera: { id: 'c-1', nombre: 'Ingeniería de Sistemas' },
+  semestre: 8,
+  anio_grado: null,
+  ciudad: null,
+  intereses: [],
+}
+
 const recibida: RecibidaServidor = {
   id: 'p-2',
   estado: 'RECIBIDA',
   creada_en: '2026-10-03T10:00:00Z',
-  candidato: {
-    nombres: 'Ana',
-    apellidos: 'Pérez',
-    titular: null,
-    descripcion: null,
-    carrera: { id: 'c-1', nombre: 'Ingeniería de Sistemas' },
-    semestre: 8,
-    anio_grado: null,
-    ciudad: null,
-    intereses: [],
-  },
+  candidato,
 }
 
 const detalle: DetalleServidor = {
@@ -92,5 +94,34 @@ describe('detalleDesdeServidor', () => {
     expect(candidato.descripcion).toBe('')
     expect(candidato.ciudad).toBe('')
     expect(candidato.carrera).toBe('Ingeniería de Sistemas')
+  })
+})
+
+describe('datos que el servidor puede enviar vacíos', () => {
+  it('una postulación sin perfil de candidato no rompe la lista', () => {
+    const sinPerfil = recibidaDesdeServidor({ ...recibida, candidato: null })
+    expect(sinPerfil.nombre).toBe('Perfil no disponible')
+    expect(sinPerfil.carrera).toBe('')
+    expect(sinPerfil.semestre).toBeNull()
+  })
+
+  it('una carrera que ya no existe queda como cadena vacía', () => {
+    const sinCarrera = recibidaDesdeServidor({ ...recibida, candidato: { ...candidato, carrera: null } })
+    expect(sinCarrera.carrera).toBe('')
+    expect(detalleDesdeServidor({ ...detalle, candidato: { ...candidato, carrera: null } }).candidato.carrera).toBe('')
+  })
+
+  it('el detalle sin perfil muestra un candidato vacío en vez de fallar', () => {
+    const resultado = detalleDesdeServidor({ ...detalle, candidato: null })
+    expect(resultado.candidato.nombres).toBe('Perfil no disponible')
+    expect(resultado.candidato.intereses).toEqual([])
+  })
+
+  it('un responsable nulo en el historial queda con un texto', () => {
+    const resultado = detalleDesdeServidor({
+      ...detalle,
+      historial: [{ estado: 'RECIBIDA', cambiado_en: '2026-10-03T10:00:00Z', responsable: null }],
+    })
+    expect(resultado.historial[0].responsable).toBe('Sin responsable')
   })
 })
