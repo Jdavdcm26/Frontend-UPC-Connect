@@ -7,6 +7,7 @@ import ErrorPage from '@/app/pages/ErrorPage'
 import ForbiddenPage from '@/app/pages/ForbiddenPage'
 import HomePage from '@/app/pages/HomePage'
 import NotFoundPage from '@/app/pages/NotFoundPage'
+import LoginPage from '@/features/auth/LoginPage'
 import RegistroPage from '@/features/auth/RegistroPage'
 import RequireAuth from '@/features/auth/RequireAuth'
 import RevisaCorreoPage from '@/features/auth/RevisaCorreoPage'
@@ -29,6 +30,7 @@ export const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       { path: 'catalogo', element: <CatalogoPage /> },
       { path: 'sin-permiso', element: <ForbiddenPage /> },
+      { path: 'iniciar-sesion', element: <LoginPage /> },
       { path: 'registro', element: <RegistroPage /> },
       { path: 'revisa-tu-correo', element: <RevisaCorreoPage /> },
       { path: 'verificar-correo', element: <VerificarCorreoPage /> },
