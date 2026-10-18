@@ -9,6 +9,7 @@ import HomePage from '@/app/pages/HomePage'
 import NotFoundPage from '@/app/pages/NotFoundPage'
 import LoginPage from '@/features/auth/LoginPage'
 import RecuperarContrasenaPage from '@/features/auth/RecuperarContrasenaPage'
+import RedirigirSiHaySesion from '@/features/auth/RedirigirSiHaySesion'
 import RegistroPage from '@/features/auth/RegistroPage'
 import RestablecerContrasenaPage from '@/features/auth/RestablecerContrasenaPage'
 import RequireAuth from '@/features/auth/RequireAuth'
@@ -29,7 +30,7 @@ export const router = createBrowserRouter([
     element: <PublicLayout />,
     errorElement: <ErrorPage />,
     children: [
-      { index: true, element: <HomePage /> },
+      { index: true, element: <RedirigirSiHaySesion><HomePage /></RedirigirSiHaySesion> },
       { path: 'catalogo', element: <CatalogoPage /> },
       { path: 'sin-permiso', element: <ForbiddenPage /> },
       { path: 'iniciar-sesion', element: <LoginPage /> },
