@@ -7,6 +7,12 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   // react(): permite usar JSX/TSX. tailwindcss(): procesa las clases de Tailwind.
   plugins: [react(), tailwindcss()],
+  // Redirige /api al backend de desarrollo: imita el mismo dominio de staging (cookies sin CORS).
+  server: {
+    proxy: {
+      '/api': 'http://localhost:8000',
+    },
+  },
   resolve: {
     alias: {
       // "@/algo" se resuelve a "src/algo" (mismo alias que en tsconfig)
