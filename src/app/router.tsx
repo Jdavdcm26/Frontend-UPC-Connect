@@ -1,4 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom'
+import AuthLayout from '@/app/layouts/AuthLayout'
 import CandidateLayout from '@/app/layouts/CandidateLayout'
 import CompanyLayout from '@/app/layouts/CompanyLayout'
 import PublicLayout from '@/app/layouts/PublicLayout'
@@ -32,13 +33,18 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <RedirigirSiHaySesion><HomePage /></RedirigirSiHaySesion> },
       { path: 'catalogo', element: <CatalogoPage /> },
+      {
+        element: <AuthLayout />,
+        children: [
+          { path: 'iniciar-sesion', element: <LoginPage /> },
+          { path: 'recuperar-contrasena', element: <RecuperarContrasenaPage /> },
+          { path: 'restablecer-contrasena', element: <RestablecerContrasenaPage /> },
+          { path: 'registro', element: <RegistroPage /> },
+          { path: 'revisa-tu-correo', element: <RevisaCorreoPage /> },
+          { path: 'verificar-correo', element: <VerificarCorreoPage /> },
+        ],
+      },
       { path: 'sin-permiso', element: <ForbiddenPage /> },
-      { path: 'iniciar-sesion', element: <LoginPage /> },
-      { path: 'recuperar-contrasena', element: <RecuperarContrasenaPage /> },
-      { path: 'restablecer-contrasena', element: <RestablecerContrasenaPage /> },
-      { path: 'registro', element: <RegistroPage /> },
-      { path: 'revisa-tu-correo', element: <RevisaCorreoPage /> },
-      { path: 'verificar-correo', element: <VerificarCorreoPage /> },
       // Prototipo navegable de baja fidelidad (FE-08). Se elimina al terminar el Sprint 4.
       { path: 'prototipo/registro', element: <RegistroPrototipo /> },
       { path: 'prototipo/revisa-correo', element: <RevisaCorreoPrototipo /> },
