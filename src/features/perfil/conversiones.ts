@@ -1,5 +1,5 @@
 import type { PerfilDatos } from '@/features/perfil/perfilEsquema'
-import type { Perfil } from '@/features/perfil/tipos'
+import type { HabilidadPerfil, Perfil, PerfilPublico } from '@/features/perfil/tipos'
 
 // Forma en que el servidor envía el perfil (GET y PUT /api/v1/me/perfil, dentro de { data }).
 export type PerfilServidor = {
@@ -88,5 +88,40 @@ export function perfilAFormulario(perfil: Perfil | null): PerfilDatos {
     anioGrado: perfil.anioGrado === null ? '' : String(perfil.anioGrado),
     ciudad: perfil.ciudad,
     intereses: perfil.intereses,
+  }
+}
+
+// Forma de GET /api/v1/perfiles/{slug} (API-16, BE-20), dentro de { data }.
+// Todos los campos llegan siempre: los de texto pueden ser null y las listas pueden venir vacías.
+// El correo nunca se envía.
+export type PerfilPublicoServidor = {
+  id: string
+  slug: string
+  nombres: string
+  apellidos: string
+  titular: string | null
+  carrera: { id: string; nombre: string } | null
+  semestre: number | null
+  anio_grado: number | null
+  ciudad: string | null
+  descripcion: string | null
+  intereses: string[]
+  habilidades: HabilidadPerfil[]
+}
+
+// Del perfil ajeno del servidor al de la interfaz: lo nulo pasa a texto vacío.
+export function perfilPublicoDesdeServidor(p: PerfilPublicoServidor): PerfilPublico {
+  return {
+    slug: p.slug,
+    nombres: p.nombres,
+    apellidos: p.apellidos,
+    titular: p.titular ?? '',
+    carreraNombre: p.carrera?.nombre ?? '',
+    semestre: p.semestre,
+    anioGrado: p.anio_grado,
+    ciudad: p.ciudad ?? '',
+    descripcion: p.descripcion ?? '',
+    intereses: p.intereses,
+    habilidades: p.habilidades,
   }
 }

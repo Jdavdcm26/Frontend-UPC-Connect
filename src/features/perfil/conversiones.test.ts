@@ -4,6 +4,8 @@ import {
   datosAPerfil,
   perfilAFormulario,
   perfilDesdeServidor,
+  perfilPublicoDesdeServidor,
+  type PerfilPublicoServidor,
   type PerfilServidor,
 } from '@/features/perfil/conversiones'
 
@@ -97,5 +99,67 @@ describe('cuerpo del PUT del perfil', () => {
     const cuerpo = cuerpoPerfil(datosAPerfil({ ...datosEstudiante, semestre: '', anioGrado: '2025' }, true, ''))
     expect(cuerpo).toMatchObject({ anio_grado: 2025 })
     expect(cuerpo).not.toHaveProperty('semestre')
+  })
+})
+
+describe('perfilPublicoDesdeServidor', () => {
+  // Perfil de otra persona tal como lo envía GET /api/v1/perfiles/{slug} (BE-20).
+  const completo: PerfilPublicoServidor = {
+    id: 'p-1',
+    slug: 'ana-perez',
+    nombres: 'Ana',
+    apellidos: 'Pérez',
+    titular: 'Estudiante de Ingeniería de Sistemas',
+    carrera: { id: ID_CARRERA, nombre: 'Ingeniería de Sistemas' },
+    semestre: 6,
+    anio_grado: null,
+    ciudad: 'Valledupar',
+    descripcion: 'Me interesa el desarrollo web.',
+    intereses: ['React'],
+    habilidades: [{ id: 'h-1', nombre: 'React', tipo: 'TECNICA', nivel: 'AVANZADO' }],
+  }
+
+  it('pasa todos los datos del perfil', () => {
+    expect(perfilPublicoDesdeServidor(completo)).toEqual({
+      slug: 'ana-perez',
+      nombres: 'Ana',
+      apellidos: 'Pérez',
+      titular: 'Estudiante de Ingeniería de Sistemas',
+      carreraNombre: 'Ingeniería de Sistemas',
+      semestre: 6,
+      anioGrado: null,
+      ciudad: 'Valledupar',
+      descripcion: 'Me interesa el desarrollo web.',
+      intereses: ['React'],
+      habilidades: [{ id: 'h-1', nombre: 'React', tipo: 'TECNICA', nivel: 'AVANZADO' }],
+    })
+  })
+
+  it('los textos nulos quedan como texto vacío', () => {
+    const perfil = perfilPublicoDesdeServidor({ ...completo, titular: null, descripcion: null, ciudad: null })
+    expect(perfil.titular).toBe('')
+    expect(perfil.descripcion).toBe('')
+    expect(perfil.ciudad).toBe('')
+  })
+
+  it('una carrera que ya no existe queda como texto vacío', () => {
+    expect(perfilPublicoDesdeServidor({ ...completo, carrera: null }).carreraNombre).toBe('')
+  })
+
+  it('un egresado llega con año de grado y sin semestre', () => {
+    const perfil = perfilPublicoDesdeServidor({ ...completo, semestre: null, anio_grado: 2024 })
+    expect(perfil.semestre).toBeNull()
+    expect(perfil.anioGrado).toBe(2024)
+  })
+
+  it('los intereses y las habilidades pueden llegar vacíos', () => {
+    const perfil = perfilPublicoDesdeServidor({ ...completo, intereses: [], habilidades: [] })
+    expect(perfil.intereses).toEqual([])
+    expect(perfil.habilidades).toEqual([])
+  })
+
+  it('una habilidad sin nivel conserva el nivel nulo', () => {
+    const habilidad = { id: 'h-2', nombre: 'Comunicación', tipo: 'BLANDA' as const, nivel: null }
+    expect(perfilPublicoDesdeServidor({ ...completo, habilidades: [habilidad] }).habilidades[0].nivel).toBeNull()
   })
 })
