@@ -8,6 +8,8 @@ import ErrorPage from '@/app/pages/ErrorPage'
 import ForbiddenPage from '@/app/pages/ForbiddenPage'
 import HomePage from '@/app/pages/HomePage'
 import NotFoundPage from '@/app/pages/NotFoundPage'
+import InicioCandidatoPage from '@/features/inicio/InicioCandidatoPage'
+import InicioEmpresaPage from '@/features/inicio/InicioEmpresaPage'
 import CuentaAdministrativaPage from '@/features/auth/CuentaAdministrativaPage'
 import LoginPage from '@/features/auth/LoginPage'
 import PoliticaPrivacidadPage from '@/features/auth/PoliticaPrivacidadPage'
@@ -83,7 +85,7 @@ export const router = createBrowserRouter([
             children: [
               {
                 element: <RequirePerfil />,
-                children: [{ index: true, element: <p>Panel del candidato (FE-28)</p> }],
+                children: [{ index: true, element: <InicioCandidatoPage /> }],
               },
             ],
           },
@@ -162,7 +164,7 @@ export const router = createBrowserRouter([
           {
             element: <CompanyLayout />,
             children: [
-              { index: true, element: <p>Panel de la empresa (FE-29)</p> },
+              { index: true, element: <InicioEmpresaPage /> },
               { path: 'vacantes', element: <MisVacantesPage /> },
               { path: 'vacantes/nueva', element: <NuevaVacantePage /> },
               { path: 'vacantes/:id/editar', element: <EditarVacantePage /> },

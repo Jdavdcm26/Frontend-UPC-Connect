@@ -44,4 +44,6 @@ export type Vacante = {
   empresa: string
   // Solo en el detalle para el candidato: si ya se postuló a esta vacante.
   yaPostulado?: boolean
+  // Solo en la lista de la empresa: cuántas postulaciones recibió (provisional hasta BE-32).
+  postulacionesTotal?: number
 }

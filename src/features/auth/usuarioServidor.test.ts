@@ -26,6 +26,19 @@ describe('usuarioDesdeServidor', () => {
     expect(usuario.esEgresado).toBe(false)
   })
 
+  it('una empresa sin aprobar queda marcada', () => {
+    const usuario = usuarioDesdeServidor({ ...base, rol: 'EMPRESA', empresa_aprobada: false })
+    expect(usuario.empresaAprobada).toBe(false)
+  })
+
+  it('una empresa aprobada queda marcada', () => {
+    expect(usuarioDesdeServidor({ ...base, rol: 'EMPRESA', empresa_aprobada: true }).empresaAprobada).toBe(true)
+  })
+
+  it('un candidato no lleva dato de aprobación', () => {
+    expect(usuarioDesdeServidor({ ...base, empresa_aprobada: false })).not.toHaveProperty('empresaAprobada')
+  })
+
   it('acepta mayúsculas o minúsculas', () => {
     const usuario = usuarioDesdeServidor({ ...base, rol: 'empresa', estado: 'suspendido' })
     expect(usuario.rol).toBe('empresa')
