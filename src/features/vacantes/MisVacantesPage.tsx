@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Link } from 'react-router'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -15,10 +15,15 @@ const MENSAJE_ESTADO: Record<EstadoVacante, string> = {
   CERRADA: 'Vacante cerrada.',
 }
 
-// Lista de las vacantes de la empresa con sus acciones (FE-20).
+// Lista de las vacantes de la empresa con sus acciones, por cursor (FE-20).
 export default function MisVacantesPage() {
   const queryClient = useQueryClient()
-  const vacantes = useQuery({ queryKey: CLAVE_MIS_VACANTES, queryFn: listarMisVacantes })
+  const vacantes = useInfiniteQuery({
+    queryKey: CLAVE_MIS_VACANTES,
+    queryFn: ({ pageParam }) => listarMisVacantes(pageParam),
+    initialPageParam: null as string | null,
+    getNextPageParam: (ultima) => ultima.siguiente,
+  })
 
   const cambio = useMutation({
     mutationFn: ({ id, estado }: { id: string; estado: EstadoVacante }) => cambiarEstadoVacante(id, estado),
@@ -49,6 +54,8 @@ export default function MisVacantesPage() {
     )
   }
 
+  const lista = vacantes.data.pages.flatMap((pagina) => pagina.vacantes)
+
   return (
     <section className="mx-auto max-w-3xl space-y-4">
       <div className="flex items-center justify-between gap-4">
@@ -58,11 +65,11 @@ export default function MisVacantesPage() {
         </Button>
       </div>
 
-      {vacantes.data.length === 0 ? (
+      {lista.length === 0 ? (
         <p className="text-muted-foreground">Aún no has publicado vacantes.</p>
       ) : (
         <ul className="space-y-3">
-          {vacantes.data.map((vacante) => (
+          {lista.map((vacante) => (
             <li key={vacante.id} className="space-y-2 rounded-lg border p-4">
               <div className="flex items-start justify-between gap-2">
                 <h2 className="font-semibold">{vacante.titulo}</h2>
@@ -80,6 +87,14 @@ export default function MisVacantesPage() {
             </li>
           ))}
         </ul>
+      )}
+
+      {vacantes.hasNextPage && (
+        <div className="text-center">
+          <Button variant="outline" disabled={vacantes.isFetchingNextPage} onClick={() => void vacantes.fetchNextPage()}>
+            {vacantes.isFetchingNextPage ? 'Cargando...' : 'Cargar más'}
+          </Button>
+        </div>
       )}
     </section>
   )
