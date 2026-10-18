@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { resumenAcademico } from '@/features/perfil/formato'
 import ApplicationStateBadge from '@/features/postulaciones/ApplicationStateBadge'
+import { idBotonVerPerfil } from '@/features/postulaciones/foco'
 import type { PostulacionRecibida } from '@/features/postulaciones/tipos'
 import { formatearFecha } from '@/shared/lib/fechas'
 
@@ -32,6 +33,7 @@ export default function CandidateList({ postulaciones, seleccionadaId, onSelecci
               <Button
                 variant="outline"
                 size="sm"
+                id={idBotonVerPerfil(postulacion.id)}
                 aria-label={`Ver perfil de ${postulacion.nombre}`}
                 onClick={() => onSeleccionar(postulacion.id)}
               >
