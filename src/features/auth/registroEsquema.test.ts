@@ -5,6 +5,7 @@ const datosValidos = {
   correo: 'estudiante@upc.edu.co',
   contrasena: 'clave-segura-123',
   confirmacion: 'clave-segura-123',
+  aceptaPolitica: true,
 }
 
 describe('registroEsquema', () => {
@@ -31,6 +32,14 @@ describe('registroEsquema', () => {
     expect(resultado.success).toBe(false)
     if (!resultado.success) {
       expect(resultado.error.issues[0].path).toEqual(['confirmacion'])
+    }
+  })
+
+  it('rechaza cuando no se acepta la política', () => {
+    const resultado = registroEsquema.safeParse({ ...datosValidos, aceptaPolitica: false })
+    expect(resultado.success).toBe(false)
+    if (!resultado.success) {
+      expect(resultado.error.issues[0].path).toEqual(['aceptaPolitica'])
     }
   })
 })
