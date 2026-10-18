@@ -40,7 +40,9 @@ async function crearError(respuesta: Response): Promise<ApiError> {
   }
   const mensaje =
     MENSAJES[respuesta.status] ?? datos.message ?? 'Ocurrió un error inesperado. Intenta de nuevo.'
-  return new ApiError(respuesta.status, mensaje, datos.errors)
+  // Retry-After (segundos) indica cuánto esperar tras un bloqueo 429.
+  const espera = Number.parseInt(respuesta.headers.get('Retry-After') ?? '', 10)
+  return new ApiError(respuesta.status, mensaje, datos.errors, Number.isNaN(espera) ? undefined : espera)
 }
 
 async function solicitar<T>(metodo: Metodo, ruta: string, cuerpo?: unknown): Promise<T> {
