@@ -86,6 +86,7 @@ export default function ProfileForm({ carreras, perfil, esEgresado }: Props) {
               valor={field.value}
               onChange={field.onChange}
               error={errors.carreraId?.message}
+              inputRef={field.ref}
             />
           )}
         />
@@ -98,7 +99,12 @@ export default function ProfileForm({ carreras, perfil, esEgresado }: Props) {
             control={control}
             name="semestre"
             render={({ field }) => (
-              <SemesterField valor={field.value} onChange={field.onChange} error={errors.semestre?.message} />
+              <SemesterField
+                valor={field.value}
+                onChange={field.onChange}
+                error={errors.semestre?.message}
+                inputRef={field.ref}
+              />
             )}
           />
         )}

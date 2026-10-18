@@ -93,6 +93,7 @@ export default function RegistroPage() {
             checked={field.value}
             onChange={field.onChange}
             error={errors.aceptaPolitica?.message}
+            inputRef={field.ref}
           />
         )}
       />
