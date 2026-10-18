@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Controller, useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -39,7 +40,10 @@ export default function ProfileForm({ carreras, perfil, esEgresado }: Props) {
   const guardado = useMutation({
     mutationFn: guardarPerfil,
     // Los cambios se ven de inmediato: se actualiza el perfil que tiene la app.
-    onSuccess: (nuevo) => queryClient.setQueryData(CLAVE_PERFIL, nuevo),
+    onSuccess: (nuevo) => {
+      queryClient.setQueryData(CLAVE_PERFIL, nuevo)
+      toast.success('Perfil guardado.')
+    },
   })
 
   const mensajeError = guardado.isError
@@ -122,12 +126,6 @@ export default function ProfileForm({ carreras, perfil, esEgresado }: Props) {
           <InterestsField valor={field.value} onChange={field.onChange} error={errors.intereses?.message} />
         )}
       />
-
-      {guardado.isSuccess && (
-        <p role="status" className="text-sm text-muted-foreground">
-          Cambios guardados.
-        </p>
-      )}
 
       <Button type="submit" disabled={guardado.isPending}>
         {guardado.isPending ? 'Guardando...' : 'Guardar perfil'}
