@@ -1,14 +1,13 @@
-// Rol de la persona: define a qué diseño y pantallas tiene acceso.
-// El administrador entra por el panel de Filament, no por esta aplicación.
+// Rol que usa la interfaz: candidato (estudiante o egresado) o empresa.
 export type Rol = 'candidato' | 'empresa'
 
-// Estado de la cuenta. PENDIENTE y SUSPENDIDO no entran a rutas protegidas.
 export type EstadoCuenta = 'ACTIVO' | 'PENDIENTE' | 'SUSPENDIDO'
 
-// Usuario con sesión iniciada (respuesta de GET /api/v1/me).
 export type Usuario = {
-  id: number
+  id: string
   correo: string
   rol: Rol
+  // Los egresados tienen año de grado en su perfil.
+  esEgresado: boolean
   estado: EstadoCuenta
 }

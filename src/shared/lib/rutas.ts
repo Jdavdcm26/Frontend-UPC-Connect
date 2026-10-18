@@ -10,5 +10,13 @@ export const RUTAS = {
   politicaPrivacidad: '/politica-de-privacidad',
   inicioCandidato: '/inicio',
   inicioEmpresa: '/empresa',
+  empresaVacantes: '/empresa/vacantes',
+  empresaNuevaVacante: '/empresa/vacantes/nueva',
+  vacantes: '/vacantes',
+  perfil: '/perfil',
+  perfilEditar: '/perfil/editar',
   sinPermiso: '/sin-permiso',
 } as const
+
+// Ruta para editar una vacante de la empresa.
+export const rutaEditarVacante = (id: string) => `/empresa/vacantes/${id}/editar`

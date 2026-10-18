@@ -18,6 +18,14 @@ import RequireAuth from '@/features/auth/RequireAuth'
 import RevisaCorreoPage from '@/features/auth/RevisaCorreoPage'
 import VerificarCorreoPage from '@/features/auth/VerificarCorreoPage'
 import RequireRole from '@/features/auth/RequireRole'
+import EditarVacantePage from '@/features/vacantes/EditarVacantePage'
+import MisVacantesPage from '@/features/vacantes/MisVacantesPage'
+import NuevaVacantePage from '@/features/vacantes/NuevaVacantePage'
+import PerfilEditarPage from '@/features/perfil/PerfilEditarPage'
+import RequirePerfil from '@/features/perfil/RequirePerfil'
+import PerfilPage from '@/features/perfil/PerfilPage'
+import VacanteDetallePage from '@/features/vacantes/VacanteDetallePage'
+import VacantesPage from '@/features/vacantes/VacantesPage'
 import PerfilPrototipo from '@/prototipo/PerfilPrototipo'
 import RegistroPrototipo from '@/prototipo/RegistroPrototipo'
 import RevisaCorreoPrototipo from '@/prototipo/RevisaCorreoPrototipo'
@@ -65,7 +73,53 @@ export const router = createBrowserRouter([
         children: [
           {
             element: <CandidateLayout />,
-            children: [{ index: true, element: <p>Panel del candidato (FE-28)</p> }],
+            children: [
+              {
+                element: <RequirePerfil />,
+                children: [{ index: true, element: <p>Panel del candidato (FE-28)</p> }],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    path: '/perfil',
+    element: <RequireAuth />,
+    children: [
+      {
+        element: <RequireRole rol="candidato" />,
+        children: [
+          {
+            element: <CandidateLayout />,
+            children: [
+              { path: 'editar', element: <PerfilEditarPage /> },
+              { element: <RequirePerfil />, children: [{ index: true, element: <PerfilPage /> }] },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    path: '/vacantes',
+    element: <RequireAuth />,
+    children: [
+      {
+        element: <RequireRole rol="candidato" />,
+        children: [
+          {
+            element: <CandidateLayout />,
+            children: [
+              {
+                element: <RequirePerfil />,
+                children: [
+                  { index: true, element: <VacantesPage /> },
+                  { path: ':id', element: <VacanteDetallePage /> },
+                ],
+              },
+            ],
           },
         ],
       },
@@ -80,7 +134,12 @@ export const router = createBrowserRouter([
         children: [
           {
             element: <CompanyLayout />,
-            children: [{ index: true, element: <p>Panel de la empresa (FE-29)</p> }],
+            children: [
+              { index: true, element: <p>Panel de la empresa (FE-29)</p> },
+              { path: 'vacantes', element: <MisVacantesPage /> },
+              { path: 'vacantes/nueva', element: <NuevaVacantePage /> },
+              { path: 'vacantes/:id/editar', element: <EditarVacantePage /> },
+            ],
           },
         ],
       },
