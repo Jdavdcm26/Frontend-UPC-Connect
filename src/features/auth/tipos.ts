@@ -4,7 +4,7 @@ export type Rol = 'candidato' | 'empresa'
 export type EstadoCuenta = 'ACTIVO' | 'PENDIENTE' | 'SUSPENDIDO'
 
 export type Usuario = {
-  id: number
+  id: string
   correo: string
   rol: Rol
   // Los egresados tienen año de grado en su perfil.

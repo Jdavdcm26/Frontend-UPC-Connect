@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import { usuarioDesdeServidor } from '@/features/auth/usuarioServidor'
 
-const base = { id: 7, name: 'Ana Pérez', email: 'ana@unicesar.edu.co', rol: 'ESTUDIANTE', estado: 'ACTIVO' }
+const base = { id: '7', name: 'Ana Pérez', email: 'ana@unicesar.edu.co', rol: 'ESTUDIANTE', estado: 'ACTIVO' }
 
 describe('usuarioDesdeServidor', () => {
   it('traduce un estudiante activo', () => {
     expect(usuarioDesdeServidor(base)).toEqual({
-      id: 7,
+      id: '7',
       correo: 'ana@unicesar.edu.co',
       rol: 'candidato',
       esEgresado: false,

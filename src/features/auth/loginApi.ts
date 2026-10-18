@@ -19,7 +19,7 @@ export async function iniciarSesionApi(datos: LoginDatos): Promise<void> {
     if (datos.contrasena === 'incorrecta') throw new ApiError(401, CREDENCIALES_INVALIDAS)
     if (datos.contrasena === 'bloqueada') throw new ApiError(429, mensajeBloqueo(300), {}, 300)
     iniciarSesionDemo({
-      id: 1,
+      id: '1',
       correo: datos.correo,
       rol: datos.correo.includes('empresa') ? 'empresa' : 'candidato',
       esEgresado: datos.correo.includes('egresado'),

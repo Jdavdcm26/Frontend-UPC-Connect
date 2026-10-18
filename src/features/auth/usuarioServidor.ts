@@ -2,7 +2,7 @@ import type { EstadoCuenta, Usuario } from '@/features/auth/tipos'
 
 // Forma en que GET /api/v1/me envía al usuario (dentro de { data }).
 export type UsuarioServidor = {
-  id: number
+  id: string
   name: string
   email: string
   rol: string
