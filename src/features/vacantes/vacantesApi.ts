@@ -267,3 +267,51 @@ export async function obtenerVacante(id: string): Promise<Vacante> {
   const respuesta = await api.get<{ data: VacanteServidor }>(`/api/v1/vacantes/${encodeURIComponent(id)}`)
   return vacanteDesdeServidor(respuesta.data)
 }
+
+// Guarda los cambios de una vacante de la empresa (FE-20, API-20).
+export async function actualizarVacante(id: string, datos: VacanteDatos): Promise<void> {
+  if (USAR_FIXTURES) {
+    await pausa(600)
+    const guardadas = leerGuardadas()
+    if (!guardadas.some((v) => v.id === id)) throw new ApiError(404, 'No encontramos esa vacante.')
+    const nuevas = guardadas.map((v) =>
+      v.id === id
+        ? {
+            ...v,
+            tipo: datos.tipo,
+            titulo: datos.titulo,
+            descripcion: datos.descripcion,
+            requisitos: datos.requisitos,
+            ciudad: datos.ciudad,
+            modalidad: datos.modalidad,
+            fechaCierre: datos.fechaCierre,
+            carreraIds: datos.carreraIds.map(Number),
+          }
+        : v,
+    )
+    sessionStorage.setItem(CLAVE_DEMO, JSON.stringify(nuevas))
+    return
+  }
+  try {
+    await api.put(`/api/v1/empresa/vacantes/${encodeURIComponent(id)}`, {
+      tipo: datos.tipo,
+      titulo: datos.titulo,
+      descripcion: datos.descripcion,
+      requisitos: datos.requisitos,
+      carrera_ids: datos.carreraIds.map(Number),
+      ciudad: datos.ciudad,
+      modalidad: datos.modalidad,
+      fecha_cierre: datos.fechaCierre,
+    })
+  } catch (error) {
+    if (error instanceof ApiError) {
+      if (error.status === 403) {
+        throw new ApiError(403, error.mensajeServidor ?? 'No puedes editar esta vacante.')
+      }
+      if (error.status === 422) {
+        throw new ApiError(422, error.message, traducirCampos(error.campos))
+      }
+    }
+    throw error
+  }
+}
