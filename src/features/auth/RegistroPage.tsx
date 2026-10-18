@@ -1,9 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
-import { useForm, useWatch } from 'react-hook-form'
+import { Controller, useForm, useWatch } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import ConsentCheckbox from '@/features/auth/ConsentCheckbox'
 import PasswordField from '@/features/auth/PasswordField'
 import { registroEsquema, type RegistroDatos } from '@/features/auth/registroEsquema'
 import { registrarApi } from '@/features/auth/registroApi'
@@ -23,7 +24,7 @@ export default function RegistroPage() {
     formState: { errors },
   } = useForm<RegistroDatos>({
     resolver: zodResolver(registroEsquema),
-    defaultValues: { correo: '', contrasena: '', confirmacion: '' },
+    defaultValues: { correo: '', contrasena: '', confirmacion: '', aceptaPolitica: false },
   })
 
   const contrasenaEscrita = useWatch({ control, name: 'contrasena' })
@@ -75,6 +76,18 @@ export default function RegistroPage() {
           <Input type="password" autoComplete="new-password" {...campo} {...register('confirmacion')} />
         )}
       </FormField>
+
+      <Controller
+        control={control}
+        name="aceptaPolitica"
+        render={({ field }) => (
+          <ConsentCheckbox
+            checked={field.value}
+            onChange={field.onChange}
+            error={errors.aceptaPolitica?.message}
+          />
+        )}
+      />
 
       <Button type="submit" className="w-full" disabled={registro.isPending}>
         {registro.isPending ? 'Creando cuenta...' : 'Registrarme'}
