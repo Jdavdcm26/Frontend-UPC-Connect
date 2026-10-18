@@ -2,6 +2,9 @@ import { createBrowserRouter } from 'react-router-dom'
 import CandidateLayout from '@/app/layouts/CandidateLayout'
 import CompanyLayout from '@/app/layouts/CompanyLayout'
 import PublicLayout from '@/app/layouts/PublicLayout'
+import CatalogoPage from '@/app/pages/CatalogoPage'
+import ErrorPage from '@/app/pages/ErrorPage'
+import ForbiddenPage from '@/app/pages/ForbiddenPage'
 import HomePage from '@/app/pages/HomePage'
 import NotFoundPage from '@/app/pages/NotFoundPage'
 
@@ -11,8 +14,11 @@ export const router = createBrowserRouter([
   {
     path: '/',
     element: <PublicLayout />,
+    errorElement: <ErrorPage />,
     children: [
       { index: true, element: <HomePage /> },
+      { path: 'catalogo', element: <CatalogoPage /> },
+      { path: 'sin-permiso', element: <ForbiddenPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },

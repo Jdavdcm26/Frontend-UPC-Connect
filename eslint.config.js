@@ -19,4 +19,12 @@ export default defineConfig([
       globals: globals.browser,
     },
   },
+  {
+    // Los componentes de shadcn exportan también sus variantes (buttonVariants, ...).
+    // Es el patrón de la librería, así que aquí se desactiva la regla de fast refresh.
+    files: ['src/components/ui/**/*.tsx'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
 ])
