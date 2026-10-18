@@ -1,9 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { Link, useLocation } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import PasswordField from '@/features/auth/PasswordField'
 import { restablecerContrasenaApi } from '@/features/auth/recuperacionApi'
 import { restablecerEsquema, type RestablecerDatos } from '@/features/auth/recuperacionEsquema'
 import { ApiError } from '@/shared/api/apiError'
@@ -15,12 +16,15 @@ export default function RestablecerContrasenaPage() {
   const { search } = useLocation()
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors },
   } = useForm<RestablecerDatos>({
     resolver: zodResolver(restablecerEsquema),
     defaultValues: { contrasena: '', confirmacion: '' },
   })
+
+  const contrasenaEscrita = useWatch({ control, name: 'contrasena' })
 
   const cambio = useMutation({
     mutationFn: (datos: RestablecerDatos) => restablecerContrasenaApi(search, datos),
@@ -57,16 +61,13 @@ export default function RestablecerContrasenaPage() {
         </div>
       )}
 
-      <FormField
+      <PasswordField
         id="contrasena"
         etiqueta="Contraseña nueva"
-        ayuda="Mínimo 10 caracteres."
+        valor={contrasenaEscrita}
+        registro={register('contrasena')}
         error={errors.contrasena?.message}
-      >
-        {(campo) => (
-          <Input type="password" autoComplete="new-password" {...campo} {...register('contrasena')} />
-        )}
-      </FormField>
+      />
 
       <FormField id="confirmacion" etiqueta="Confirmar contraseña" error={errors.confirmacion?.message}>
         {(campo) => (
