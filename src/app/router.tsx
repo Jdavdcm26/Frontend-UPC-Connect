@@ -18,6 +18,8 @@ import RequireAuth from '@/features/auth/RequireAuth'
 import RevisaCorreoPage from '@/features/auth/RevisaCorreoPage'
 import VerificarCorreoPage from '@/features/auth/VerificarCorreoPage'
 import RequireRole from '@/features/auth/RequireRole'
+import PerfilEditarPage from '@/features/perfil/PerfilEditarPage'
+import RequirePerfil from '@/features/perfil/RequirePerfil'
 import PerfilPrototipo from '@/prototipo/PerfilPrototipo'
 import RegistroPrototipo from '@/prototipo/RegistroPrototipo'
 import RevisaCorreoPrototipo from '@/prototipo/RevisaCorreoPrototipo'
@@ -65,7 +67,27 @@ export const router = createBrowserRouter([
         children: [
           {
             element: <CandidateLayout />,
-            children: [{ index: true, element: <p>Panel del candidato (FE-28)</p> }],
+            children: [
+              {
+                element: <RequirePerfil />,
+                children: [{ index: true, element: <p>Panel del candidato (FE-28)</p> }],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    path: '/perfil',
+    element: <RequireAuth />,
+    children: [
+      {
+        element: <RequireRole rol="candidato" />,
+        children: [
+          {
+            element: <CandidateLayout />,
+            children: [{ path: 'editar', element: <PerfilEditarPage /> }],
           },
         ],
       },
