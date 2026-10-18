@@ -42,6 +42,8 @@ export type CambioEstado = {
 
 // Datos del candidato que la empresa puede ver.
 export type CandidatoVisible = {
+  // Dirección de su perfil (FE-26): /perfiles/{slug}.
+  slug: string
   nombres: string
   apellidos: string
   titular: string

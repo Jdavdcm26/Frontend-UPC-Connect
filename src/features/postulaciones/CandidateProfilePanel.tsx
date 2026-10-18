@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useRef, type RefObject } from 'react'
-import { Navigate } from 'react-router'
-import { Button } from '@/components/ui/button'
+import { Link, Navigate } from 'react-router'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { resumenAcademico } from '@/features/perfil/formato'
 import ProfileSection from '@/features/perfil/ProfileSection'
@@ -11,7 +11,7 @@ import StateChangeSelect from '@/features/postulaciones/StateChangeSelect'
 import StateHistory from '@/features/postulaciones/StateHistory'
 import type { DetallePostulacionRecibida } from '@/features/postulaciones/tipos'
 import { ApiError } from '@/shared/api/apiError'
-import { RUTAS } from '@/shared/lib/rutas'
+import { RUTAS, rutaPerfilPublico } from '@/shared/lib/rutas'
 
 type Props = {
   postulacionId: string
@@ -127,9 +127,16 @@ function Contenido({ detalle, vacanteId, titulo, onCerrar }: ContenidoProps) {
         <StateHistory historial={detalle.historial} />
       </ProfileSection>
 
-      <Button variant="outline" size="sm" onClick={onCerrar}>
-        Cerrar
-      </Button>
+      <div className="flex flex-wrap gap-2">
+        {c.slug && (
+          <Link to={rutaPerfilPublico(c.slug)} className={buttonVariants({ variant: 'outline', size: 'sm' })}>
+            Ver perfil completo
+          </Link>
+        )}
+        <Button variant="outline" size="sm" onClick={onCerrar}>
+          Cerrar
+        </Button>
+      </div>
     </>
   )
 }

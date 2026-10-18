@@ -31,6 +31,9 @@ export type PaginaRecibidas = {
 // Formas de la API de la empresa (API-26, API-27 y API-28), según el contrato de José (BE-32 y BE-33).
 // El candidato también trae «habilidades», que todavía no se muestra.
 type CandidatoServidor = {
+  // BE-32: el id y el slug (dirección de su perfil) llegan siempre.
+  id: string
+  slug: string
   nombres: string
   apellidos: string
   titular: string | null
@@ -61,6 +64,8 @@ export type DetalleServidor = RecibidaServidor & {
 const SIN_PERFIL = 'Perfil no disponible'
 
 const CANDIDATO_SIN_PERFIL: CandidatoVisible = {
+  // Sin perfil no hay dirección: la pantalla no ofrece el enlace.
+  slug: '',
   nombres: SIN_PERFIL,
   apellidos: '',
   titular: '',
@@ -94,6 +99,7 @@ export function detalleDesdeServidor(p: DetalleServidor): DetallePostulacionReci
     mensaje: p.mensaje ?? '',
     candidato: c
       ? {
+          slug: c.slug,
           nombres: c.nombres,
           apellidos: c.apellidos,
           titular: c.titular ?? '',

@@ -27,3 +27,6 @@ export const rutaEditarVacante = (id: string) => `/empresa/vacantes/${id}/editar
 
 // Ruta con las postulaciones que recibió una vacante de la empresa.
 export const rutaPostulacionesVacante = (id: string) => `/empresa/vacantes/${id}/postulaciones`
+
+// Ruta con el perfil de otra persona (HU-27 / FE-26). El slug lo genera el servidor.
+export const rutaPerfilPublico = (slug: string) => `/perfiles/${encodeURIComponent(slug)}`
