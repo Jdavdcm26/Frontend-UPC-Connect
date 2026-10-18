@@ -1,5 +1,5 @@
 import { obtenerSesion, USAR_FIXTURES } from '@/features/auth/sesionApi'
-import type { Vacante } from '@/features/vacantes/tipos'
+import type { EstadoVacante, Vacante } from '@/features/vacantes/tipos'
 import type { VacanteDatos } from '@/features/vacantes/vacanteEsquema'
 import { ApiError } from '@/shared/api/apiError'
 import { api } from '@/shared/api/client'
@@ -30,7 +30,7 @@ export async function crearVacante(datos: VacanteDatos): Promise<void> {
     if (usuario?.correo.includes('noaprobada')) {
       throw new ApiError(403, 'Tu empresa aún no ha sido aprobada, así que todavía no puedes publicar vacantes.')
     }
-    const guardadas = JSON.parse(sessionStorage.getItem(CLAVE_DEMO) ?? '[]') as Vacante[]
+    const guardadas = leerGuardadas()
     const nueva: Vacante = {
       id: crypto.randomUUID(),
       tipo: datos.tipo,
@@ -70,4 +70,112 @@ export async function crearVacante(datos: VacanteDatos): Promise<void> {
     }
     throw error
   }
+}
+
+// Clave de caché de la lista de vacantes de la empresa.
+export const CLAVE_MIS_VACANTES = ['mis-vacantes']
+
+// Con fixtures: ejemplos que aparecen la primera vez que se abre la lista.
+const EJEMPLOS: Vacante[] = [
+  {
+    id: 'demo-1',
+    tipo: 'VACANTE',
+    titulo: 'Desarrollador web junior',
+    descripcion: 'Apoyo en el desarrollo de aplicaciones web.',
+    requisitos: 'Conocimientos de HTML, CSS y JavaScript.',
+    ciudad: 'Valledupar',
+    modalidad: 'HIBRIDA',
+    estado: 'ACTIVA',
+    fechaCierre: '2026-12-31',
+    carreraIds: [1],
+    empresa: 'Mi empresa (demo)',
+  },
+  {
+    id: 'demo-2',
+    tipo: 'PRACTICA',
+    titulo: 'Práctica en soporte técnico',
+    descripcion: 'Atención y soporte a usuarios internos.',
+    requisitos: 'Estudiante de últimos semestres.',
+    ciudad: 'Valledupar',
+    modalidad: 'PRESENCIAL',
+    estado: 'PAUSADA',
+    fechaCierre: '2026-11-30',
+    carreraIds: [1],
+    empresa: 'Mi empresa (demo)',
+  },
+  {
+    id: 'demo-3',
+    tipo: 'PASANTIA',
+    titulo: 'Pasantía en análisis de datos',
+    descripcion: 'Limpieza y análisis de datos de ventas.',
+    requisitos: 'Manejo básico de hojas de cálculo.',
+    ciudad: 'Bogotá',
+    modalidad: 'REMOTA',
+    estado: 'CERRADA',
+    fechaCierre: '2026-10-01',
+    carreraIds: [1],
+    empresa: 'Mi empresa (demo)',
+  },
+]
+
+// Lee las vacantes guardadas en la pestaña; si no hay, guarda los ejemplos.
+function leerGuardadas(): Vacante[] {
+  const texto = sessionStorage.getItem(CLAVE_DEMO)
+  if (texto === null) {
+    sessionStorage.setItem(CLAVE_DEMO, JSON.stringify(EJEMPLOS))
+    return EJEMPLOS
+  }
+  return JSON.parse(texto) as Vacante[]
+}
+
+// Forma provisional de la vacante en el servidor (se ajusta cuando José confirme el contrato).
+type VacanteServidor = {
+  id: string
+  tipo: Vacante['tipo']
+  titulo: string
+  descripcion: string
+  requisitos: string
+  ciudad: string
+  modalidad: Vacante['modalidad']
+  estado: EstadoVacante
+  fecha_cierre: string
+  carrera_ids: number[]
+  empresa?: string
+}
+
+function vacanteDesdeServidor(v: VacanteServidor): Vacante {
+  return {
+    id: v.id,
+    tipo: v.tipo,
+    titulo: v.titulo,
+    descripcion: v.descripcion,
+    requisitos: v.requisitos,
+    ciudad: v.ciudad,
+    modalidad: v.modalidad,
+    estado: v.estado,
+    fechaCierre: v.fecha_cierre,
+    carreraIds: v.carrera_ids,
+    empresa: v.empresa ?? '',
+  }
+}
+
+// Vacantes de la empresa que inició sesión (FE-20).
+export async function listarMisVacantes(): Promise<Vacante[]> {
+  if (USAR_FIXTURES) {
+    await pausa(400)
+    return leerGuardadas()
+  }
+  const respuesta = await api.get<{ data: VacanteServidor[] }>('/api/v1/empresa/vacantes')
+  return respuesta.data.map(vacanteDesdeServidor)
+}
+
+// Pausar, reanudar o cerrar una vacante (FE-20).
+export async function cambiarEstadoVacante(id: string, estado: EstadoVacante): Promise<void> {
+  if (USAR_FIXTURES) {
+    await pausa(300)
+    const cambiadas = leerGuardadas().map((v) => (v.id === id ? { ...v, estado } : v))
+    sessionStorage.setItem(CLAVE_DEMO, JSON.stringify(cambiadas))
+    return
+  }
+  await api.patch(`/api/v1/empresa/vacantes/${id}/estado`, { estado })
 }
