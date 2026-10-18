@@ -1,4 +1,5 @@
 import { obtenerSesion, USAR_FIXTURES } from '@/features/auth/sesionApi'
+import { slugDesdeNombre } from '@/features/perfil/formato'
 import { obtenerPerfil } from '@/features/perfil/perfilApi'
 import {
   guardarPostulacionesDemo,
@@ -44,6 +45,7 @@ export async function postularse(vacanteId: string, mensaje: string): Promise<vo
         creadaEn: ahora,
         candidatoCorreo: correo,
         candidato: {
+          slug: slugDesdeNombre(perfil.nombres, perfil.apellidos),
           nombres: perfil.nombres,
           apellidos: perfil.apellidos,
           titular: perfil.titular,

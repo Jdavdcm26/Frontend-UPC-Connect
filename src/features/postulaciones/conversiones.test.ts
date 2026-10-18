@@ -24,6 +24,8 @@ const mia: PostulacionServidor = {
 }
 
 const candidato: NonNullable<RecibidaServidor['candidato']> = {
+  id: 'u-1',
+  slug: 'ana-perez',
   nombres: 'Ana',
   apellidos: 'Pérez',
   titular: null,
@@ -88,6 +90,10 @@ describe('detalleDesdeServidor', () => {
     ])
   })
 
+  it('conserva la dirección del perfil del candidato (slug)', () => {
+    expect(detalleDesdeServidor(detalle).candidato.slug).toBe('ana-perez')
+  })
+
   it('los datos del candidato que llegan nulos quedan como cadenas vacías', () => {
     const { candidato } = detalleDesdeServidor(detalle)
     expect(candidato.titular).toBe('')
@@ -114,6 +120,7 @@ describe('datos que el servidor puede enviar vacíos', () => {
   it('el detalle sin perfil muestra un candidato vacío en vez de fallar', () => {
     const resultado = detalleDesdeServidor({ ...detalle, candidato: null })
     expect(resultado.candidato.nombres).toBe('Perfil no disponible')
+    expect(resultado.candidato.slug).toBe('')
     expect(resultado.candidato.intereses).toEqual([])
   })
 
