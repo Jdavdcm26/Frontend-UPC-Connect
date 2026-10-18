@@ -26,16 +26,19 @@ export async function iniciarSesionApi(datos: LoginDatos): Promise<void> {
     await new Promise((resolver) => setTimeout(resolver, 600))
     if (datos.contrasena === 'incorrecta') throw new ApiError(401, CREDENCIALES_INVALIDAS)
     if (datos.contrasena === 'bloqueada') throw new ApiError(429, mensajeBloqueo(300), {}, 300)
+    const rol = rolDemo(datos.correo)
     iniciarSesionDemo({
       id: '1',
       correo: datos.correo,
-      rol: rolDemo(datos.correo),
+      rol,
       esEgresado: datos.correo.includes('egresado'),
       estado: datos.correo.includes('pendiente')
         ? 'PENDIENTE'
         : datos.correo.includes('suspendido')
           ? 'SUSPENDIDO'
           : 'ACTIVO',
+      // Una empresa con «noaprobada» en el correo simula una empresa sin aprobar.
+      ...(rol === 'empresa' ? { empresaAprobada: !datos.correo.includes('noaprobada') } : {}),
     })
     return
   }

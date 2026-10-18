@@ -38,6 +38,8 @@ type VacanteServidor = {
   empresa?: { id: string | number; razon_social: string; ciudad?: string }
   // Provisional: pendiente de confirmar con José.
   ya_postulado?: boolean
+  // Solo en GET /empresa/vacantes. Provisional: lo agrega BE-32.
+  postulaciones_total?: number
 }
 
 type PaginaServidor = {
@@ -59,6 +61,7 @@ function vacanteDesdeServidor(v: VacanteServidor): Vacante {
     carreraIds: (v.carreras ?? []).map((c) => c.id),
     empresa: v.empresa?.razon_social ?? '',
     yaPostulado: v.ya_postulado ?? false,
+    postulacionesTotal: v.postulaciones_total,
   }
 }
 
@@ -251,7 +254,13 @@ export const CLAVE_MIS_VACANTES = ['mis-vacantes']
 export async function listarMisVacantes(cursor: string | null): Promise<PaginaVacantes> {
   if (USAR_FIXTURES) {
     await pausa(400)
-    return paginar(leerGuardadas(), cursor)
+    // El conteo de postulaciones se calcula con las postulaciones de la demostración.
+    const postulaciones = leerPostulacionesDemo()
+    const conTotales = leerGuardadas().map((v) => ({
+      ...v,
+      postulacionesTotal: postulaciones.filter((p) => p.vacanteId === v.id).length,
+    }))
+    return paginar(conTotales, cursor)
   }
   const params = new URLSearchParams()
   if (cursor) params.set('cursor', cursor)

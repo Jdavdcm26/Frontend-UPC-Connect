@@ -7,6 +7,8 @@ export type UsuarioServidor = {
   email: string
   rol: string
   estado: string
+  // Solo viene en empresas.
+  empresa_aprobada?: boolean | null
 }
 
 const ESTADOS: EstadoCuenta[] = ['ACTIVO', 'PENDIENTE', 'SUSPENDIDO']
@@ -31,5 +33,8 @@ export function usuarioDesdeServidor(usuario: UsuarioServidor): Usuario {
     rol: rolDeLaInterfaz(rol),
     esEgresado: rol === 'EGRESADO',
     estado: ESTADOS.find((valor) => valor === estado) ?? 'PENDIENTE',
+    ...(rol === 'EMPRESA' && typeof usuario.empresa_aprobada === 'boolean'
+      ? { empresaAprobada: usuario.empresa_aprobada }
+      : {}),
   }
 }

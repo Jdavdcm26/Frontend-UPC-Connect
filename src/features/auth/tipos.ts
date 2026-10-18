@@ -11,4 +11,6 @@ export type Usuario = {
   // Los egresados tienen año de grado en su perfil.
   esEgresado: boolean
   estado: EstadoCuenta
+  // Solo en empresas: si la administración ya la aprobó (puede publicar). Sin dato = no aplica.
+  empresaAprobada?: boolean
 }
