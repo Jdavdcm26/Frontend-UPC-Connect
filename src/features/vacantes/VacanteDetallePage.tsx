@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { CLAVE_CARRERAS, obtenerCarreras } from '@/features/perfil/perfilApi'
+import ApplyButton from '@/features/postulaciones/ApplyButton'
 import {
   ETIQUETA_ESTADO,
   ETIQUETA_MODALIDAD,
@@ -73,6 +74,8 @@ export default function VacanteDetallePage() {
           {ETIQUETA_MODALIDAD[datos.modalidad]} · {datos.ciudad} · Cierra el {datos.fechaCierre}
         </p>
       </header>
+
+      <ApplyButton vacante={datos} />
 
       <section className="space-y-1">
         <h2 className="font-semibold">Descripción</h2>
