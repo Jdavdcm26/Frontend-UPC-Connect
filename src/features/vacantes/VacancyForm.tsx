@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -15,7 +15,7 @@ import {
   TIPOS_VACANTE,
 } from '@/features/vacantes/tipos'
 import { vacanteEsquema, type VacanteDatos } from '@/features/vacantes/vacanteEsquema'
-import { crearVacante } from '@/features/vacantes/vacantesApi'
+import { CLAVE_MIS_VACANTES, crearVacante } from '@/features/vacantes/vacantesApi'
 import { ApiError } from '@/shared/api/apiError'
 import { aplicarErroresServidor } from '@/shared/lib/erroresServidor'
 import { hoyLocal } from '@/shared/lib/fechas'
@@ -55,9 +55,12 @@ export default function VacancyForm({ carreras }: Props) {
     defaultValues: VALORES_INICIALES,
   })
 
+  const queryClient = useQueryClient()
+
   const publicacion = useMutation({
     mutationFn: crearVacante,
     onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: CLAVE_MIS_VACANTES })
       toast.success('Vacante publicada.')
       reset(VALORES_INICIALES)
     },
