@@ -6,11 +6,7 @@ import type { Vacante } from '@/features/vacantes/tipos'
 // Para llegar al detalle ya se exige tener el perfil completo (RequirePerfil), así que no se revisa aquí.
 export default function ApplyButton({ vacante }: { vacante: Vacante }) {
   if (vacante.yaPostulado) {
-    return (
-      <p role="status" className="text-sm font-medium">
-        ✓ Ya te postulaste a esta vacante.
-      </p>
-    )
+    return <Button disabled>✓ Postulado</Button>
   }
 
   // El motivo ya aparece en el aviso de la página; aquí solo se deshabilita la acción.
