@@ -32,6 +32,11 @@ describe('vacanteEsquema', () => {
     expect(vacanteEsquema.safeParse({ ...datosValidos, descripcion }).success).toBe(false)
   })
 
+  it('admite como máximo las carreras permitidas', () => {
+    const demasiadas = Array.from({ length: LIMITES_VACANTE.carreras + 1 }, (_, i) => `carrera-${i}`)
+    expect(vacanteEsquema.safeParse({ ...datosValidos, carreraIds: demasiadas }).success).toBe(false)
+  })
+
   it('exige al menos una carrera objetivo', () => {
     expect(vacanteEsquema.safeParse({ ...datosValidos, carreraIds: [] }).success).toBe(false)
   })
