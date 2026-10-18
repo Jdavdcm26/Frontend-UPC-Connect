@@ -6,6 +6,7 @@ const datosValidos = {
   contrasena: 'clave-segura-123',
   confirmacion: 'clave-segura-123',
   aceptaPolitica: true,
+  captcha: 'token-de-turnstile',
 }
 
 describe('registroEsquema', () => {
@@ -40,6 +41,14 @@ describe('registroEsquema', () => {
     expect(resultado.success).toBe(false)
     if (!resultado.success) {
       expect(resultado.error.issues[0].path).toEqual(['aceptaPolitica'])
+    }
+  })
+
+  it('rechaza cuando falta la verificación de seguridad', () => {
+    const resultado = registroEsquema.safeParse({ ...datosValidos, captcha: '' })
+    expect(resultado.success).toBe(false)
+    if (!resultado.success) {
+      expect(resultado.error.issues[0].path).toEqual(['captcha'])
     }
   })
 })

@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { contrasena, correo } from '@/shared/lib/validaciones'
 
-// Reglas del formulario de registro (FE-10 y FE-14).
+// Reglas del formulario de registro (FE-10 y FE-14, con la verificación de seguridad).
 export const registroEsquema = z
   .object({
     correo,
@@ -11,6 +11,8 @@ export const registroEsquema = z
     aceptaPolitica: z
       .boolean()
       .refine((valor) => valor, 'Debes aceptar la política de privacidad para registrarte.'),
+  // Token de Turnstile (verificación de seguridad). El servidor lo comprueba con Cloudflare.
+  captcha: z.string().min(1, 'Completa la verificación de seguridad.'),
   })
   .refine((datos) => datos.contrasena === datos.confirmacion, {
     message: 'Las contraseñas no coinciden.',

@@ -1,4 +1,4 @@
-import type { RestablecerDatos } from '@/features/auth/recuperacionEsquema'
+import type { RestablecerDatos, SolicitarRecuperacionDatos } from '@/features/auth/recuperacionEsquema'
 import { USAR_FIXTURES } from '@/features/auth/sesionApi'
 import { ApiError } from '@/shared/api/apiError'
 import { api } from '@/shared/api/client'
@@ -6,12 +6,21 @@ import { api } from '@/shared/api/client'
 const pausa = (ms: number) => new Promise((resolver) => setTimeout(resolver, ms))
 
 // Pide el correo de recuperación. El servidor responde igual exista o no la cuenta.
-export async function solicitarRecuperacionApi(correo: string): Promise<void> {
+export async function solicitarRecuperacionApi(datos: SolicitarRecuperacionDatos): Promise<void> {
   if (USAR_FIXTURES) {
     await pausa(600)
     return
   }
-  await api.post('/api/v1/auth/forgot-password', { email: correo })
+  try {
+    await api.post('/api/v1/auth/forgot-password', { email: datos.correo, captcha: datos.captcha })
+  } catch (error) {
+    // El servidor llama "email" al correo; el formulario lo llama "correo".
+    if (error instanceof ApiError && error.status === 422) {
+      const { email, ...otros } = error.campos
+      throw new ApiError(422, error.message, email ? { ...otros, correo: email } : otros)
+    }
+    throw error
+  }
 }
 
 // Guarda la contraseña nueva. "consulta" es lo que viene después del ? del enlace

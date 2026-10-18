@@ -2,7 +2,11 @@ import { z } from 'zod'
 import { contrasena, correo } from '@/shared/lib/validaciones'
 
 // Pedir el enlace de recuperación (HU-02 / FE-13).
-export const solicitarRecuperacionEsquema = z.object({ correo })
+export const solicitarRecuperacionEsquema = z.object({
+  correo,
+  // Token de Turnstile (verificación de seguridad). El servidor lo comprueba con Cloudflare.
+  captcha: z.string().min(1, 'Completa la verificación de seguridad.'),
+})
 export type SolicitarRecuperacionDatos = z.infer<typeof solicitarRecuperacionEsquema>
 
 // Escribir la contraseña nueva, llegando desde el enlace del correo.
