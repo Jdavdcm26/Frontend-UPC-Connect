@@ -1,10 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useSession } from '@/features/auth/useSession'
 import ProfileForm from '@/features/perfil/ProfileForm'
 import { CLAVE_CARRERAS, CLAVE_PERFIL, obtenerCarreras, obtenerPerfil } from '@/features/perfil/perfilApi'
 
 // Alta y edición del perfil (HU-09 / FE-15).
 export default function PerfilEditarPage() {
+  const { usuario } = useSession()
   const perfil = useQuery({ queryKey: CLAVE_PERFIL, queryFn: obtenerPerfil })
   const carreras = useQuery({ queryKey: CLAVE_CARRERAS, queryFn: obtenerCarreras })
 
@@ -37,8 +39,7 @@ export default function PerfilEditarPage() {
           Cuéntanos tu carrera y tu semestre para empezar. Son obligatorios.
         </p>
       )}
-      {/* esEgresado queda en false hasta que el contrato de /me diga si es estudiante o egresado. */}
-      <ProfileForm carreras={carreras.data} perfil={perfil.data} esEgresado={false} />
+      <ProfileForm carreras={carreras.data} perfil={perfil.data} esEgresado={usuario?.esEgresado ?? false} />
     </section>
   )
 }
