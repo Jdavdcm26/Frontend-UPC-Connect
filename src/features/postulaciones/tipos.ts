@@ -48,7 +48,8 @@ export type CandidatoVisible = {
   descripcion: string
   // Nombre de la carrera.
   carrera: string
-  semestre: number
+  // Los egresados no tienen semestre.
+  semestre: number | null
   // Solo para egresados.
   anioGrado: number | null
   ciudad: string
@@ -63,7 +64,8 @@ export type PostulacionRecibida = {
   // Nombres y apellidos del candidato.
   nombre: string
   carrera: string
-  semestre: number
+  semestre: number | null
+  anioGrado: number | null
 }
 
 // Detalle de una postulación recibida: mensaje, perfil visible e historial.

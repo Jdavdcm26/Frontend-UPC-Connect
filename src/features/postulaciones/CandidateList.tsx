@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button'
+import { resumenAcademico } from '@/features/perfil/formato'
 import ApplicationStateBadge from '@/features/postulaciones/ApplicationStateBadge'
 import type { PostulacionRecibida } from '@/features/postulaciones/tipos'
 import { formatearFecha } from '@/shared/lib/fechas'
@@ -26,9 +27,7 @@ export default function CandidateList({ postulaciones, seleccionadaId, onSelecci
                 <h2 className="font-semibold">{postulacion.nombre}</h2>
                 <ApplicationStateBadge estado={postulacion.estado} />
               </div>
-              <p className="text-sm">
-                {postulacion.carrera} · Semestre {postulacion.semestre}
-              </p>
+              <p className="text-sm">{resumenAcademico(postulacion)}</p>
               <p className="text-sm text-muted-foreground">Se postuló el {formatearFecha(postulacion.creadaEn)}</p>
               <Button
                 variant="outline"

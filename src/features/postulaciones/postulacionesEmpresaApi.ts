@@ -36,7 +36,7 @@ type CandidatoServidor = {
   titular: string | null
   descripcion: string | null
   carrera: { nombre: string }
-  semestre: number
+  semestre: number | null
   anio_grado: number | null
   ciudad: string | null
   intereses: string[]
@@ -62,6 +62,7 @@ function recibidaDesdeServidor(p: RecibidaServidor): PostulacionRecibida {
     nombre: `${p.candidato.nombres} ${p.candidato.apellidos}`,
     carrera: p.candidato.carrera.nombre,
     semestre: p.candidato.semestre,
+    anioGrado: p.candidato.anio_grado,
   }
 }
 
@@ -125,6 +126,7 @@ export async function listarPostulacionesRecibidas(vacanteId: string, cursor: st
         nombre: `${p.candidato.nombres} ${p.candidato.apellidos}`,
         carrera: p.candidato.carrera,
         semestre: p.candidato.semestre,
+        anioGrado: p.candidato.anioGrado,
       })),
       siguiente: fin < recibidas.length ? String(fin) : null,
     }

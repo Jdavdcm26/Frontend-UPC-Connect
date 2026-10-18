@@ -1,5 +1,10 @@
 import { CARRERAS_DEMO } from '@/features/perfil/carrerasDemo'
-import { datosAPerfil } from '@/features/perfil/conversiones'
+import {
+  cuerpoPerfil,
+  datosAPerfil,
+  perfilDesdeServidor,
+  type PerfilServidor,
+} from '@/features/perfil/conversiones'
 import type { PerfilDatos } from '@/features/perfil/perfilEsquema'
 import type { Carrera, Perfil } from '@/features/perfil/tipos'
 import { USAR_FIXTURES } from '@/features/auth/sesionApi'
@@ -13,40 +18,14 @@ export const CLAVE_CARRERAS = ['carreras'] as const
 const CLAVE_DEMO = 'upc-perfil-demo'
 const pausa = (ms: number) => new Promise((resolver) => setTimeout(resolver, ms))
 
-// Forma en que el servidor envía el perfil (nombres en snake_case).
-type PerfilServidor = {
-  nombres: string
-  apellidos: string
-  titular: string | null
-  descripcion: string | null
-  carrera_id: string
-  semestre: number
-  anio_grado: number | null
-  ciudad: string | null
-  intereses: string[]
-}
-
-function desdeServidor(p: PerfilServidor): Perfil {
-  return {
-    nombres: p.nombres,
-    apellidos: p.apellidos,
-    titular: p.titular ?? '',
-    descripcion: p.descripcion ?? '',
-    carreraId: p.carrera_id,
-    semestre: p.semestre,
-    anioGrado: p.anio_grado,
-    ciudad: p.ciudad ?? '',
-    intereses: p.intereses,
-  }
-}
-
-// Catálogo de carreras (API-10).
+// Catálogo de carreras (API-10). El servidor solo lista las activas.
 export async function obtenerCarreras(): Promise<Carrera[]> {
   if (USAR_FIXTURES) {
     await pausa(300)
     return CARRERAS_DEMO
   }
-  return api.get<Carrera[]>('/api/v1/carreras')
+  const respuesta = await api.get<{ data: { id: string; nombre: string; facultad: string }[] }>('/api/v1/carreras')
+  return respuesta.data.map((c) => ({ id: c.id, nombre: c.nombre, facultad: c.facultad, activa: true }))
 }
 
 // Perfil de la persona con sesión (API-12). Devuelve null si todavía no lo ha creado (404).
@@ -56,31 +35,25 @@ export async function obtenerPerfil(): Promise<Perfil | null> {
     return guardado ? (JSON.parse(guardado) as Perfil) : null
   }
   try {
-    return desdeServidor(await api.get<PerfilServidor>('/api/v1/me/perfil'))
+    const respuesta = await api.get<{ data: PerfilServidor }>('/api/v1/me/perfil')
+    return perfilDesdeServidor(respuesta.data)
   } catch (error) {
     if (error instanceof ApiError && error.status === 404) return null
     throw error
   }
 }
 
-// Crea o actualiza el perfil (API-13).
-export async function guardarPerfil(datos: PerfilDatos): Promise<Perfil> {
-  const perfil = datosAPerfil(datos)
+// Crea o actualiza el perfil (API-13). Los egresados envían año de grado; los estudiantes, semestre.
+export async function guardarPerfil(datos: PerfilDatos, esEgresado: boolean): Promise<Perfil> {
   if (USAR_FIXTURES) {
     await pausa(600)
+    const carrera = CARRERAS_DEMO.find((c) => c.id === datos.carreraId)
+    const perfil = datosAPerfil(datos, esEgresado, carrera?.nombre ?? '')
     sessionStorage.setItem(CLAVE_DEMO, JSON.stringify(perfil))
     return perfil
   }
-  await api.put('/api/v1/me/perfil', {
-    nombres: perfil.nombres,
-    apellidos: perfil.apellidos,
-    titular: perfil.titular,
-    descripcion: perfil.descripcion,
-    carrera_id: perfil.carreraId,
-    semestre: perfil.semestre,
-    anio_grado: perfil.anioGrado,
-    ciudad: perfil.ciudad,
-    intereses: perfil.intereses,
-  })
-  return perfil
+  // El nombre de la carrera lo devuelve el servidor en la respuesta.
+  const cuerpo = cuerpoPerfil(datosAPerfil(datos, esEgresado, ''))
+  const respuesta = await api.put<{ data: PerfilServidor }>('/api/v1/me/perfil', cuerpo)
+  return perfilDesdeServidor(respuesta.data)
 }

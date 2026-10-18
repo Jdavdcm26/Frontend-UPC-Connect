@@ -14,7 +14,10 @@ export type Perfil = {
   titular: string
   descripcion: string
   carreraId: string
-  semestre: number
+  // Nombre de la carrera: el servidor lo envía aunque la carrera ya no esté en el catálogo.
+  carreraNombre: string
+  // Los egresados no tienen semestre.
+  semestre: number | null
   // Solo para egresados.
   anioGrado: number | null
   ciudad: string

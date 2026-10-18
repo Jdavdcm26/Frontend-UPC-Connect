@@ -3,6 +3,7 @@ import { useEffect, useRef, type RefObject } from 'react'
 import { Navigate } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import { resumenAcademico } from '@/features/perfil/formato'
 import ProfileSection from '@/features/perfil/ProfileSection'
 import ApplicationStateBadge from '@/features/postulaciones/ApplicationStateBadge'
 import { claveDetalleRecibida, obtenerPostulacionRecibida } from '@/features/postulaciones/postulacionesEmpresaApi'
@@ -74,9 +75,8 @@ type ContenidoProps = {
 
 function Contenido({ detalle, vacanteId, titulo, onCerrar }: ContenidoProps) {
   const c = detalle.candidato
-  const datosAcademicos = [c.carrera, `Semestre ${c.semestre}`, c.anioGrado ? `Egresado en ${c.anioGrado}` : null]
-    .filter(Boolean)
-    .join(' · ')
+  const datosAcademicos = resumenAcademico(c)
+
 
   return (
     <>

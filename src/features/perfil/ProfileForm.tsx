@@ -37,8 +37,15 @@ export default function ProfileForm({ carreras, perfil, esEgresado }: Props) {
     defaultValues: perfilAFormulario(perfil),
   })
 
+  // El servidor solo lista las carreras activas. Si la carrera del perfil ya se desactivó,
+  // se agrega para que siga elegida (el servidor la acepta).
+  const carrerasConActual =
+    perfil && !carreras.some((c) => c.id === perfil.carreraId)
+      ? [...carreras, { id: perfil.carreraId, nombre: perfil.carreraNombre, facultad: '', activa: false }]
+      : carreras
+
   const guardado = useMutation({
-    mutationFn: guardarPerfil,
+    mutationFn: (datos: PerfilDatos) => guardarPerfil(datos, esEgresado),
     // Los cambios se ven de inmediato: se actualiza el perfil que tiene la app.
     onSuccess: (nuevo) => {
       queryClient.setQueryData(CLAVE_PERFIL, nuevo)
@@ -75,7 +82,7 @@ export default function ProfileForm({ carreras, perfil, esEgresado }: Props) {
           name="carreraId"
           render={({ field }) => (
             <CareerSelect
-              carreras={carreras}
+              carreras={carrerasConActual}
               valor={field.value}
               onChange={field.onChange}
               error={errors.carreraId?.message}

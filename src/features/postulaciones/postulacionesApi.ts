@@ -1,5 +1,4 @@
 import { obtenerSesion, USAR_FIXTURES } from '@/features/auth/sesionApi'
-import { CARRERAS_DEMO } from '@/features/perfil/carrerasDemo'
 import { obtenerPerfil } from '@/features/perfil/perfilApi'
 import {
   guardarPostulacionesDemo,
@@ -49,7 +48,7 @@ export async function postularse(vacanteId: string, mensaje: string): Promise<vo
           apellidos: perfil.apellidos,
           titular: perfil.titular,
           descripcion: perfil.descripcion,
-          carrera: CARRERAS_DEMO.find((c) => c.id === perfil.carreraId)?.nombre ?? '',
+          carrera: perfil.carreraNombre,
           semestre: perfil.semestre,
           anioGrado: perfil.anioGrado,
           ciudad: perfil.ciudad,

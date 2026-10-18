@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { Navigate } from 'react-router-dom'
 import { Skeleton } from '@/components/ui/skeleton'
-import { CLAVE_CARRERAS, CLAVE_PERFIL, obtenerCarreras, obtenerPerfil } from '@/features/perfil/perfilApi'
+import { resumenAcademico } from '@/features/perfil/formato'
+import { CLAVE_PERFIL, obtenerPerfil } from '@/features/perfil/perfilApi'
 import ProfileHeader from '@/features/perfil/ProfileHeader'
 import ProfileSection from '@/features/perfil/ProfileSection'
 import { RUTAS } from '@/shared/lib/rutas'
@@ -9,9 +10,8 @@ import { RUTAS } from '@/shared/lib/rutas'
 // Mi perfil: vista de lectura (HU-09 / FE-16).
 export default function PerfilPage() {
   const perfil = useQuery({ queryKey: CLAVE_PERFIL, queryFn: obtenerPerfil })
-  const carreras = useQuery({ queryKey: CLAVE_CARRERAS, queryFn: obtenerCarreras })
 
-  if (perfil.isPending || carreras.isPending) {
+  if (perfil.isPending) {
     return (
       <div className="mx-auto max-w-2xl space-y-4" role="status" aria-label="Cargando perfil">
         <Skeleton className="h-8 w-64" />
@@ -21,7 +21,7 @@ export default function PerfilPage() {
     )
   }
 
-  if (perfil.isError || carreras.isError) {
+  if (perfil.isError) {
     return (
       <p role="alert" className="text-center text-destructive">
         No pudimos cargar tu perfil. Recarga la página para intentar de nuevo.
@@ -32,11 +32,12 @@ export default function PerfilPage() {
   const datos = perfil.data
   if (!datos) return <Navigate to={RUTAS.perfilEditar} replace />
 
-  // Una carrera desactivada sigue en el catálogo, así que se muestra igual.
-  const carrera = carreras.data.find((c) => c.id === datos.carreraId)?.nombre ?? 'Carrera no disponible'
-  const detalle = [carrera, `Semestre ${datos.semestre}`, datos.anioGrado ? `Egresado en ${datos.anioGrado}` : null]
-    .filter(Boolean)
-    .join(' · ')
+  // El servidor envía el nombre de la carrera aunque ya no esté en el catálogo.
+  const detalle = resumenAcademico({
+    carrera: datos.carreraNombre,
+    semestre: datos.semestre,
+    anioGrado: datos.anioGrado,
+  })
 
   return (
     <article className="mx-auto max-w-2xl space-y-6">
