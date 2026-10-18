@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router'
 import { Skeleton } from '@/components/ui/skeleton'
 import { CLAVE_CARRERAS, obtenerCarreras } from '@/features/perfil/perfilApi'
 import VacancyForm from '@/features/vacantes/VacancyForm'
-import { claveVacante, obtenerVacante } from '@/features/vacantes/vacantesApi'
+import { claveMiVacante, obtenerMiVacante } from '@/features/vacantes/vacantesApi'
 import { ApiError } from '@/shared/api/apiError'
 import { RUTAS } from '@/shared/lib/rutas'
 
@@ -16,7 +16,7 @@ const VolverAMisVacantes = () => (
 // Editar una vacante de la empresa (FE-20).
 export default function EditarVacantePage() {
   const { id = '' } = useParams()
-  const vacante = useQuery({ queryKey: claveVacante(id), queryFn: () => obtenerVacante(id) })
+  const vacante = useQuery({ queryKey: claveMiVacante(id), queryFn: () => obtenerMiVacante(id) })
   const carreras = useQuery({ queryKey: CLAVE_CARRERAS, queryFn: obtenerCarreras })
 
   if (vacante.isPending || carreras.isPending) {

@@ -20,6 +20,7 @@ import { vacanteEsquema, type VacanteDatos } from '@/features/vacantes/vacanteEs
 import {
   CLAVE_MIS_VACANTES,
   actualizarVacante,
+  claveMiVacante,
   claveVacante,
   crearVacante,
 } from '@/features/vacantes/vacantesApi'
@@ -88,6 +89,7 @@ export default function VacancyForm({ carreras, vacante }: Props) {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: CLAVE_MIS_VACANTES })
       if (vacante) {
+        void queryClient.invalidateQueries({ queryKey: claveMiVacante(vacante.id) })
         void queryClient.invalidateQueries({ queryKey: claveVacante(vacante.id) })
         void queryClient.invalidateQueries({ queryKey: ['vacantes'] })
         toast.success('Vacante actualizada.')
