@@ -35,7 +35,8 @@ type CandidatoServidor = {
   apellidos: string
   titular: string | null
   descripcion: string | null
-  carrera: { id: string; nombre: string }
+  // null si la carrera ya no existe.
+  carrera: { id: string; nombre: string } | null
   semestre: number | null
   anio_grado: number | null
   ciudad: string | null
@@ -46,24 +47,41 @@ export type RecibidaServidor = {
   id: string
   estado: EstadoPostulacion
   creada_en: string
-  candidato: CandidatoServidor
+  // null si la persona ya no tiene perfil.
+  candidato: CandidatoServidor | null
 }
 
-// «responsable» es el nombre de la cuenta que hizo el cambio.
+// «responsable» es el nombre de la cuenta que hizo el cambio; es null si esa cuenta ya no existe.
 export type DetalleServidor = RecibidaServidor & {
   mensaje: string | null
-  historial: { estado: EstadoPostulacion; cambiado_en: string; responsable: string }[]
+  historial: { estado: EstadoPostulacion; cambiado_en: string; responsable: string | null }[]
+}
+
+// Qué se muestra cuando el servidor no envía el perfil del candidato.
+const SIN_PERFIL = 'Perfil no disponible'
+
+const CANDIDATO_SIN_PERFIL: CandidatoVisible = {
+  nombres: SIN_PERFIL,
+  apellidos: '',
+  titular: '',
+  descripcion: '',
+  carrera: '',
+  semestre: null,
+  anioGrado: null,
+  ciudad: '',
+  intereses: [],
 }
 
 export function recibidaDesdeServidor(p: RecibidaServidor): PostulacionRecibida {
+  const c = p.candidato
   return {
     id: p.id,
     estado: p.estado,
     creadaEn: p.creada_en,
-    nombre: `${p.candidato.nombres} ${p.candidato.apellidos}`,
-    carrera: p.candidato.carrera.nombre,
-    semestre: p.candidato.semestre,
-    anioGrado: p.candidato.anio_grado,
+    nombre: c ? `${c.nombres} ${c.apellidos}` : SIN_PERFIL,
+    carrera: c?.carrera?.nombre ?? '',
+    semestre: c?.semestre ?? null,
+    anioGrado: c?.anio_grado ?? null,
   }
 }
 
@@ -74,18 +92,24 @@ export function detalleDesdeServidor(p: DetalleServidor): DetallePostulacionReci
     estado: p.estado,
     creadaEn: p.creada_en,
     mensaje: p.mensaje ?? '',
-    candidato: {
-      nombres: c.nombres,
-      apellidos: c.apellidos,
-      titular: c.titular ?? '',
-      descripcion: c.descripcion ?? '',
-      carrera: c.carrera.nombre,
-      semestre: c.semestre,
-      anioGrado: c.anio_grado,
-      ciudad: c.ciudad ?? '',
-      intereses: c.intereses,
-    },
-    historial: p.historial.map((h) => ({ estado: h.estado, fecha: h.cambiado_en, responsable: h.responsable })),
+    candidato: c
+      ? {
+          nombres: c.nombres,
+          apellidos: c.apellidos,
+          titular: c.titular ?? '',
+          descripcion: c.descripcion ?? '',
+          carrera: c.carrera?.nombre ?? '',
+          semestre: c.semestre,
+          anioGrado: c.anio_grado,
+          ciudad: c.ciudad ?? '',
+          intereses: c.intereses,
+        }
+      : CANDIDATO_SIN_PERFIL,
+    historial: p.historial.map((h) => ({
+      estado: h.estado,
+      fecha: h.cambiado_en,
+      responsable: h.responsable ?? 'Sin responsable',
+    })),
   }
 }
 
