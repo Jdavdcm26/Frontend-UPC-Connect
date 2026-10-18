@@ -252,3 +252,18 @@ export async function listarVacantes(filtros: FiltrosVacantes, cursor: string | 
     siguiente: respuesta.meta.next_cursor,
   }
 }
+
+// Clave de caché del detalle de una vacante.
+export const claveVacante = (id: string) => ['vacante', id]
+
+// Detalle de una vacante (FE-22). Si no existe, el error es 404.
+export async function obtenerVacante(id: string): Promise<Vacante> {
+  if (USAR_FIXTURES) {
+    await pausa(400)
+    const vacante = [...leerGuardadas(), ...CATALOGO].find((v) => v.id === id)
+    if (!vacante) throw new ApiError(404, 'No encontramos esa vacante.')
+    return vacante
+  }
+  const respuesta = await api.get<{ data: VacanteServidor }>(`/api/v1/vacantes/${encodeURIComponent(id)}`)
+  return vacanteDesdeServidor(respuesta.data)
+}
