@@ -1,9 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import PasswordField from '@/features/auth/PasswordField'
 import { registroEsquema, type RegistroDatos } from '@/features/auth/registroEsquema'
 import { registrarApi } from '@/features/auth/registroApi'
 import { ApiError } from '@/shared/api/apiError'
@@ -16,6 +17,7 @@ export default function RegistroPage() {
   const navegar = useNavigate()
   const {
     register,
+    control,
     handleSubmit,
     setError,
     formState: { errors },
@@ -23,6 +25,8 @@ export default function RegistroPage() {
     resolver: zodResolver(registroEsquema),
     defaultValues: { correo: '', contrasena: '', confirmacion: '' },
   })
+
+  const contrasenaEscrita = useWatch({ control, name: 'contrasena' })
 
   const registro = useMutation({
     mutationFn: registrarApi,
@@ -58,16 +62,13 @@ export default function RegistroPage() {
         {(campo) => <Input type="email" autoComplete="email" {...campo} {...register('correo')} />}
       </FormField>
 
-      <FormField
+      <PasswordField
         id="contrasena"
         etiqueta="Contraseña"
-        ayuda="Mínimo 10 caracteres."
+        valor={contrasenaEscrita}
+        registro={register('contrasena')}
         error={errors.contrasena?.message}
-      >
-        {(campo) => (
-          <Input type="password" autoComplete="new-password" {...campo} {...register('contrasena')} />
-        )}
-      </FormField>
+      />
 
       <FormField id="confirmacion" etiqueta="Confirmar contraseña" error={errors.confirmacion?.message}>
         {(campo) => (
