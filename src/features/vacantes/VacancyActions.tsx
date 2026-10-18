@@ -1,3 +1,4 @@
+import { Link } from 'react-router'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,6 +12,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import type { EstadoVacante, Vacante } from '@/features/vacantes/tipos'
+import { rutaEditarVacante } from '@/shared/lib/rutas'
 
 type Props = {
   vacante: Vacante
@@ -55,6 +57,9 @@ export default function VacancyActions({ vacante, ocupado, onCambiarEstado }: Pr
 
   return (
     <div className="flex flex-wrap gap-2">
+      <Button asChild variant="outline" size="sm">
+        <Link to={rutaEditarVacante(vacante.id)}>Editar</Link>
+      </Button>
       {vacante.estado === 'ACTIVA' && (
         <ConfirmarAccion
           etiqueta="Pausar"
