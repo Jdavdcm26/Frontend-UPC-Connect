@@ -30,3 +30,48 @@ export type Postulacion = {
   // Fecha y hora de envío en formato ISO.
   creadaEn: string
 }
+
+// Un cambio en el historial de una postulación (HU-47).
+export type CambioEstado = {
+  estado: EstadoPostulacion
+  // Fecha y hora del cambio en formato ISO.
+  fecha: string
+  // Quién hizo el cambio.
+  responsable: string
+}
+
+// Datos del candidato que la empresa puede ver.
+export type CandidatoVisible = {
+  nombres: string
+  apellidos: string
+  titular: string
+  descripcion: string
+  // Nombre de la carrera.
+  carrera: string
+  semestre: number
+  // Solo para egresados.
+  anioGrado: number | null
+  ciudad: string
+  intereses: string[]
+}
+
+// Fila de la lista de postulaciones recibidas por una vacante (HU-47 / FE-25).
+export type PostulacionRecibida = {
+  id: string
+  estado: EstadoPostulacion
+  creadaEn: string
+  // Nombres y apellidos del candidato.
+  nombre: string
+  carrera: string
+  semestre: number
+}
+
+// Detalle de una postulación recibida: mensaje, perfil visible e historial.
+export type DetallePostulacionRecibida = {
+  id: string
+  estado: EstadoPostulacion
+  creadaEn: string
+  mensaje: string
+  candidato: CandidatoVisible
+  historial: CambioEstado[]
+}

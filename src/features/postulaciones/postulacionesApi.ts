@@ -1,4 +1,6 @@
 import { obtenerSesion, USAR_FIXTURES } from '@/features/auth/sesionApi'
+import { CARRERAS_DEMO } from '@/features/perfil/carrerasDemo'
+import { obtenerPerfil } from '@/features/perfil/perfilApi'
 import {
   guardarPostulacionesDemo,
   leerPostulacionesDemo,
@@ -24,8 +26,11 @@ export async function postularse(vacanteId: string, mensaje: string): Promise<vo
     if (vacante.estado !== 'ACTIVA') {
       throw new ApiError(422, 'Esta vacante ya no recibe postulaciones.')
     }
+    const perfil = await obtenerPerfil()
+    if (!perfil) throw new ApiError(422, 'Completa tu perfil antes de postularte.')
     const guardadas = leerPostulacionesDemo()
     const correo = usuario?.correo ?? ''
+    const ahora = new Date().toISOString()
     if (guardadas.some((p) => p.vacanteId === vacanteId && p.candidatoCorreo === correo)) {
       throw new ApiError(422, 'Ya te postulaste a esta vacante.')
     }
@@ -37,8 +42,20 @@ export async function postularse(vacanteId: string, mensaje: string): Promise<vo
         empresa: vacante.empresa,
         mensaje: mensaje.trim(),
         estado: 'RECIBIDA',
-        creadaEn: new Date().toISOString(),
+        creadaEn: ahora,
         candidatoCorreo: correo,
+        candidato: {
+          nombres: perfil.nombres,
+          apellidos: perfil.apellidos,
+          titular: perfil.titular,
+          descripcion: perfil.descripcion,
+          carrera: CARRERAS_DEMO.find((c) => c.id === perfil.carreraId)?.nombre ?? '',
+          semestre: perfil.semestre,
+          anioGrado: perfil.anioGrado,
+          ciudad: perfil.ciudad,
+          intereses: perfil.intereses,
+        },
+        historial: [{ estado: 'RECIBIDA', fecha: ahora, responsable: 'Sistema' }],
       },
       ...guardadas,
     ])
