@@ -20,6 +20,7 @@ import VerificarCorreoPage from '@/features/auth/VerificarCorreoPage'
 import RequireRole from '@/features/auth/RequireRole'
 import PerfilEditarPage from '@/features/perfil/PerfilEditarPage'
 import RequirePerfil from '@/features/perfil/RequirePerfil'
+import PerfilPage from '@/features/perfil/PerfilPage'
 import PerfilPrototipo from '@/prototipo/PerfilPrototipo'
 import RegistroPrototipo from '@/prototipo/RegistroPrototipo'
 import RevisaCorreoPrototipo from '@/prototipo/RevisaCorreoPrototipo'
@@ -87,7 +88,10 @@ export const router = createBrowserRouter([
         children: [
           {
             element: <CandidateLayout />,
-            children: [{ path: 'editar', element: <PerfilEditarPage /> }],
+            children: [
+              { path: 'editar', element: <PerfilEditarPage /> },
+              { element: <RequirePerfil />, children: [{ index: true, element: <PerfilPage /> }] },
+            ],
           },
         ],
       },
