@@ -10,12 +10,16 @@ const CAMPOS: Record<string, string> = {
   password: 'contrasena',
   password_confirmation: 'confirmacion',
   acepta_politica: 'aceptaPolitica',
+  // Si la política cambió, el servidor avisa en este campo: se muestra junto a la casilla de aceptación.
+  version_politica: 'aceptaPolitica',
 }
 
-function traducirCampos(campos: Record<string, string[]>): Record<string, string[]> {
+export function traducirCampos(campos: Record<string, string[]>): Record<string, string[]> {
   const traducidos: Record<string, string[]> = {}
   for (const [campo, mensajes] of Object.entries(campos)) {
-    traducidos[CAMPOS[campo] ?? campo] = mensajes
+    const nombre = CAMPOS[campo] ?? campo
+    // Dos campos del servidor pueden caer en la misma casilla: se juntan los mensajes, no se pisan.
+    traducidos[nombre] = [...(traducidos[nombre] ?? []), ...mensajes]
   }
   return traducidos
 }

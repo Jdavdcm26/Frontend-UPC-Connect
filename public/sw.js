@@ -9,8 +9,8 @@ const CACHE = 'upc-shell-v1'
 // Se guarda al instalar, para que la página sin conexión siempre esté disponible.
 const PRECACHE = ['/offline.html', '/offline.css', '/favicon.svg', '/icons/icon-192.png']
 
-// Primer tramo de las rutas que atiende el servidor (API, sesión y paneles): no se tocan.
-const RUTAS_DEL_SERVIDOR = ['api', 'sanctum', 'admin', 'livewire', 'filament', 'horizon', 'storage']
+// Primer tramo de las rutas que atiende el servidor (API, sesión, paneles, documentación /docs y salud /up): no se tocan.
+const RUTAS_DEL_SERVIDOR = ['api', 'sanctum', 'admin', 'livewire', 'filament', 'horizon', 'storage', 'docs', 'up']
 
 self.addEventListener('install', (evento) => {
   evento.waitUntil(
