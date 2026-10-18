@@ -6,7 +6,7 @@ const BASE_URL: string = import.meta.env.VITE_API_URL ?? ''
 type Metodo = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 
 // Mensajes en español de Colombia que dicen cómo corregir (RNF-27).
-// Tienen prioridad sobre el texto del servidor, que puede venir en inglés.
+// Tienen prioridad sobre el texto del servidor (en 401, 403, 404 y 419 viene en inglés).
 const MENSAJES: Record<number, string> = {
   401: 'Debes iniciar sesión para continuar.',
   403: 'No tienes permiso para realizar esta acción.',
@@ -38,8 +38,13 @@ async function crearError(respuesta: Response): Promise<ApiError> {
   } catch {
     // La respuesta no trae JSON: se usa el mensaje por defecto.
   }
+  // En 422 y 429 el servidor ya responde en español: dice qué corregir o cuánto esperar.
+  const delServidor = respuesta.status === 422 || respuesta.status === 429 ? datos.message : undefined
   const mensaje =
-    MENSAJES[respuesta.status] ?? datos.message ?? 'Ocurrió un error inesperado. Intenta de nuevo.'
+    delServidor ??
+    MENSAJES[respuesta.status] ??
+    datos.message ??
+    'Ocurrió un error inesperado. Intenta de nuevo.'
   // Retry-After (segundos) indica cuánto esperar tras un bloqueo 429.
   const espera = Number.parseInt(respuesta.headers.get('Retry-After') ?? '', 10)
   return new ApiError(respuesta.status, mensaje, datos.errors, Number.isNaN(espera) ? undefined : espera)
