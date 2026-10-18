@@ -44,7 +44,7 @@ export default function ReenviarVerificacion() {
       )}
 
       <Button type="submit" className="w-full" disabled={reenvio.isPending}>
-        {reenvio.isPending ? 'Enviando...' : 'Enviar nuevo enlace'}
+        {reenvio.isPending ? 'Enviando...' : 'Reenviar enlace'}
       </Button>
     </form>
   )
