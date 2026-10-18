@@ -7,7 +7,7 @@ export const CLAVE_SESION = ['sesion'] as const
 
 // Mientras el backend no esté listo, VITE_USAR_FIXTURES=true simula la sesión.
 // Solo es para desarrollo: con la API real la sesión es una cookie (no se guarda token).
-const USAR_FIXTURES = import.meta.env.VITE_USAR_FIXTURES === 'true'
+export const USAR_FIXTURES = import.meta.env.VITE_USAR_FIXTURES === 'true'
 const CLAVE_DEMO = 'upc-sesion-demo'
 
 // Devuelve el usuario con sesión, o null si no la hay (401).
