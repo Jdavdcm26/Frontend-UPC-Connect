@@ -26,7 +26,7 @@ export async function postularse(vacanteId: string, mensaje: string): Promise<vo
       throw new ApiError(422, 'Esta vacante ya no recibe postulaciones.')
     }
     const perfil = await obtenerPerfil()
-    if (!perfil) throw new ApiError(422, 'Completa tu perfil antes de postularte.')
+    if (!perfil) throw new ApiError(403, 'Completa tu perfil (carrera y semestre, o año de grado) antes de postularte.')
     const guardadas = leerPostulacionesDemo()
     const correo = usuario?.correo ?? ''
     const ahora = new Date().toISOString()
@@ -61,7 +61,15 @@ export async function postularse(vacanteId: string, mensaje: string): Promise<vo
     return
   }
   const cuerpo = mensaje.trim() ? { mensaje: mensaje.trim() } : {}
-  await api.post(`/api/v1/vacantes/${encodeURIComponent(vacanteId)}/postulaciones`, cuerpo)
+  try {
+    await api.post(`/api/v1/vacantes/${encodeURIComponent(vacanteId)}/postulaciones`, cuerpo)
+  } catch (error) {
+    // En un 403 el servidor dice el motivo real (por ejemplo, que falta completar el perfil).
+    if (error instanceof ApiError && error.status === 403) {
+      throw new ApiError(403, error.mensajeServidor ?? error.message)
+    }
+    throw error
+  }
 }
 
 export type PaginaPostulaciones = {
