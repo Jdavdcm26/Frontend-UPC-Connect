@@ -15,5 +15,6 @@ export const ENLACES_CANDIDATO: Enlace[] = [
 
 export const ENLACES_EMPRESA: Enlace[] = [
   { ruta: RUTAS.inicioEmpresa, etiqueta: 'Inicio' },
+  { ruta: RUTAS.empresaVacantes, etiqueta: 'Mis vacantes' },
   { ruta: RUTAS.empresaNuevaVacante, etiqueta: 'Publicar vacante' },
 ]
