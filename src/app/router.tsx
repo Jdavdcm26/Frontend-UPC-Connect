@@ -1,41 +1,23 @@
+import type { ComponentType } from 'react'
 import { createBrowserRouter } from 'react-router-dom'
 import AuthLayout from '@/app/layouts/AuthLayout'
 import CandidateLayout from '@/app/layouts/CandidateLayout'
 import CompanyLayout from '@/app/layouts/CompanyLayout'
 import PublicLayout from '@/app/layouts/PublicLayout'
-import CatalogoPage from '@/app/pages/CatalogoPage'
 import ErrorPage from '@/app/pages/ErrorPage'
+import PantallaCarga from '@/app/pages/PantallaCarga'
 import ForbiddenPage from '@/app/pages/ForbiddenPage'
 import HomePage from '@/app/pages/HomePage'
 import NotFoundPage from '@/app/pages/NotFoundPage'
-import InicioCandidatoPage from '@/features/inicio/InicioCandidatoPage'
-import InicioEmpresaPage from '@/features/inicio/InicioEmpresaPage'
-import CuentaAdministrativaPage from '@/features/auth/CuentaAdministrativaPage'
-import LoginPage from '@/features/auth/LoginPage'
-import PoliticaPrivacidadPage from '@/features/auth/PoliticaPrivacidadPage'
-import RecuperarContrasenaPage from '@/features/auth/RecuperarContrasenaPage'
 import RedirigirSiHaySesion from '@/features/auth/RedirigirSiHaySesion'
-import RegistroPage from '@/features/auth/RegistroPage'
-import RestablecerContrasenaPage from '@/features/auth/RestablecerContrasenaPage'
 import RequireAuth from '@/features/auth/RequireAuth'
-import RevisaCorreoPage from '@/features/auth/RevisaCorreoPage'
-import VerificarCorreoPage from '@/features/auth/VerificarCorreoPage'
 import RequireRole from '@/features/auth/RequireRole'
-import EditarVacantePage from '@/features/vacantes/EditarVacantePage'
-import MisVacantesPage from '@/features/vacantes/MisVacantesPage'
-import NuevaVacantePage from '@/features/vacantes/NuevaVacantePage'
-import PostulacionesRecibidasPage from '@/features/postulaciones/PostulacionesRecibidasPage'
-import MisPostulacionesPage from '@/features/postulaciones/MisPostulacionesPage'
-import PerfilEditarPage from '@/features/perfil/PerfilEditarPage'
 import RequirePerfil from '@/features/perfil/RequirePerfil'
-import PerfilPage from '@/features/perfil/PerfilPage'
-import VacanteDetallePage from '@/features/vacantes/VacanteDetallePage'
-import VacantesPage from '@/features/vacantes/VacantesPage'
-import PerfilPrototipo from '@/prototipo/PerfilPrototipo'
-import RegistroPrototipo from '@/prototipo/RegistroPrototipo'
-import RevisaCorreoPrototipo from '@/prototipo/RevisaCorreoPrototipo'
-import VacanteDetallePrototipo from '@/prototipo/VacanteDetallePrototipo'
-import VacantesPrototipo from '@/prototipo/VacantesPrototipo'
+
+// Carga cada pantalla solo cuando se visita su ruta, para que la primera descarga sea liviana (FE-33).
+const cargar = (importar: () => Promise<{ default: ComponentType }>) => async () => ({
+  Component: (await importar()).default,
+})
 
 // Rutas en espanol (RNF-27). Cada grupo usa su propio diseno.
 // /inicio (candidato) y /empresa (empresa) exigen sesion activa y el rol correcto (FE-09).
@@ -44,32 +26,28 @@ export const router = createBrowserRouter([
     path: '/',
     element: <PublicLayout />,
     errorElement: <ErrorPage />,
+    // Se muestra mientras se descarga la primera pantalla.
+    HydrateFallback: PantallaCarga,
     children: [
       { index: true, element: <RedirigirSiHaySesion><HomePage /></RedirigirSiHaySesion> },
-      { path: 'catalogo', element: <CatalogoPage /> },
-      { path: 'politica-de-privacidad', element: <PoliticaPrivacidadPage /> },
+      { path: 'catalogo', lazy: cargar(() => import('@/app/pages/CatalogoPage')) },
+      { path: 'politica-de-privacidad', lazy: cargar(() => import('@/features/auth/PoliticaPrivacidadPage')) },
       {
         element: <AuthLayout />,
         children: [
-          { path: 'iniciar-sesion', element: <LoginPage /> },
-          { path: 'recuperar-contrasena', element: <RecuperarContrasenaPage /> },
-          { path: 'restablecer-contrasena', element: <RestablecerContrasenaPage /> },
-          { path: 'registro', element: <RegistroPage /> },
-          { path: 'revisa-tu-correo', element: <RevisaCorreoPage /> },
-          { path: 'verificar-correo', element: <VerificarCorreoPage /> },
+          { path: 'iniciar-sesion', lazy: cargar(() => import('@/features/auth/LoginPage')) },
+          { path: 'recuperar-contrasena', lazy: cargar(() => import('@/features/auth/RecuperarContrasenaPage')) },
+          { path: 'restablecer-contrasena', lazy: cargar(() => import('@/features/auth/RestablecerContrasenaPage')) },
+          { path: 'registro', lazy: cargar(() => import('@/features/auth/RegistroPage')) },
+          { path: 'revisa-tu-correo', lazy: cargar(() => import('@/features/auth/RevisaCorreoPage')) },
+          { path: 'verificar-correo', lazy: cargar(() => import('@/features/auth/VerificarCorreoPage')) },
         ],
       },
       { path: 'sin-permiso', element: <ForbiddenPage /> },
       {
         element: <RequireAuth />,
-        children: [{ path: 'cuenta-administrativa', element: <CuentaAdministrativaPage /> }],
+        children: [{ path: 'cuenta-administrativa', lazy: cargar(() => import('@/features/auth/CuentaAdministrativaPage')) }],
       },
-      // Prototipo navegable de baja fidelidad (FE-08). Se elimina al terminar el Sprint 4.
-      { path: 'prototipo/registro', element: <RegistroPrototipo /> },
-      { path: 'prototipo/revisa-correo', element: <RevisaCorreoPrototipo /> },
-      { path: 'prototipo/perfil', element: <PerfilPrototipo /> },
-      { path: 'prototipo/vacantes', element: <VacantesPrototipo /> },
-      { path: 'prototipo/vacantes/:id', element: <VacanteDetallePrototipo /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },
@@ -85,7 +63,7 @@ export const router = createBrowserRouter([
             children: [
               {
                 element: <RequirePerfil />,
-                children: [{ index: true, element: <InicioCandidatoPage /> }],
+                children: [{ index: true, lazy: cargar(() => import('@/features/inicio/InicioCandidatoPage')) }],
               },
             ],
           },
@@ -103,8 +81,8 @@ export const router = createBrowserRouter([
           {
             element: <CandidateLayout />,
             children: [
-              { path: 'editar', element: <PerfilEditarPage /> },
-              { element: <RequirePerfil />, children: [{ index: true, element: <PerfilPage /> }] },
+              { path: 'editar', lazy: cargar(() => import('@/features/perfil/PerfilEditarPage')) },
+              { element: <RequirePerfil />, children: [{ index: true, lazy: cargar(() => import('@/features/perfil/PerfilPage')) }] },
             ],
           },
         ],
@@ -124,8 +102,8 @@ export const router = createBrowserRouter([
               {
                 element: <RequirePerfil />,
                 children: [
-                  { index: true, element: <VacantesPage /> },
-                  { path: ':id', element: <VacanteDetallePage /> },
+                  { index: true, lazy: cargar(() => import('@/features/vacantes/VacantesPage')) },
+                  { path: ':id', lazy: cargar(() => import('@/features/vacantes/VacanteDetallePage')) },
                 ],
               },
             ],
@@ -146,7 +124,7 @@ export const router = createBrowserRouter([
             children: [
               {
                 element: <RequirePerfil />,
-                children: [{ index: true, element: <MisPostulacionesPage /> }],
+                children: [{ index: true, lazy: cargar(() => import('@/features/postulaciones/MisPostulacionesPage')) }],
               },
             ],
           },
@@ -164,11 +142,11 @@ export const router = createBrowserRouter([
           {
             element: <CompanyLayout />,
             children: [
-              { index: true, element: <InicioEmpresaPage /> },
-              { path: 'vacantes', element: <MisVacantesPage /> },
-              { path: 'vacantes/nueva', element: <NuevaVacantePage /> },
-              { path: 'vacantes/:id/editar', element: <EditarVacantePage /> },
-              { path: 'vacantes/:id/postulaciones', element: <PostulacionesRecibidasPage /> },
+              { index: true, lazy: cargar(() => import('@/features/inicio/InicioEmpresaPage')) },
+              { path: 'vacantes', lazy: cargar(() => import('@/features/vacantes/MisVacantesPage')) },
+              { path: 'vacantes/nueva', lazy: cargar(() => import('@/features/vacantes/NuevaVacantePage')) },
+              { path: 'vacantes/:id/editar', lazy: cargar(() => import('@/features/vacantes/EditarVacantePage')) },
+              { path: 'vacantes/:id/postulaciones', lazy: cargar(() => import('@/features/postulaciones/PostulacionesRecibidasPage')) },
             ],
           },
         ],
