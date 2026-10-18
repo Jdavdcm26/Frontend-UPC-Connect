@@ -10,13 +10,14 @@ export function rutaInicioPorRol(rol: Rol): string {
 }
 
 // Zonas exclusivas y los roles que pueden entrar a cada una:
-// /empresa es de empresas; /inicio, /vacantes y /perfil, de candidatos;
+// /empresa es de empresas; /inicio, /vacantes, /mis-postulaciones y /perfil, de candidatos;
 // /cuenta-administrativa, de admin y moderador.
 function rolesDeLaRuta(ruta: string): Rol[] | null {
   const esZona = (prefijo: string) =>
     ruta === prefijo || ruta.startsWith(`${prefijo}/`) || ruta.startsWith(`${prefijo}?`)
   if (esZona(RUTAS.inicioEmpresa)) return ['empresa']
-  if (esZona(RUTAS.inicioCandidato) || esZona(RUTAS.vacantes) || esZona(RUTAS.perfil)) return ['candidato']
+  const zonasCandidato = [RUTAS.inicioCandidato, RUTAS.vacantes, RUTAS.misPostulaciones, RUTAS.perfil]
+  if (zonasCandidato.some(esZona)) return ['candidato']
   if (esZona(RUTAS.cuentaAdministrativa)) return ['admin', 'moderador']
   return null
 }

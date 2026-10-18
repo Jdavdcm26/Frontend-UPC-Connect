@@ -13,6 +13,7 @@ export const RUTAS = {
   empresaVacantes: '/empresa/vacantes',
   empresaNuevaVacante: '/empresa/vacantes/nueva',
   vacantes: '/vacantes',
+  misPostulaciones: '/mis-postulaciones',
   perfil: '/perfil',
   perfilEditar: '/perfil/editar',
   sinPermiso: '/sin-permiso',
