@@ -1,4 +1,5 @@
 import { obtenerSesion, USAR_FIXTURES } from '@/features/auth/sesionApi'
+import { leerPostulacionesDemo } from '@/features/postulaciones/postulacionesDemo'
 import type { FiltrosVacantes } from '@/features/vacantes/filtros'
 import { MODALIDADES, TIPOS_VACANTE, type EstadoVacante, type Vacante } from '@/features/vacantes/tipos'
 import type { VacanteDatos } from '@/features/vacantes/vacanteEsquema'
@@ -142,6 +143,7 @@ type VacanteServidor = {
   fecha_cierre: string
   carrera_ids: number[]
   empresa?: string
+  ya_postulado?: boolean
 }
 
 function vacanteDesdeServidor(v: VacanteServidor): Vacante {
@@ -157,6 +159,7 @@ function vacanteDesdeServidor(v: VacanteServidor): Vacante {
     fechaCierre: v.fecha_cierre,
     carreraIds: v.carrera_ids,
     empresa: v.empresa ?? '',
+    yaPostulado: v.ya_postulado ?? false,
   }
 }
 
@@ -262,7 +265,9 @@ export async function obtenerVacante(id: string): Promise<Vacante> {
     await pausa(400)
     const vacante = [...leerGuardadas(), ...CATALOGO].find((v) => v.id === id)
     if (!vacante) throw new ApiError(404, 'No encontramos esa vacante.')
-    return vacante
+    const correo = (await obtenerSesion())?.correo ?? ''
+    const yaPostulado = leerPostulacionesDemo().some((p) => p.vacanteId === id && p.candidatoCorreo === correo)
+    return { ...vacante, yaPostulado }
   }
   const respuesta = await api.get<{ data: VacanteServidor }>(`/api/v1/vacantes/${encodeURIComponent(id)}`)
   return vacanteDesdeServidor(respuesta.data)

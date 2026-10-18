@@ -40,4 +40,6 @@ export type Vacante = {
   carreraIds: number[]
   // Nombre de la empresa que publica.
   empresa: string
+  // Solo en el detalle para el candidato: si ya se postuló a esta vacante.
+  yaPostulado?: boolean
 }
