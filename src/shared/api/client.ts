@@ -71,7 +71,11 @@ async function solicitar<T>(metodo: Metodo, ruta: string, cuerpo?: unknown): Pro
     throw new ApiError(0, 'No hay conexión con el servidor. Revisa tu internet.')
   }
 
-  if (!respuesta.ok) throw await crearError(respuesta)
+  if (!respuesta.ok) {
+    // Con 419 la cookie CSRF venció: se vuelve a pedir en la próxima escritura.
+    if (respuesta.status === 419) csrfListo = false
+    throw await crearError(respuesta)
+  }
   if (respuesta.status === 204) return undefined as T
   return (await respuesta.json()) as T
 }
