@@ -22,6 +22,7 @@ import RequireRole from '@/features/auth/RequireRole'
 import EditarVacantePage from '@/features/vacantes/EditarVacantePage'
 import MisVacantesPage from '@/features/vacantes/MisVacantesPage'
 import NuevaVacantePage from '@/features/vacantes/NuevaVacantePage'
+import PostulacionesRecibidasPage from '@/features/postulaciones/PostulacionesRecibidasPage'
 import MisPostulacionesPage from '@/features/postulaciones/MisPostulacionesPage'
 import PerfilEditarPage from '@/features/perfil/PerfilEditarPage'
 import RequirePerfil from '@/features/perfil/RequirePerfil'
@@ -165,6 +166,7 @@ export const router = createBrowserRouter([
               { path: 'vacantes', element: <MisVacantesPage /> },
               { path: 'vacantes/nueva', element: <NuevaVacantePage /> },
               { path: 'vacantes/:id/editar', element: <EditarVacantePage /> },
+              { path: 'vacantes/:id/postulaciones', element: <PostulacionesRecibidasPage /> },
             ],
           },
         ],

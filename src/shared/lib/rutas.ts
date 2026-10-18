@@ -24,3 +24,6 @@ export const RUTAS = {
 
 // Ruta para editar una vacante de la empresa.
 export const rutaEditarVacante = (id: string) => `/empresa/vacantes/${id}/editar`
+
+// Ruta con las postulaciones que recibió una vacante de la empresa.
+export const rutaPostulacionesVacante = (id: string) => `/empresa/vacantes/${id}/postulaciones`

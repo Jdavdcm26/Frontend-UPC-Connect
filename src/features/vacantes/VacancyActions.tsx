@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import type { EstadoVacante, Vacante } from '@/features/vacantes/tipos'
-import { rutaEditarVacante } from '@/shared/lib/rutas'
+import { rutaEditarVacante, rutaPostulacionesVacante } from '@/shared/lib/rutas'
 
 type Props = {
   vacante: Vacante
@@ -51,15 +51,21 @@ function ConfirmarAccion({ etiqueta, titulo, descripcion, deshabilitado, onConfi
   )
 }
 
-// Acciones de una vacante de la empresa según su estado (FE-20).
+// Acciones de una vacante de la empresa según su estado (FE-20 y FE-25).
+// Una vacante cerrada ya no se edita, pero sus postulaciones se pueden seguir viendo.
 export default function VacancyActions({ vacante, ocupado, onCambiarEstado }: Props) {
-  if (vacante.estado === 'CERRADA') return null
+  const cerrada = vacante.estado === 'CERRADA'
 
   return (
     <div className="flex flex-wrap gap-2">
       <Button asChild variant="outline" size="sm">
-        <Link to={rutaEditarVacante(vacante.id)}>Editar</Link>
+        <Link to={rutaPostulacionesVacante(vacante.id)}>Ver postulaciones</Link>
       </Button>
+      {!cerrada && (
+        <Button asChild variant="outline" size="sm">
+          <Link to={rutaEditarVacante(vacante.id)}>Editar</Link>
+        </Button>
+      )}
       {vacante.estado === 'ACTIVA' && (
         <ConfirmarAccion
           etiqueta="Pausar"
@@ -74,13 +80,15 @@ export default function VacancyActions({ vacante, ocupado, onCambiarEstado }: Pr
           Reanudar
         </Button>
       )}
-      <ConfirmarAccion
-        etiqueta="Cerrar"
-        titulo="¿Cerrar esta vacante?"
-        descripcion="Una vacante cerrada ya no se puede reabrir."
-        deshabilitado={ocupado}
-        onConfirmar={() => onCambiarEstado('CERRADA')}
-      />
+      {!cerrada && (
+        <ConfirmarAccion
+          etiqueta="Cerrar"
+          titulo="¿Cerrar esta vacante?"
+          descripcion="Una vacante cerrada ya no se puede reabrir."
+          deshabilitado={ocupado}
+          onConfirmar={() => onCambiarEstado('CERRADA')}
+        />
+      )}
     </div>
   )
 }
