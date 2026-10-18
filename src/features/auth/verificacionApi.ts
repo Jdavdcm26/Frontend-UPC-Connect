@@ -24,7 +24,15 @@ export async function verificarCorreoApi(consulta: string): Promise<void> {
   const hash = parametros.get('hash')
   parametros.delete('id')
   parametros.delete('hash')
-  await api.get(`/api/v1/auth/email/verify/${id}/${hash}?${parametros.toString()}`)
+  try {
+    await api.get(`/api/v1/auth/email/verify/${id}/${hash}?${parametros.toString()}`)
+  } catch (error) {
+    // Un enlace inválido responde 403: se muestra el mensaje del servidor, no el genérico.
+    if (error instanceof ApiError && error.status === 403) {
+      throw new ApiError(403, error.mensajeServidor ?? 'El enlace no es válido. Pide uno nuevo.')
+    }
+    throw error
+  }
 }
 
 // Pide un nuevo enlace de verificación (el servidor limita cuántos se envían) (API-04).
