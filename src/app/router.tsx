@@ -3,6 +3,7 @@ import { createBrowserRouter } from 'react-router-dom'
 import AuthLayout from '@/app/layouts/AuthLayout'
 import CandidateLayout from '@/app/layouts/CandidateLayout'
 import CompanyLayout from '@/app/layouts/CompanyLayout'
+import LayoutPorRol from '@/app/layouts/LayoutPorRol'
 import PublicLayout from '@/app/layouts/PublicLayout'
 import ErrorPage from '@/app/pages/ErrorPage'
 import PantallaCarga from '@/app/pages/PantallaCarga'
@@ -86,6 +87,17 @@ export const router = createBrowserRouter([
             ],
           },
         ],
+      },
+    ],
+  },
+  {
+    // Perfil de otra persona: lo ven candidatos y empresas, cada uno con su menú (FE-26).
+    path: '/perfiles/:slug',
+    element: <RequireAuth />,
+    children: [
+      {
+        element: <LayoutPorRol />,
+        children: [{ index: true, lazy: cargar(() => import('@/features/perfil/PerfilPublicoPage')) }],
       },
     ],
   },
