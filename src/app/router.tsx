@@ -7,6 +7,11 @@ import ErrorPage from '@/app/pages/ErrorPage'
 import ForbiddenPage from '@/app/pages/ForbiddenPage'
 import HomePage from '@/app/pages/HomePage'
 import NotFoundPage from '@/app/pages/NotFoundPage'
+import PerfilPrototipo from '@/prototipo/PerfilPrototipo'
+import RegistroPrototipo from '@/prototipo/RegistroPrototipo'
+import RevisaCorreoPrototipo from '@/prototipo/RevisaCorreoPrototipo'
+import VacanteDetallePrototipo from '@/prototipo/VacanteDetallePrototipo'
+import VacantesPrototipo from '@/prototipo/VacantesPrototipo'
 
 // Rutas en español (RNF-27). Cada grupo usa su propio diseño.
 // Las rutas /candidato y /empresa se protegerán con sesión en FE-09.
@@ -19,6 +24,12 @@ export const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       { path: 'catalogo', element: <CatalogoPage /> },
       { path: 'sin-permiso', element: <ForbiddenPage /> },
+      // Prototipo navegable de baja fidelidad (FE-08). Se elimina al terminar el Sprint 4.
+      { path: 'prototipo/registro', element: <RegistroPrototipo /> },
+      { path: 'prototipo/revisa-correo', element: <RevisaCorreoPrototipo /> },
+      { path: 'prototipo/perfil', element: <PerfilPrototipo /> },
+      { path: 'prototipo/vacantes', element: <VacantesPrototipo /> },
+      { path: 'prototipo/vacantes/:id', element: <VacanteDetallePrototipo /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },
