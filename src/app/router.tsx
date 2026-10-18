@@ -9,6 +9,7 @@ import ForbiddenPage from '@/app/pages/ForbiddenPage'
 import HomePage from '@/app/pages/HomePage'
 import NotFoundPage from '@/app/pages/NotFoundPage'
 import LoginPage from '@/features/auth/LoginPage'
+import PoliticaPrivacidadPage from '@/features/auth/PoliticaPrivacidadPage'
 import RecuperarContrasenaPage from '@/features/auth/RecuperarContrasenaPage'
 import RedirigirSiHaySesion from '@/features/auth/RedirigirSiHaySesion'
 import RegistroPage from '@/features/auth/RegistroPage'
@@ -33,6 +34,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <RedirigirSiHaySesion><HomePage /></RedirigirSiHaySesion> },
       { path: 'catalogo', element: <CatalogoPage /> },
+      { path: 'politica-de-privacidad', element: <PoliticaPrivacidadPage /> },
       {
         element: <AuthLayout />,
         children: [
