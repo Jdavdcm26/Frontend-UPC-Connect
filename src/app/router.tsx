@@ -18,6 +18,7 @@ import RequireAuth from '@/features/auth/RequireAuth'
 import RevisaCorreoPage from '@/features/auth/RevisaCorreoPage'
 import VerificarCorreoPage from '@/features/auth/VerificarCorreoPage'
 import RequireRole from '@/features/auth/RequireRole'
+import EditarVacantePage from '@/features/vacantes/EditarVacantePage'
 import MisVacantesPage from '@/features/vacantes/MisVacantesPage'
 import NuevaVacantePage from '@/features/vacantes/NuevaVacantePage'
 import PerfilEditarPage from '@/features/perfil/PerfilEditarPage'
@@ -137,6 +138,7 @@ export const router = createBrowserRouter([
               { index: true, element: <p>Panel de la empresa (FE-29)</p> },
               { path: 'vacantes', element: <MisVacantesPage /> },
               { path: 'vacantes/nueva', element: <NuevaVacantePage /> },
+              { path: 'vacantes/:id/editar', element: <EditarVacantePage /> },
             ],
           },
         ],
