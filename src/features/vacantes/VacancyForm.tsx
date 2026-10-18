@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Controller, useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -13,12 +14,19 @@ import {
   ETIQUETA_TIPO,
   MODALIDADES,
   TIPOS_VACANTE,
+  type Vacante,
 } from '@/features/vacantes/tipos'
 import { vacanteEsquema, type VacanteDatos } from '@/features/vacantes/vacanteEsquema'
-import { CLAVE_MIS_VACANTES, crearVacante } from '@/features/vacantes/vacantesApi'
+import {
+  CLAVE_MIS_VACANTES,
+  actualizarVacante,
+  claveVacante,
+  crearVacante,
+} from '@/features/vacantes/vacantesApi'
 import { ApiError } from '@/shared/api/apiError'
 import { aplicarErroresServidor } from '@/shared/lib/erroresServidor'
 import { hoyLocal } from '@/shared/lib/fechas'
+import { RUTAS } from '@/shared/lib/rutas'
 import FormField from '@/shared/ui/FormField'
 import SelectField from '@/shared/ui/SelectField'
 
@@ -37,12 +45,32 @@ const VALORES_INICIALES: VacanteDatos = {
 const OPCIONES_TIPO = TIPOS_VACANTE.map((valor) => ({ valor, etiqueta: ETIQUETA_TIPO[valor] }))
 const OPCIONES_MODALIDAD = MODALIDADES.map((valor) => ({ valor, etiqueta: ETIQUETA_MODALIDAD[valor] }))
 
-type Props = {
-  carreras: Carrera[]
+// Convierte una vacante existente en los valores del formulario.
+function valoresDesdeVacante(vacante: Vacante): VacanteDatos {
+  return {
+    tipo: vacante.tipo,
+    titulo: vacante.titulo,
+    descripcion: vacante.descripcion,
+    requisitos: vacante.requisitos,
+    carreraIds: vacante.carreraIds.map(String),
+    ciudad: vacante.ciudad,
+    modalidad: vacante.modalidad,
+    fechaCierre: vacante.fechaCierre,
+  }
 }
 
-// Formulario para publicar una vacante, práctica o pasantía (HU-41 / FE-19).
-export default function VacancyForm({ carreras }: Props) {
+type Props = {
+  carreras: Carrera[]
+  // Si se indica, el formulario edita esa vacante; si no, publica una nueva.
+  vacante?: Vacante
+}
+
+// Formulario para publicar o editar una vacante, práctica o pasantía (HU-41 / FE-19, FE-20).
+export default function VacancyForm({ carreras, vacante }: Props) {
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const valoresIniciales = vacante ? valoresDesdeVacante(vacante) : VALORES_INICIALES
+
   const {
     register,
     control,
@@ -52,17 +80,22 @@ export default function VacancyForm({ carreras }: Props) {
     formState: { errors },
   } = useForm<VacanteDatos>({
     resolver: zodResolver(vacanteEsquema),
-    defaultValues: VALORES_INICIALES,
+    defaultValues: valoresIniciales,
   })
 
-  const queryClient = useQueryClient()
-
-  const publicacion = useMutation({
-    mutationFn: crearVacante,
+  const guardado = useMutation({
+    mutationFn: (datos: VacanteDatos) => (vacante ? actualizarVacante(vacante.id, datos) : crearVacante(datos)),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: CLAVE_MIS_VACANTES })
-      toast.success('Vacante publicada.')
-      reset(VALORES_INICIALES)
+      if (vacante) {
+        void queryClient.invalidateQueries({ queryKey: claveVacante(vacante.id) })
+        void queryClient.invalidateQueries({ queryKey: ['vacantes'] })
+        toast.success('Vacante actualizada.')
+        void navigate(RUTAS.empresaVacantes)
+      } else {
+        toast.success('Vacante publicada.')
+        reset(VALORES_INICIALES)
+      }
     },
     // Los errores de validación (422) van a cada campo; el resto (por ejemplo, empresa no aprobada) se muestra arriba.
     onError: (error) => {
@@ -71,12 +104,10 @@ export default function VacancyForm({ carreras }: Props) {
   })
 
   const errorGeneral =
-    publicacion.error instanceof ApiError && publicacion.error.status !== 422
-      ? publicacion.error.message
-      : undefined
+    guardado.error instanceof ApiError && guardado.error.status !== 422 ? guardado.error.message : undefined
 
   return (
-    <form noValidate onSubmit={handleSubmit((datos) => publicacion.mutate(datos))} className="space-y-4">
+    <form noValidate onSubmit={handleSubmit((datos) => guardado.mutate(datos))} className="space-y-4">
       {errorGeneral && (
         <p role="alert" className="rounded-md border border-destructive p-3 text-sm text-destructive">
           {errorGeneral}
@@ -160,8 +191,14 @@ export default function VacancyForm({ carreras }: Props) {
         </FormField>
       </div>
 
-      <Button type="submit" disabled={publicacion.isPending}>
-        {publicacion.isPending ? 'Publicando...' : 'Publicar vacante'}
+      <Button type="submit" disabled={guardado.isPending}>
+        {guardado.isPending
+          ? vacante
+            ? 'Guardando...'
+            : 'Publicando...'
+          : vacante
+            ? 'Guardar cambios'
+            : 'Publicar vacante'}
       </Button>
     </form>
   )
