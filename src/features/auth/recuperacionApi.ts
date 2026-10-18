@@ -11,7 +11,7 @@ export async function solicitarRecuperacionApi(correo: string): Promise<void> {
     await pausa(600)
     return
   }
-  await api.post('/api/v1/auth/password/forgot', { email: correo })
+  await api.post('/api/v1/auth/forgot-password', { email: correo })
 }
 
 // Guarda la contraseña nueva. "consulta" es lo que viene después del ? del enlace
@@ -25,7 +25,7 @@ export async function restablecerContrasenaApi(consulta: string, datos: Restable
     return
   }
   const parametros = new URLSearchParams(consulta)
-  await api.post('/api/v1/auth/password/reset', {
+  await api.post('/api/v1/auth/reset-password', {
     token: parametros.get('token'),
     email: parametros.get('email'),
     password: datos.contrasena,
