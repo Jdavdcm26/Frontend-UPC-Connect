@@ -1,4 +1,4 @@
-import type { EstadoCuenta, Usuario } from '@/features/auth/tipos'
+import type { EstadoCuenta, Rol, Usuario } from '@/features/auth/tipos'
 
 // Forma en que GET /api/v1/me envía al usuario (dentro de { data }).
 export type UsuarioServidor = {
@@ -11,8 +11,16 @@ export type UsuarioServidor = {
 
 const ESTADOS: EstadoCuenta[] = ['ACTIVO', 'PENDIENTE', 'SUSPENDIDO']
 
-// Traduce al usuario de la interfaz. Los valores exactos de rol y estado están por confirmar:
-// lo que no sea EMPRESA cuenta como candidato, y un estado desconocido como PENDIENTE
+// Roles del servidor: ESTUDIANTE, EGRESADO, EMPRESA, MODERADOR y ADMIN.
+// ESTUDIANTE y EGRESADO son candidato; cualquier otro valor se trata como candidato.
+function rolDeLaInterfaz(rol: string): Rol {
+  if (rol === 'EMPRESA') return 'empresa'
+  if (rol === 'ADMIN') return 'admin'
+  if (rol === 'MODERADOR') return 'moderador'
+  return 'candidato'
+}
+
+// Traduce al usuario de la interfaz. Un estado desconocido cuenta como PENDIENTE
 // (lo más seguro, porque no deja entrar a rutas protegidas).
 export function usuarioDesdeServidor(usuario: UsuarioServidor): Usuario {
   const rol = usuario.rol.toUpperCase()
@@ -20,7 +28,7 @@ export function usuarioDesdeServidor(usuario: UsuarioServidor): Usuario {
   return {
     id: usuario.id,
     correo: usuario.email,
-    rol: rol === 'EMPRESA' ? 'empresa' : 'candidato',
+    rol: rolDeLaInterfaz(rol),
     esEgresado: rol === 'EGRESADO',
     estado: ESTADOS.find((valor) => valor === estado) ?? 'PENDIENTE',
   }

@@ -16,6 +16,9 @@ export const RUTAS = {
   perfil: '/perfil',
   perfilEditar: '/perfil/editar',
   sinPermiso: '/sin-permiso',
+  cuentaAdministrativa: '/cuenta-administrativa',
+  // Panel de administración (Filament). Lo sirve el backend, no es una ruta de esta aplicación.
+  panelAdministracion: '/admin',
 } as const
 
 // Ruta para editar una vacante de la empresa.
