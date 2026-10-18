@@ -8,7 +8,9 @@ import ForbiddenPage from '@/app/pages/ForbiddenPage'
 import HomePage from '@/app/pages/HomePage'
 import NotFoundPage from '@/app/pages/NotFoundPage'
 import LoginPage from '@/features/auth/LoginPage'
+import RecuperarContrasenaPage from '@/features/auth/RecuperarContrasenaPage'
 import RegistroPage from '@/features/auth/RegistroPage'
+import RestablecerContrasenaPage from '@/features/auth/RestablecerContrasenaPage'
 import RequireAuth from '@/features/auth/RequireAuth'
 import RevisaCorreoPage from '@/features/auth/RevisaCorreoPage'
 import VerificarCorreoPage from '@/features/auth/VerificarCorreoPage'
@@ -31,6 +33,8 @@ export const router = createBrowserRouter([
       { path: 'catalogo', element: <CatalogoPage /> },
       { path: 'sin-permiso', element: <ForbiddenPage /> },
       { path: 'iniciar-sesion', element: <LoginPage /> },
+      { path: 'recuperar-contrasena', element: <RecuperarContrasenaPage /> },
+      { path: 'restablecer-contrasena', element: <RestablecerContrasenaPage /> },
       { path: 'registro', element: <RegistroPage /> },
       { path: 'revisa-tu-correo', element: <RevisaCorreoPage /> },
       { path: 'verificar-correo', element: <VerificarCorreoPage /> },
