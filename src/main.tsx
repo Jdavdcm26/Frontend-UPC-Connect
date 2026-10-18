@@ -6,8 +6,11 @@ import { Toaster } from '@/components/ui/sonner'
 import { queryClient } from '@/app/queryClient'
 import { router } from '@/app/router'
 import SessionProvider from '@/features/auth/SessionProvider'
+import { registrarServiceWorker } from '@/pwa/registrarServiceWorker'
 import ErrorBoundary from '@/shared/ui/ErrorBoundary'
 import './index.css'
+
+registrarServiceWorker()
 
 // Punto de entrada: ErrorBoundary atrapa fallos de renderizado,
 // TanStack Query maneja los datos del servidor, SessionProvider
