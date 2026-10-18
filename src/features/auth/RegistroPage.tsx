@@ -1,9 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
+import { useState } from 'react'
 import { Controller, useForm, useWatch } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import CaptchaTurnstile from '@/features/auth/CaptchaTurnstile'
 import ConsentCheckbox from '@/features/auth/ConsentCheckbox'
 import PasswordField from '@/features/auth/PasswordField'
 import { registroEsquema, type RegistroDatos } from '@/features/auth/registroEsquema'
@@ -21,13 +23,17 @@ export default function RegistroPage() {
     control,
     handleSubmit,
     setError,
+    setValue,
     formState: { errors },
   } = useForm<RegistroDatos>({
     resolver: zodResolver(registroEsquema),
-    defaultValues: { correo: '', contrasena: '', confirmacion: '', aceptaPolitica: false },
+    defaultValues: { correo: '', contrasena: '', confirmacion: '', aceptaPolitica: false, captcha: '' },
   })
 
   const contrasenaEscrita = useWatch({ control, name: 'contrasena' })
+
+  // El token de la verificación sirve una sola vez: si el registro falla, se pide uno nuevo.
+  const [intento, setIntento] = useState(0)
 
   const registro = useMutation({
     mutationFn: registrarApi,
@@ -37,6 +43,8 @@ export default function RegistroPage() {
     // Los errores de validación (422) van a cada campo; el resto se muestra arriba.
     onError: (error) => {
       aplicarErroresServidor(error, setError)
+      setValue('captcha', '')
+      setIntento((n) => n + 1)
     },
   })
 
@@ -86,6 +94,14 @@ export default function RegistroPage() {
             onChange={field.onChange}
             error={errors.aceptaPolitica?.message}
           />
+        )}
+      />
+
+      <Controller
+        control={control}
+        name="captcha"
+        render={({ field }) => (
+          <CaptchaTurnstile key={intento} onToken={field.onChange} error={errors.captcha?.message} />
         )}
       />
 

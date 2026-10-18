@@ -34,6 +34,7 @@ export async function registrarApi(datos: RegistroDatos): Promise<void> {
       password_confirmation: datos.confirmacion,
       acepta_politica: datos.aceptaPolitica,
       version_politica: VERSION_POLITICA,
+      captcha: datos.captcha,
     })
   } catch (error) {
     if (error instanceof ApiError && error.status === 422) {
