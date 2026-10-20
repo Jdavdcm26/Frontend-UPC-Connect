@@ -1,3 +1,4 @@
+import type { Ref } from 'react'
 import { Link } from 'react-router-dom'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
@@ -8,17 +9,19 @@ type Props = {
   checked: boolean
   onChange: (valor: boolean) => void
   error?: string
+  inputRef?: Ref<HTMLButtonElement>
 }
 
 const ID = 'acepta-politica'
 const ID_ERROR = 'acepta-politica-error'
 
 // Casilla de consentimiento con enlace a la política vigente (HU-07 / FE-14).
-export default function ConsentCheckbox({ checked, onChange, error }: Props) {
+export default function ConsentCheckbox({ checked, onChange, error, inputRef }: Props) {
   return (
     <div className="space-y-1.5">
       <div className="flex items-start gap-2">
         <Checkbox
+          ref={inputRef}
           id={ID}
           checked={checked}
           onCheckedChange={(valor) => onChange(valor === true)}

@@ -129,6 +129,7 @@ export default function VacancyForm({ carreras, vacante }: Props) {
               valor={field.value}
               onChange={field.onChange}
               error={errors.tipo?.message}
+              inputRef={field.ref}
             />
           )}
         />
@@ -144,6 +145,7 @@ export default function VacancyForm({ carreras, vacante }: Props) {
               valor={field.value}
               onChange={field.onChange}
               error={errors.modalidad?.message}
+              inputRef={field.ref}
             />
           )}
         />
@@ -180,6 +182,7 @@ export default function VacancyForm({ carreras, vacante }: Props) {
             valor={field.value}
             onChange={field.onChange}
             error={errors.carreraIds?.message}
+            inputRef={field.ref}
           />
         )}
       />

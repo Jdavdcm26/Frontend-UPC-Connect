@@ -1,8 +1,10 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
+import { useEffect, useRef } from 'react'
 import { Link, Navigate, useParams, useSearchParams } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import CandidateList from '@/features/postulaciones/CandidateList'
+import { idBotonVerPerfil } from '@/features/postulaciones/foco'
 import CandidateProfilePanel from '@/features/postulaciones/CandidateProfilePanel'
 import { claveRecibidas, listarPostulacionesRecibidas } from '@/features/postulaciones/postulacionesEmpresaApi'
 import { claveMiVacante, obtenerMiVacante } from '@/features/vacantes/vacantesApi'
@@ -28,6 +30,14 @@ export default function PostulacionesRecibidasPage() {
     getNextPageParam: (ultima) => ultima.siguiente,
   })
 
+  // Al cerrar el panel, el foco vuelve al botón «Ver perfil» que lo abrió (si no, se pierde al desaparecer «Cerrar»).
+  const devolverFocoA = useRef<string | null>(null)
+  useEffect(() => {
+    if (seleccionada || !devolverFocoA.current) return
+    document.getElementById(idBotonVerPerfil(devolverFocoA.current))?.focus()
+    devolverFocoA.current = null
+  }, [seleccionada])
+
   if (esAjena(vacante.error) || esAjena(postulaciones.error)) {
     return <Navigate to={RUTAS.sinPermiso} replace />
   }
@@ -35,7 +45,10 @@ export default function PostulacionesRecibidasPage() {
   const lista = postulaciones.data?.pages.flatMap((pagina) => pagina.postulaciones) ?? []
 
   const seleccionar = (postulacionId: string) => setParams({ postulacion: postulacionId })
-  const cerrarPanel = () => setParams({})
+  const cerrarPanel = () => {
+    devolverFocoA.current = seleccionada
+    setParams({})
+  }
 
   return (
     <section className="mx-auto max-w-5xl space-y-4">

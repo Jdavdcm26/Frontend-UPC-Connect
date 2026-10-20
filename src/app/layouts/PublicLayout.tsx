@@ -1,5 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link, Outlet } from 'react-router-dom'
+import AnunciarRuta from '@/app/AnunciarRuta'
+import SaltarAlContenido from '@/app/layouts/SaltarAlContenido'
 import { Button } from '@/components/ui/button'
 import { CLAVE_SESION, obtenerSesion } from '@/features/auth/sesionApi'
 import { RUTAS } from '@/shared/lib/rutas'
@@ -11,6 +13,8 @@ export default function PublicLayout() {
 
   return (
     <div className="min-h-screen">
+      <SaltarAlContenido />
+      <AnunciarRuta />
       <header className="flex items-center justify-between border-b p-4">
         <Link to={RUTAS.raiz} className="font-bold">
           UPC Connect
@@ -26,7 +30,7 @@ export default function PublicLayout() {
           </nav>
         )}
       </header>
-      <main className="p-4">
+      <main id="contenido" tabIndex={-1} className="p-4 focus:outline-none">
         <Outlet />
       </main>
     </div>
