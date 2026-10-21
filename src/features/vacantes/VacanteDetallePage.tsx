@@ -1,15 +1,17 @@
-import { useQuery } from '@tanstack/react-query'
+import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
-import { CLAVE_CARRERAS, obtenerCarreras } from '@/features/perfil/perfilApi'
+import { obtenerCarreras } from '@/features/perfil/perfilApi'
+import type { Carrera } from '@/features/perfil/tipos'
 import ApplyButton from '@/features/postulaciones/ApplyButton'
 import {
   ETIQUETA_ESTADO,
   ETIQUETA_MODALIDAD,
   ETIQUETA_TIPO,
+  type Vacante,
 } from '@/features/vacantes/tipos'
-import { claveVacante, obtenerVacante } from '@/features/vacantes/vacantesApi'
+import { obtenerVacante } from '@/features/vacantes/vacantesApi'
 import { ApiError } from '@/shared/api/apiError'
 import { RUTAS } from '@/shared/lib/rutas'
 
@@ -22,10 +24,46 @@ const VolverAlListado = () => (
 // Detalle de una vacante para el candidato (FE-22).
 export default function VacanteDetallePage() {
   const { id = '' } = useParams()
-  const vacante = useQuery({ queryKey: claveVacante(id), queryFn: () => obtenerVacante(id) })
-  const carreras = useQuery({ queryKey: CLAVE_CARRERAS, queryFn: obtenerCarreras })
+  const [vacante, setVacante] = useState<Vacante>()
+  const [error, setError] = useState<unknown>()
+  const [carreras, setCarreras] = useState<Carrera[]>([])
+  // Cambiar este número vuelve a pedir la vacante (por ejemplo, después de postularse).
+  const [recargas, setRecargas] = useState(0)
 
-  if (vacante.isPending) {
+  // Al volver a pedirla se sigue mostrando la que ya había, sin parpadeos.
+  useEffect(() => {
+    let vigente = true
+    obtenerVacante(id)
+      .then((datos) => {
+        if (!vigente) return
+        setVacante(datos)
+        setError(undefined)
+      })
+      .catch((e) => {
+        if (vigente) setError(e)
+      })
+    return () => {
+      vigente = false
+    }
+  }, [id, recargas])
+
+  // Las carreras solo sirven para mostrar nombres: si fallan, esa sección no aparece.
+  useEffect(() => {
+    let vigente = true
+    obtenerCarreras()
+      .then((datos) => {
+        if (vigente) setCarreras(datos)
+      })
+      .catch(() => {})
+    return () => {
+      vigente = false
+    }
+  }, [])
+
+  // Si cambió el id de la URL, la vacante guardada es la anterior: se trata como «cargando».
+  const datos = vacante?.id === id ? vacante : undefined
+
+  if (!datos && error === undefined) {
     return (
       <div className="mx-auto max-w-3xl space-y-4" role="status" aria-label="Cargando vacante">
         <Skeleton className="h-8 w-72" />
@@ -35,8 +73,8 @@ export default function VacanteDetallePage() {
     )
   }
 
-  if (vacante.isError) {
-    const noExiste = vacante.error instanceof ApiError && vacante.error.status === 404
+  if (!datos) {
+    const noExiste = error instanceof ApiError && error.status === 404
     return (
       <div className="mx-auto max-w-3xl space-y-4">
         <p role="alert" className="text-destructive">
@@ -49,8 +87,7 @@ export default function VacanteDetallePage() {
     )
   }
 
-  const datos = vacante.data
-  const nombresCarreras = (carreras.data ?? [])
+  const nombresCarreras = carreras
     .filter((c) => datos.carreraIds.includes(c.id))
     .map((c) => c.nombre)
 
@@ -77,7 +114,8 @@ export default function VacanteDetallePage() {
         </p>
       </header>
 
-      <ApplyButton vacante={datos} />
+      {/* Al terminar de postularse (bien o mal), se vuelve a pedir la vacante para saber si ya está postulado. */}
+      <ApplyButton vacante={datos} onPostulado={() => setRecargas((n) => n + 1)} />
 
       <section className="space-y-1">
         <h2 className="font-semibold">Descripción</h2>

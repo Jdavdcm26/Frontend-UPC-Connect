@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation } from '@tanstack/react-query'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
@@ -20,31 +20,43 @@ export default function ReenviarVerificacion() {
     formState: { errors },
   } = useForm<Datos>({ resolver: zodResolver(esquema), defaultValues: { correo: '' } })
 
-  const reenvio = useMutation({ mutationFn: reenviarVerificacionApi })
+  const [enviando, setEnviando] = useState(false)
+  const [enviado, setEnviado] = useState(false)
+  const [error, setError] = useState<unknown>()
+
+  async function reenviar(datos: Datos) {
+    setEnviando(true)
+    setEnviado(false)
+    setError(undefined)
+    try {
+      await reenviarVerificacionApi(datos.correo)
+      setEnviado(true)
+    } catch (e) {
+      setError(e ?? new Error())
+    } finally {
+      setEnviando(false)
+    }
+  }
 
   return (
-    <form
-      noValidate
-      onSubmit={handleSubmit((datos) => reenvio.mutate(datos.correo))}
-      className="space-y-3 text-left"
-    >
+    <form noValidate onSubmit={handleSubmit(reenviar)} className="space-y-3 text-left">
       <FormField id="correo-reenvio" etiqueta="Correo institucional" error={errors.correo?.message}>
         {(campo) => <Input type="email" autoComplete="email" {...campo} {...register('correo')} />}
       </FormField>
 
-      {reenvio.isError && (
+      {error !== undefined && (
         <p role="alert" className="text-sm text-destructive">
-          {reenvio.error instanceof ApiError ? reenvio.error.message : 'No pudimos enviar el enlace.'}
+          {error instanceof ApiError ? error.message : 'No pudimos enviar el enlace.'}
         </p>
       )}
-      {reenvio.isSuccess && (
+      {enviado && (
         <p role="status" className="text-sm text-muted-foreground">
           Listo, te enviamos un nuevo enlace. Revisa tu correo.
         </p>
       )}
 
-      <Button type="submit" className="w-full" disabled={reenvio.isPending}>
-        {reenvio.isPending ? 'Enviando...' : 'Reenviar enlace'}
+      <Button type="submit" className="w-full" disabled={enviando}>
+        {enviando ? 'Enviando...' : 'Reenviar enlace'}
       </Button>
     </form>
   )

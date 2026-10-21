@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query'
+import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import ReenviarVerificacion from '@/features/auth/ReenviarVerificacion'
@@ -10,7 +10,23 @@ import { RUTAS } from '@/shared/lib/rutas'
 export default function RevisaCorreoPage() {
   const ubicacion = useLocation()
   const correo = (ubicacion.state as { correo?: string } | null)?.correo
-  const reenvio = useMutation({ mutationFn: reenviarVerificacionApi })
+  const [enviando, setEnviando] = useState(false)
+  const [enviado, setEnviado] = useState(false)
+  const [error, setError] = useState<unknown>()
+
+  async function reenviar(destino: string) {
+    setEnviando(true)
+    setEnviado(false)
+    setError(undefined)
+    try {
+      await reenviarVerificacionApi(destino)
+      setEnviado(true)
+    } catch (e) {
+      setError(e ?? new Error())
+    } finally {
+      setEnviando(false)
+    }
+  }
 
   return (
     <section className="mx-auto max-w-sm space-y-4 text-center">
@@ -30,19 +46,19 @@ export default function RevisaCorreoPage() {
               type="button"
               variant="outline"
               className="w-full"
-              disabled={reenvio.isPending}
-              onClick={() => reenvio.mutate(correo)}
+              disabled={enviando}
+              onClick={() => void reenviar(correo)}
             >
-              {reenvio.isPending ? 'Enviando...' : 'Reenviar enlace'}
+              {enviando ? 'Enviando...' : 'Reenviar enlace'}
             </Button>
-            {reenvio.isSuccess && (
+            {enviado && (
               <p role="status" className="text-sm text-muted-foreground">
                 Listo, te enviamos un nuevo enlace.
               </p>
             )}
-            {reenvio.isError && (
+            {error !== undefined && (
               <p role="alert" className="text-sm text-destructive">
-                {reenvio.error instanceof ApiError ? reenvio.error.message : 'No pudimos enviar el enlace.'}
+                {error instanceof ApiError ? error.message : 'No pudimos enviar el enlace.'}
               </p>
             )}
           </>

@@ -1,5 +1,4 @@
 import { obtenerSesion, USAR_FIXTURES } from '@/features/auth/sesionApi'
-import { CLAVE_POSTULACIONES } from '@/features/postulaciones/postulacionesApi'
 import {
   guardarPostulacionesDemo,
   leerPostulacionesDemo,
@@ -17,10 +16,6 @@ import { ApiError } from '@/shared/api/apiError'
 import { api } from '@/shared/api/client'
 
 const pausa = (ms: number) => new Promise((resolver) => setTimeout(resolver, ms))
-
-// Claves de TanStack Query de la parte de la empresa (cuelgan de CLAVE_POSTULACIONES).
-export const claveRecibidas = (vacanteId: string) => [...CLAVE_POSTULACIONES, 'recibidas', vacanteId] as const
-export const claveDetalleRecibida = (id: string) => [...CLAVE_POSTULACIONES, 'detalle', id] as const
 
 export type PaginaRecibidas = {
   postulaciones: PostulacionRecibida[]

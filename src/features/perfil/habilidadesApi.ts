@@ -7,8 +7,6 @@ import type { HabilidadCatalogo, NivelHabilidad, Perfil } from '@/features/perfi
 import { ApiError } from '@/shared/api/apiError'
 import { api } from '@/shared/api/client'
 
-// Clave de TanStack Query de las sugerencias del autocompletado.
-export const claveHabilidades = (texto: string) => ['habilidades', texto] as const
 
 const pausa = (ms: number) => new Promise((resolver) => setTimeout(resolver, ms))
 

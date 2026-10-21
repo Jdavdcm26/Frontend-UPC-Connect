@@ -11,10 +11,6 @@ import { USAR_FIXTURES } from '@/features/auth/sesionApi'
 import { ApiError } from '@/shared/api/apiError'
 import { api } from '@/shared/api/client'
 
-// Claves de TanStack Query.
-export const CLAVE_PERFIL = ['perfil'] as const
-export const CLAVE_CARRERAS = ['carreras'] as const
-
 const CLAVE_DEMO = 'upc-perfil-demo'
 const pausa = (ms: number) => new Promise((resolver) => setTimeout(resolver, ms))
 

@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
@@ -7,8 +7,7 @@ import { Input } from '@/components/ui/input'
 import { loginEsquema, type LoginDatos } from '@/features/auth/loginEsquema'
 import { iniciarSesionApi } from '@/features/auth/loginApi'
 import { destinoPermitido, rutaInicioPorRol } from '@/features/auth/rutaPorRol'
-import { CLAVE_SESION } from '@/features/auth/sesionApi'
-import type { Usuario } from '@/features/auth/tipos'
+import { useSession } from '@/features/auth/useSession'
 import { ApiError } from '@/shared/api/apiError'
 import { RUTAS } from '@/shared/lib/rutas'
 import FormField from '@/shared/ui/FormField'
@@ -22,7 +21,9 @@ function destinoSeguro(desde: unknown): string | null {
 export default function LoginPage() {
   const navegar = useNavigate()
   const ubicacion = useLocation()
-  const queryClient = useQueryClient()
+  const { refrescarSesion } = useSession()
+  const [enviando, setEnviando] = useState(false)
+  const [error, setError] = useState<unknown>()
   const desde = destinoSeguro((ubicacion.state as { desde?: unknown } | null)?.desde)
 
   const {
@@ -34,23 +35,27 @@ export default function LoginPage() {
     defaultValues: { correo: '', contrasena: '' },
   })
 
-  const login = useMutation({
-    mutationFn: iniciarSesionApi,
-    onSuccess: async () => {
+  async function iniciarSesion(datos: LoginDatos) {
+    setEnviando(true)
+    setError(undefined)
+    try {
+      await iniciarSesionApi(datos)
       // Vuelve a consultar la sesión y, con el rol, decide a dónde ir.
-      await queryClient.invalidateQueries({ queryKey: CLAVE_SESION })
-      const usuario = queryClient.getQueryData<Usuario | null>(CLAVE_SESION)
+      const usuario = await refrescarSesion()
       const destino = usuario ? (destinoPermitido(desde, usuario.rol) ?? rutaInicioPorRol(usuario.rol)) : (desde ?? RUTAS.raiz)
       navegar(destino, { replace: true })
-    },
-  })
+    } catch (e) {
+      setError(e)
+      setEnviando(false)
+    }
+  }
 
-  const mensajeError = login.error instanceof ApiError ? login.error.message : undefined
+  const mensajeError = error instanceof ApiError ? error.message : undefined
 
   return (
     <form
       noValidate
-      onSubmit={handleSubmit((datos) => login.mutate(datos))}
+      onSubmit={handleSubmit(iniciarSesion)}
       className="mx-auto max-w-sm space-y-4"
     >
       <h1 className="text-2xl font-bold">Iniciar sesión</h1>
@@ -71,8 +76,8 @@ export default function LoginPage() {
         )}
       </FormField>
 
-      <Button type="submit" className="w-full" disabled={login.isPending}>
-        {login.isPending ? 'Entrando...' : 'Entrar'}
+      <Button type="submit" className="w-full" disabled={enviando}>
+        {enviando ? 'Entrando...' : 'Entrar'}
       </Button>
 
       <p className="text-center text-sm text-muted-foreground">

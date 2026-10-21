@@ -3,9 +3,6 @@ import { api } from '@/shared/api/client'
 import type { Usuario } from '@/features/auth/tipos'
 import { usuarioDesdeServidor, type UsuarioServidor } from '@/features/auth/usuarioServidor'
 
-// Clave de TanStack Query donde vive la sesión.
-export const CLAVE_SESION = ['sesion'] as const
-
 // Mientras el backend no esté listo, VITE_USAR_FIXTURES=true simula la sesión.
 // Solo es para desarrollo: con la API real la sesión es una cookie (no se guarda token).
 export const USAR_FIXTURES = import.meta.env.VITE_USAR_FIXTURES === 'true'

@@ -10,10 +10,6 @@ import { obtenerVacante, TAMANO_PAGINA } from '@/features/vacantes/vacantesApi'
 import { ApiError } from '@/shared/api/apiError'
 import { api } from '@/shared/api/client'
 
-// Clave de TanStack Query para las listas de postulaciones (FE-24 y FE-25).
-export const CLAVE_POSTULACIONES = ['postulaciones'] as const
-export const CLAVE_MIS_POSTULACIONES = [...CLAVE_POSTULACIONES, 'mias'] as const
-
 const pausa = (ms: number) => new Promise((resolver) => setTimeout(resolver, ms))
 
 // Postularse a una vacante con un mensaje opcional (HU-45 / FE-23, API-24).

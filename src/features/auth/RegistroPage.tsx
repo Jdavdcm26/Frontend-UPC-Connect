@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation } from '@tanstack/react-query'
 import { useState } from 'react'
 import { Controller, useForm, useWatch } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
@@ -40,28 +39,33 @@ export default function RegistroPage() {
   // El token de la verificación sirve una sola vez: si el registro falla, se pide uno nuevo.
   const [intento, setIntento] = useState(0)
 
-  const registro = useMutation({
-    mutationFn: registrarApi,
-    // Al registrarse, pasa a "Revisa tu correo" llevando el correo escrito.
-    onSuccess: (_resultado, datos) =>
-      navegar(RUTAS.revisaCorreo, { state: { correo: datos.correo } }),
-    // Los errores de validación (422) van a cada campo; el resto se muestra arriba.
-    onError: (error) => {
+  const [enviando, setEnviando] = useState(false)
+  const [errorEnvio, setErrorEnvio] = useState<unknown>()
+
+  async function registrarse(datos: RegistroDatos) {
+    setEnviando(true)
+    setErrorEnvio(undefined)
+    try {
+      await registrarApi(datos)
+      // Al registrarse, pasa a "Revisa tu correo" llevando el correo escrito.
+      navegar(RUTAS.revisaCorreo, { state: { correo: datos.correo } })
+    } catch (error) {
+      // Los errores de validación (422) van a cada campo; el resto se muestra arriba.
+      setErrorEnvio(error)
       aplicarErroresServidor(error, setError)
       setValue('captcha', '')
       setIntento((n) => n + 1)
-    },
-  })
+      setEnviando(false)
+    }
+  }
 
   const errorGeneral =
-    registro.error instanceof ApiError && registro.error.status !== 422
-      ? registro.error.message
-      : undefined
+    errorEnvio instanceof ApiError && errorEnvio.status !== 422 ? errorEnvio.message : undefined
 
   return (
     <form
       noValidate
-      onSubmit={handleSubmit((datos) => registro.mutate(datos))}
+      onSubmit={handleSubmit(registrarse)}
       className="mx-auto max-w-sm space-y-4"
     >
       <h1 className="text-2xl font-bold">Crear cuenta</h1>
@@ -111,8 +115,8 @@ export default function RegistroPage() {
         )}
       />
 
-      <Button type="submit" className="w-full" disabled={registro.isPending}>
-        {registro.isPending ? 'Creando cuenta...' : 'Registrarme'}
+      <Button type="submit" className="w-full" disabled={enviando}>
+        {enviando ? 'Creando cuenta...' : 'Registrarme'}
       </Button>
 
       <p className="text-center text-sm text-muted-foreground">

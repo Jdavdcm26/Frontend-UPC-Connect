@@ -1,15 +1,14 @@
-import { useQuery } from '@tanstack/react-query'
 import { Link, Outlet } from 'react-router-dom'
 import AnunciarRuta from '@/app/AnunciarRuta'
 import SaltarAlContenido from '@/app/layouts/SaltarAlContenido'
 import { Button } from '@/components/ui/button'
-import { CLAVE_SESION, obtenerSesion } from '@/features/auth/sesionApi'
+import { useSession } from '@/features/auth/useSession'
 import { RUTAS } from '@/shared/lib/rutas'
 
 // Diseño para páginas sin sesión: inicio, registro, inicio de sesión.
 // Los enlaces de acceso solo se muestran cuando se sabe que no hay sesión.
 export default function PublicLayout() {
-  const sesion = useQuery({ queryKey: CLAVE_SESION, queryFn: obtenerSesion })
+  const { usuario, cargando } = useSession()
 
   return (
     <div className="min-h-screen">
@@ -19,7 +18,7 @@ export default function PublicLayout() {
         <Link to={RUTAS.raiz} className="font-bold">
           UPC Connect
         </Link>
-        {sesion.data === null && (
+        {!cargando && usuario === null && (
           <nav aria-label="Acceso" className="flex items-center gap-2">
             <Button asChild variant="ghost" size="sm">
               <Link to={RUTAS.iniciarSesion}>Iniciar sesión</Link>

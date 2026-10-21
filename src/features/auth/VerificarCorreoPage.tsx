@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import ReenviarVerificacion from '@/features/auth/ReenviarVerificacion'
 import { verificarCorreoApi } from '@/features/auth/verificacionApi'
@@ -11,17 +11,20 @@ export default function VerificarCorreoPage() {
   const { search } = useLocation()
   const hayEnlace = search !== ''
 
-  // useQuery evita verificar dos veces el mismo enlace (el segundo intento fallaría).
-  const verificacion = useQuery({
-    queryKey: ['verificar-correo', search],
-    queryFn: async () => {
-      await verificarCorreoApi(search)
-      return true
-    },
-    enabled: hayEnlace,
-    retry: false,
-    staleTime: Infinity,
-  })
+  const [verificado, setVerificado] = useState(false)
+  const [error, setError] = useState<unknown>()
+
+  // El enlace sirve una sola vez: el segundo intento fallaría. En modo estricto React ejecuta
+  // los efectos dos veces al montar, así que esta referencia evita repetir la petición.
+  const yaPedido = useRef(false)
+
+  useEffect(() => {
+    if (!hayEnlace || yaPedido.current) return
+    yaPedido.current = true
+    verificarCorreoApi(search)
+      .then(() => setVerificado(true))
+      .catch((e) => setError(e ?? new Error()))
+  }, [hayEnlace, search])
 
   if (!hayEnlace) {
     return (
@@ -36,19 +39,8 @@ export default function VerificarCorreoPage() {
     )
   }
 
-  if (verificacion.isPending) {
-    return (
-      <p role="status" className="text-center text-muted-foreground">
-        Verificando tu correo...
-      </p>
-    )
-  }
-
-  if (verificacion.isError) {
-    const mensaje =
-      verificacion.error instanceof ApiError
-        ? verificacion.error.message
-        : 'No pudimos verificar tu correo.'
+  if (error !== undefined) {
+    const mensaje = error instanceof ApiError ? error.message : 'No pudimos verificar tu correo.'
     return (
       <section className="mx-auto max-w-sm space-y-4 text-center">
         <h1 className="text-2xl font-bold">No pudimos verificar tu correo</h1>
@@ -57,6 +49,14 @@ export default function VerificarCorreoPage() {
         </p>
         <ReenviarVerificacion />
       </section>
+    )
+  }
+
+  if (!verificado) {
+    return (
+      <p role="status" className="text-center text-muted-foreground">
+        Verificando tu correo...
+      </p>
     )
   }
 
