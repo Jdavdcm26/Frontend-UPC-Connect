@@ -1,25 +1,34 @@
+import { UserX } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useSession } from '@/features/auth/useSession'
 import { resumenAcademico } from '@/features/perfil/formato'
-import { obtenerPerfil } from '@/features/perfil/perfilApi'
+import { obtenerPerfilConRed } from '@/features/perfil/perfilApi'
 import ProfileDetails from '@/features/perfil/ProfileDetails'
 import ProfileHeader from '@/features/perfil/ProfileHeader'
 import type { Perfil } from '@/features/perfil/tipos'
+import SeccionPublicacionesAutor from '@/features/publicaciones/SeccionPublicacionesAutor'
+import type { RedPropia } from '@/features/red/tipos'
 import { RUTAS } from '@/shared/lib/rutas'
 import ErrorState from '@/shared/ui/ErrorState'
+import { claseEnlace } from '@/shared/ui/estilosEnlace'
 
-// Mi perfil: vista de lectura (HU-09 / FE-16).
+// Mi perfil: vista de lectura (HU-09 / FE-16), con seguidores y seguidos (HU-28) y mis publicaciones.
 export default function PerfilPage() {
+  const { usuario } = useSession()
   const [perfil, setPerfil] = useState<Perfil | null>(null)
+  const [red, setRed] = useState<RedPropia>()
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState<unknown>()
 
   useEffect(() => {
     let vigente = true
-    obtenerPerfil()
+    obtenerPerfilConRed()
       .then((datos) => {
-        if (vigente) setPerfil(datos)
+        if (!vigente) return
+        setPerfil(datos.perfil)
+        setRed(datos.red)
       })
       .catch((e) => {
         if (vigente) setError(e)
@@ -65,6 +74,7 @@ export default function PerfilPage() {
         titular={datos.titular}
         detalle={detalle}
         ciudad={datos.ciudad}
+        contadores={red}
       />
 
       <ProfileDetails
@@ -72,6 +82,22 @@ export default function PerfilPage() {
         intereses={datos.intereses}
         habilidades={datos.habilidades}
       />
+
+      <p>
+        <Link to={RUTAS.bloqueados} className={`${claseEnlace} inline-flex items-center gap-1.5 text-sm`}>
+          <UserX aria-hidden="true" className="size-4" />
+          Cuentas bloqueadas
+        </Link>
+      </p>
+
+      {usuario && (
+        <SeccionPublicacionesAutor
+          titulo="Mis publicaciones"
+          autorId={usuario.id}
+          puedeInteractuar
+          textoVacio="Todavía no has publicado nada. Comparte algo desde «Publicaciones»."
+        />
+      )}
     </article>
   )
 }
