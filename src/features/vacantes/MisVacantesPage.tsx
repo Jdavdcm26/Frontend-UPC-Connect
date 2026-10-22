@@ -1,14 +1,30 @@
+import { CalendarClock, MapPin, Pause, Plus, Users } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { toast } from 'sonner'
+import { cn } from 'cn'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import VacancyActions from '@/features/vacantes/VacancyActions'
 import VacancyStateBadge from '@/features/vacantes/VacancyStateBadge'
-import { ETIQUETA_MODALIDAD, ETIQUETA_TIPO, type EstadoVacante, type Vacante } from '@/features/vacantes/tipos'
+import VacancyTypeBadge from '@/features/vacantes/VacancyTypeBadge'
+import { ETIQUETA_MODALIDAD, type EstadoVacante, type Vacante } from '@/features/vacantes/tipos'
 import { cambiarEstadoVacante, listarMisVacantes } from '@/features/vacantes/vacantesApi'
 import { ApiError } from '@/shared/api/apiError'
+import { formatearDia } from '@/shared/lib/fechas'
 import { RUTAS } from '@/shared/lib/rutas'
+import AvisoInformativo from '@/shared/ui/AvisoInformativo'
+import DatoIcono from '@/shared/ui/DatoIcono'
+import EmptyState from '@/shared/ui/EmptyState'
+import EncabezadoPagina from '@/shared/ui/EncabezadoPagina'
+import ErrorState from '@/shared/ui/ErrorState'
+
+// Franja de color a la izquierda de cada tarjeta según el estado de la vacante.
+const ACENTO_ESTADO: Record<EstadoVacante, string> = {
+  ACTIVA: 'border-l-primary',
+  PAUSADA: 'border-l-ambar',
+  CERRADA: 'border-l-slate-400',
+}
 
 const MENSAJE_ESTADO: Record<EstadoVacante, string> = {
   ACTIVA: 'Vacante reanudada.',
@@ -24,6 +40,8 @@ export default function MisVacantesPage() {
   const [cargandoMas, setCargandoMas] = useState(false)
   const [error, setError] = useState<unknown>()
   const [cambiando, setCambiando] = useState(false)
+  // Cambiar este número vuelve a ejecutar el efecto (botón «Reintentar»).
+  const [intento, setIntento] = useState(0)
 
   // Primera página al entrar.
   useEffect(() => {
@@ -43,7 +61,13 @@ export default function MisVacantesPage() {
     return () => {
       vigente = false
     }
-  }, [])
+  }, [intento])
+
+  function reintentar() {
+    setCargando(true)
+    setError(undefined)
+    setIntento((n) => n + 1)
+  }
 
   async function cargarMas() {
     if (siguiente === null) return
@@ -75,45 +99,73 @@ export default function MisVacantesPage() {
 
   if (cargando) {
     return (
-      <div className="mx-auto max-w-3xl space-y-4" role="status" aria-label="Cargando vacantes">
-        <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-24 w-full" />
-        <Skeleton className="h-24 w-full" />
+      <div className="space-y-4" role="status" aria-label="Cargando vacantes">
+        <Skeleton className="h-9 w-56" />
+        <Skeleton className="h-40 w-full rounded-xl" />
+        <Skeleton className="h-40 w-full rounded-xl" />
       </div>
     )
   }
 
   if (error) {
     return (
-      <p role="alert" className="text-center text-destructive">
-        No pudimos cargar tus vacantes. Recarga la página para intentar de nuevo.
-      </p>
+      <ErrorState mensaje="No pudimos cargar tus vacantes. Intenta de nuevo en un momento." onReintentar={reintentar} />
     )
   }
 
   return (
-    <section className="mx-auto max-w-3xl space-y-4">
-      <div className="flex items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold">Mis vacantes</h1>
-        <Button asChild size="sm">
-          <Link to={RUTAS.empresaNuevaVacante}>Publicar vacante</Link>
-        </Button>
-      </div>
+    <section className="space-y-6">
+      <EncabezadoPagina
+        titulo="Mis vacantes"
+        descripcion="Edita, pausa o cierra tus ofertas y revisa quiénes se postularon."
+        acciones={
+          <Button asChild>
+            <Link to={RUTAS.empresaNuevaVacante}>
+              <Plus aria-hidden="true" />
+              Publicar vacante
+            </Link>
+          </Button>
+        }
+      />
 
       {lista.length === 0 ? (
-        <p className="text-muted-foreground">Aún no has publicado vacantes.</p>
+        <EmptyState
+          titulo="Aún no has publicado vacantes"
+          descripcion="Publica tu primera vacante, práctica o pasantía para empezar a recibir postulaciones."
+          accion={
+            <Button asChild variant="outline">
+              <Link to={RUTAS.empresaNuevaVacante}>Publicar vacante</Link>
+            </Button>
+          }
+        />
       ) : (
-        <ul className="space-y-3">
+        <ul className="space-y-4">
           {lista.map((vacante) => (
-            <li key={vacante.id} className="space-y-2 rounded-lg border p-4">
-              <div className="flex items-start justify-between gap-2">
-                <h2 className="font-semibold">{vacante.titulo}</h2>
+            <li
+              key={vacante.id}
+              className={cn(
+                'space-y-3 rounded-xl border border-l-4 bg-card p-5 shadow-sm sm:p-6',
+                ACENTO_ESTADO[vacante.estado],
+              )}
+            >
+              <div className="flex flex-wrap items-center gap-2">
                 <VacancyStateBadge estado={vacante.estado} />
+                <VacancyTypeBadge tipo={vacante.tipo} />
               </div>
-              <p className="text-sm text-muted-foreground">
-                {ETIQUETA_TIPO[vacante.tipo]} · {ETIQUETA_MODALIDAD[vacante.modalidad]} · {vacante.ciudad}
-              </p>
-              <p className="text-sm text-muted-foreground">Cierra el {vacante.fechaCierre}</p>
+              <h2 className="break-words text-lg font-semibold">{vacante.titulo}</h2>
+              <div className="flex flex-wrap gap-x-5 gap-y-1">
+                <DatoIcono icono={MapPin}>
+                  {ETIQUETA_MODALIDAD[vacante.modalidad]} · {vacante.ciudad}
+                </DatoIcono>
+                <DatoIcono icono={CalendarClock}>Fecha de cierre: {formatearDia(vacante.fechaCierre)}</DatoIcono>
+                {/* Si el servidor aún no envía el conteo (llega con BE-32), se cuenta como 0. */}
+                <DatoIcono icono={Users}>{vacante.postulacionesTotal ?? 0} postulaciones</DatoIcono>
+              </div>
+              {vacante.estado === 'PAUSADA' && (
+                <AvisoInformativo icono={Pause}>
+                  Vacante en pausa: no se muestra a los candidatos hasta que la reanudes.
+                </AvisoInformativo>
+              )}
               <VacancyActions
                 vacante={vacante}
                 ocupado={cambiando}
