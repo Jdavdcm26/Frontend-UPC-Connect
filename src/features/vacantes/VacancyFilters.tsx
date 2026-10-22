@@ -1,3 +1,4 @@
+import { RotateCcw, Search } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -55,7 +56,11 @@ export default function VacancyFilters({ filtros, carreras, onAplicar }: Props) 
   }
 
   return (
-    <form onSubmit={enviar} className="space-y-4 rounded-lg border p-4">
+    <form
+      onSubmit={enviar}
+      aria-label="Filtros de vacantes"
+      className="rounded-xl border bg-card p-5 shadow-sm sm:p-6"
+    >
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <FormField id="filtro-texto" etiqueta="Buscar">
           {(campo) => (
@@ -96,12 +101,16 @@ export default function VacancyFilters({ filtros, carreras, onAplicar }: Props) 
           valor={borrador.modalidad || TODOS}
           onChange={(v) => cambiar('modalidad', v === TODOS ? '' : (v as FiltrosVacantes['modalidad']))}
         />
-      </div>
-      <div className="flex gap-2">
-        <Button type="submit">Buscar</Button>
-        <Button type="button" variant="outline" onClick={limpiar}>
-          Limpiar
-        </Button>
+        <div className="flex flex-wrap items-end gap-2">
+          <Button type="submit">
+            <Search aria-hidden="true" />
+            Buscar
+          </Button>
+          <Button type="button" variant="outline" onClick={limpiar}>
+            <RotateCcw aria-hidden="true" />
+            Limpiar
+          </Button>
+        </div>
       </div>
     </form>
   )
