@@ -18,7 +18,7 @@ const TIPOS = {
 export default function MensajeFormulario({ tipo, children }: Props) {
   const { caja, Icono, rol } = TIPOS[tipo]
   return (
-    <div role={rol} className={cn('flex items-start gap-2.5 rounded-lg border p-3 text-left text-sm', caja)}>
+    <div role={rol} className={cn('flex w-full items-start gap-2.5 rounded-lg border p-3 text-left text-sm', caja)}>
       <Icono aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
       <div className="space-y-1">{children}</div>
     </div>
