@@ -7,6 +7,7 @@ import ProfileDetails from '@/features/perfil/ProfileDetails'
 import ProfileHeader from '@/features/perfil/ProfileHeader'
 import type { Perfil } from '@/features/perfil/tipos'
 import { RUTAS } from '@/shared/lib/rutas'
+import ErrorState from '@/shared/ui/ErrorState'
 
 // Mi perfil: vista de lectura (HU-09 / FE-16).
 export default function PerfilPage() {
@@ -33,19 +34,16 @@ export default function PerfilPage() {
 
   if (cargando) {
     return (
-      <div className="mx-auto max-w-2xl space-y-4" role="status" aria-label="Cargando perfil">
-        <Skeleton className="h-8 w-64" />
-        <Skeleton className="h-5 w-48" />
-        <Skeleton className="h-24 w-full" />
+      <div className="space-y-6" role="status" aria-label="Cargando perfil">
+        <Skeleton className="h-60 w-full rounded-xl" />
+        <Skeleton className="h-32 w-full rounded-xl" />
       </div>
     )
   }
 
   if (error) {
     return (
-      <p role="alert" className="text-center text-destructive">
-        No pudimos cargar tu perfil. Recarga la página para intentar de nuevo.
-      </p>
+      <ErrorState mensaje="No pudimos cargar tu perfil. Recarga la página para intentar de nuevo." />
     )
   }
 
@@ -60,12 +58,17 @@ export default function PerfilPage() {
   })
 
   return (
-    <article className="mx-auto max-w-2xl space-y-6">
-      <ProfileHeader nombre={`${datos.nombres} ${datos.apellidos}`} titular={datos.titular} detalle={detalle} />
+    <article className="space-y-6">
+      <ProfileHeader
+        nombres={datos.nombres}
+        apellidos={datos.apellidos}
+        titular={datos.titular}
+        detalle={detalle}
+        ciudad={datos.ciudad}
+      />
 
       <ProfileDetails
         descripcion={datos.descripcion}
-        ciudad={datos.ciudad}
         intereses={datos.intereses}
         habilidades={datos.habilidades}
       />

@@ -5,6 +5,8 @@ import ProfileForm from '@/features/perfil/ProfileForm'
 import { obtenerCarreras, obtenerPerfil } from '@/features/perfil/perfilApi'
 import SkillsEditor from '@/features/perfil/SkillsEditor'
 import type { Carrera, Perfil } from '@/features/perfil/tipos'
+import EncabezadoPagina from '@/shared/ui/EncabezadoPagina'
+import ErrorState from '@/shared/ui/ErrorState'
 
 // Alta y edición del perfil (HU-09 / FE-15).
 export default function PerfilEditarPage() {
@@ -36,20 +38,16 @@ export default function PerfilEditarPage() {
 
   if (cargando) {
     return (
-      <div className="mx-auto max-w-2xl space-y-4" role="status" aria-label="Cargando perfil">
-        <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-10 w-full" />
-        <Skeleton className="h-10 w-full" />
-        <Skeleton className="h-24 w-full" />
+      <div className="mx-auto max-w-3xl space-y-4" role="status" aria-label="Cargando perfil">
+        <Skeleton className="h-9 w-56" />
+        <Skeleton className="h-96 w-full rounded-xl" />
       </div>
     )
   }
 
   if (error) {
     return (
-      <p role="alert" className="text-center text-destructive">
-        No pudimos cargar tu perfil. Recarga la página para intentar de nuevo.
-      </p>
+      <ErrorState mensaje="No pudimos cargar tu perfil. Recarga la página para intentar de nuevo." />
     )
   }
 
@@ -57,20 +55,24 @@ export default function PerfilEditarPage() {
   const esEgresado = usuario?.esEgresado ?? false
 
   return (
-    <section className="mx-auto max-w-2xl space-y-4">
-      <h1 className="text-2xl font-bold">{esPrimerAcceso ? 'Crea tu perfil' : 'Editar perfil'}</h1>
-      {esPrimerAcceso && (
-        <p className="text-muted-foreground">
-          Cuéntanos tu carrera y {esEgresado ? 'tu año de grado' : 'tu semestre'} para empezar. Son obligatorios.
-        </p>
-      )}
+    <section className="mx-auto max-w-3xl space-y-6">
+      <EncabezadoPagina
+        titulo={esPrimerAcceso ? 'Crea tu perfil' : 'Editar perfil'}
+        descripcion={
+          esPrimerAcceso
+            ? `Cuéntanos tu carrera y ${esEgresado ? 'tu año de grado' : 'tu semestre'} para empezar. Son obligatorios.`
+            : 'Las empresas pueden ver tu perfil cuando te postulas: mantenlo al día.'
+        }
+      />
       {/* Al guardar, el formulario devuelve el perfil nuevo y esta pantalla lo muestra de inmediato. */}
       <ProfileForm carreras={carreras} perfil={perfil} esEgresado={esEgresado} onGuardado={setPerfil} />
       {/* Las habilidades se agregan a un perfil que ya existe (HU-11 / FE-17). */}
       {perfil ? (
         <SkillsEditor habilidades={perfil.habilidades} onActualizar={setPerfil} />
       ) : (
-        <p className="text-sm text-muted-foreground">Guarda tu perfil para poder agregar habilidades.</p>
+        <p className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-5 text-sm text-muted-foreground">
+          Guarda tu perfil para poder agregar habilidades.
+        </p>
       )}
     </section>
   )

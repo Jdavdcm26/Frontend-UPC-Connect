@@ -8,3 +8,11 @@ export function iniciales(correo: string): string {
   const texto = segunda ? primera[0] + segunda[0] : primera.slice(0, 2)
   return texto ? texto.toUpperCase() : '?'
 }
+
+// Iniciales de una persona a partir de su nombre: «Ana María» + «Pérez Gómez» -> «AP».
+export function inicialesDeNombre(nombres: string, apellidos: string): string {
+  const primera = nombres.trim()[0] ?? ''
+  const segunda = apellidos.trim()[0] ?? ''
+  const texto = primera + segunda
+  return texto ? texto.toLocaleUpperCase('es-CO') : '?'
+}

@@ -1,7 +1,9 @@
+import { Plus } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { LIMITES } from '@/features/perfil/limites'
+import EtiquetaQuitable from '@/shared/ui/EtiquetaQuitable'
 import FormField from '@/shared/ui/FormField'
 
 type Props = {
@@ -55,6 +57,7 @@ export default function InterestsField({ valor, onChange, error }: Props) {
               }}
             />
             <Button type="button" variant="outline" onClick={agregar}>
+              <Plus aria-hidden="true" />
               Agregar
             </Button>
           </div>
@@ -64,17 +67,12 @@ export default function InterestsField({ valor, onChange, error }: Props) {
       {valor.length > 0 && (
         <ul className="flex flex-wrap gap-2" aria-label="Intereses agregados">
           {valor.map((interes) => (
-            <li key={interes} className="flex items-center gap-1 rounded-full border px-3 py-1 text-sm">
-              {interes}
-              <button
-                type="button"
-                aria-label={`Quitar ${interes}`}
-                className="rounded-full px-1 hover:bg-muted"
-                onClick={() => onChange(valor.filter((actual) => actual !== interes))}
-              >
-                ×
-              </button>
-            </li>
+            <EtiquetaQuitable
+              key={interes}
+              texto={interes}
+              etiquetaQuitar={`Quitar ${interes}`}
+              onQuitar={() => onChange(valor.filter((actual) => actual !== interes))}
+            />
           ))}
         </ul>
       )}

@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Save } from 'lucide-react'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -15,6 +16,7 @@ import SemesterField from '@/features/perfil/SemesterField'
 import type { Carrera, Perfil } from '@/features/perfil/tipos'
 import { ApiError } from '@/shared/api/apiError'
 import FormField from '@/shared/ui/FormField'
+import MensajeFormulario from '@/shared/ui/MensajeFormulario'
 
 type Props = {
   carreras: Carrera[]
@@ -68,12 +70,12 @@ export default function ProfileForm({ carreras, perfil, esEgresado, onGuardado }
     : undefined
 
   return (
-    <form noValidate onSubmit={handleSubmit(guardar)} className="space-y-4">
-      {mensajeError && (
-        <p role="alert" className="text-sm text-destructive">
-          {mensajeError}
-        </p>
-      )}
+    <form
+      noValidate
+      onSubmit={handleSubmit(guardar)}
+      className="space-y-5 rounded-xl border bg-card p-5 shadow-sm sm:p-6"
+    >
+      {mensajeError && <MensajeFormulario tipo="error">{mensajeError}</MensajeFormulario>}
 
       <div className="grid gap-4 sm:grid-cols-2">
         <FormField id="nombres" etiqueta="Nombres" error={errors.nombres?.message}>
@@ -149,6 +151,7 @@ export default function ProfileForm({ carreras, perfil, esEgresado, onGuardado }
       />
 
       <Button type="submit" disabled={enviando}>
+        <Save aria-hidden="true" />
         {enviando ? 'Guardando...' : 'Guardar perfil'}
       </Button>
     </form>
