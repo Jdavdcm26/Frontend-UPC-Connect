@@ -1,22 +1,10 @@
-import { Link } from 'react-router-dom'
-import { Button } from '@/components/ui/button'
-import { RUTAS } from '@/shared/lib/rutas'
+import Portada from '@/features/landing/Portada'
 
-// Página de inicio (pública). Se reemplazará por la landing real.
+// Página de inicio (pública): portada con la propuesta de valor y las acciones principales.
 export default function HomePage() {
   return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold">UPC Connect</h1>
-      <p>Red profesional de la comunidad de la Universidad Popular del Cesar.</p>
-      <Button asChild>
-        <Link to={RUTAS.registro}>Comenzar</Link>
-      </Button>
-      <p className="text-sm">
-        ¿Ya tienes cuenta?{' '}
-        <Link to={RUTAS.iniciarSesion} className="underline">
-          Inicia sesión
-        </Link>
-      </p>
+    <div className="space-y-16 sm:space-y-24">
+      <Portada />
     </div>
   )
 }
