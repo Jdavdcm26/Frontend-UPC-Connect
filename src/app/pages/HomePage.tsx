@@ -1,12 +1,16 @@
-import { Button } from '@/components/ui/button'
+import Beneficios from '@/features/landing/Beneficios'
+import ComoFunciona from '@/features/landing/ComoFunciona'
+import LlamadoFinal from '@/features/landing/LlamadoFinal'
+import Portada from '@/features/landing/Portada'
 
-// Página de inicio (pública). Se reemplazará por la landing real.
+// Página de inicio (pública): portada, beneficios, cómo funciona y llamado a crear la cuenta.
 export default function HomePage() {
   return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold">UPC Connect</h1>
-      <p>Red profesional de la comunidad de la Universidad Popular del Cesar.</p>
-      <Button>Comenzar</Button>
+    <div className="space-y-16 sm:space-y-24">
+      <Portada />
+      <Beneficios />
+      <ComoFunciona />
+      <LlamadoFinal />
     </div>
   )
 }
