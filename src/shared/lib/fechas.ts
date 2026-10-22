@@ -22,3 +22,10 @@ export function formatearFechaHora(iso: string): string {
     minute: '2-digit',
   })
 }
+
+// Día para mostrar (por ejemplo, «17 de octubre de 2026») a partir de una fecha AAAA-MM-DD.
+// Se arma con la hora local: new Date('2026-10-17') la tomaría como UTC y en Colombia mostraría el día anterior.
+export function formatearDia(fecha: string): string {
+  const [anio, mes, dia] = fecha.split('-').map(Number)
+  return new Date(anio, mes - 1, dia).toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' })
+}

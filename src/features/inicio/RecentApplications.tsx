@@ -13,7 +13,7 @@ export default function RecentApplications({ postulaciones }: { postulaciones: P
       {postulaciones.map((postulacion) => (
         <li
           key={postulacion.id}
-          className="relative flex items-center gap-4 rounded-lg border bg-background p-4 transition-colors focus-within:ring-2 focus-within:ring-ring hover:bg-muted/60"
+          className="relative flex items-center gap-4 rounded-lg border bg-background p-4 transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring hover:bg-muted/60"
         >
           <span className="hidden size-10 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary sm:flex">
             <FileText aria-hidden="true" className="size-5" />

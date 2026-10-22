@@ -12,7 +12,7 @@ type Props = {
 export default function Saludo({ titulo, detalle, children }: Props) {
   return (
     <header className="space-y-2 rounded-xl border bg-card p-6 shadow-sm">
-      <h1 className="text-3xl font-bold">{titulo}</h1>
+      <h1 className="text-2xl font-bold sm:text-3xl">{titulo}</h1>
       {detalle && <p className="font-medium text-primary">{detalle}</p>}
       {children && <p className="max-w-2xl text-muted-foreground">{children}</p>}
     </header>
