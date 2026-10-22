@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Send } from 'lucide-react'
 import { useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -85,6 +86,7 @@ function FormularioPostulacion({ vacanteId, vacanteTitulo, onPostulado, onTermin
           Cancelar
         </Button>
         <Button type="submit" disabled={enviando}>
+          <Send aria-hidden="true" />
           {enviando ? 'Enviando…' : 'Enviar postulación'}
         </Button>
       </DialogFooter>
@@ -99,7 +101,10 @@ export default function ApplyDialog({ vacanteId, vacanteTitulo, onPostulado }: P
   return (
     <Dialog open={abierto} onOpenChange={setAbierto}>
       <DialogTrigger asChild>
-        <Button>Postularme</Button>
+        <Button size="lg" className="w-full">
+          <Send aria-hidden="true" />
+          Postularme
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <FormularioPostulacion
