@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { mensajeDeError } from '@/features/publicaciones/errores'
 import ImagePicker from '@/features/publicaciones/ImagePicker'
 import { filtrarImagenes } from '@/features/publicaciones/imagenes'
 import { LIMITES_PUBLICACION } from '@/features/publicaciones/limites'
 import { agregarImagenes, quitarImagen } from '@/features/publicaciones/publicacionesApi'
 import type { Publicacion } from '@/features/publicaciones/tipos'
 import { ApiError } from '@/shared/api/apiError'
+import { mensajeDeError } from '@/shared/lib/erroresServidor'
 import SeccionFormulario from '@/shared/ui/SeccionFormulario'
 
 type Props = {

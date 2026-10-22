@@ -4,9 +4,9 @@ import { toast } from 'sonner'
 import { cn } from 'cn'
 import { Button } from '@/components/ui/button'
 import { alternarReaccion } from '@/features/publicaciones/conversiones'
-import { mensajeDeError } from '@/features/publicaciones/errores'
 import { reaccionar } from '@/features/publicaciones/publicacionesApi'
 import type { EstadoReaccion } from '@/features/publicaciones/tipos'
+import { mensajeDeError } from '@/shared/lib/erroresServidor'
 
 type Props = {
   publicacionId: string

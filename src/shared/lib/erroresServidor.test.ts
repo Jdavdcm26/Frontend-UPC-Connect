@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { mensajeDeError } from '@/features/publicaciones/errores'
+import { mensajeDeError } from '@/shared/lib/erroresServidor'
 import { ApiError } from '@/shared/api/apiError'
 
 describe('mensajeDeError', () => {
