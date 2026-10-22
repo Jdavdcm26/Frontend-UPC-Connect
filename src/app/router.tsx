@@ -101,6 +101,49 @@ export const router = createBrowserRouter([
     ],
   },
   {
+    // Publicaciones de la comunidad (HU-18 a HU-26): el feed y el detalle los ven candidatos y empresas,
+    // cada uno con su menú. Publicar y editar es solo de estudiantes y egresados con perfil.
+    path: '/publicaciones',
+    element: <RequireAuth />,
+    children: [
+      {
+        element: <LayoutPorRol />,
+        children: [
+          { index: true, lazy: cargar(() => import('@/features/publicaciones/PublicacionesPage')) },
+          { path: ':id', lazy: cargar(() => import('@/features/publicaciones/PublicacionDetallePage')) },
+        ],
+      },
+      {
+        element: <RequireRole rol="candidato" />,
+        children: [
+          {
+            element: <CandidateLayout />,
+            children: [
+              {
+                element: <RequirePerfil />,
+                children: [
+                  { path: 'nueva', lazy: cargar(() => import('@/features/publicaciones/NuevaPublicacionPage')) },
+                  { path: ':id/editar', lazy: cargar(() => import('@/features/publicaciones/EditarPublicacionPage')) },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    // Cuentas que la persona bloqueó (HU-31). Bloquean candidatos y empresas.
+    path: '/bloqueados',
+    element: <RequireAuth />,
+    children: [
+      {
+        element: <LayoutPorRol />,
+        children: [{ index: true, lazy: cargar(() => import('@/features/red/BloqueadosPage')) }],
+      },
+    ],
+  },
+  {
     path: '/vacantes',
     element: <RequireAuth />,
     children: [

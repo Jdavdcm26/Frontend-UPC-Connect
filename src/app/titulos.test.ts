@@ -10,6 +10,9 @@ describe('tituloDeRuta', () => {
     expect(tituloDeRuta('/perfil')).toBe('Mi perfil · UPC Connect')
     expect(tituloDeRuta('/perfil/editar')).toBe('Editar perfil · UPC Connect')
     expect(tituloDeRuta('/empresa/vacantes/nueva')).toBe('Publicar vacante · UPC Connect')
+    expect(tituloDeRuta('/publicaciones')).toBe('Publicaciones · UPC Connect')
+    expect(tituloDeRuta('/publicaciones/nueva')).toBe('Nueva publicación · UPC Connect')
+    expect(tituloDeRuta('/bloqueados')).toBe('Cuentas bloqueadas · UPC Connect')
   })
 
   it('las rutas con un identificador también tienen título', () => {
@@ -17,6 +20,8 @@ describe('tituloDeRuta', () => {
     expect(tituloDeRuta('/perfiles/ana-perez')).toBe('Perfil · UPC Connect')
     expect(tituloDeRuta('/empresa/vacantes/abc-123/postulaciones')).toBe('Postulaciones recibidas · UPC Connect')
     expect(tituloDeRuta('/empresa/vacantes/abc-123/editar')).toBe('Editar vacante · UPC Connect')
+    expect(tituloDeRuta('/publicaciones/abc-123')).toBe('Publicación · UPC Connect')
+    expect(tituloDeRuta('/publicaciones/abc-123/editar')).toBe('Editar publicación · UPC Connect')
   })
 
   it('una barra final no cambia el título', () => {

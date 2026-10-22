@@ -16,6 +16,9 @@ export const RUTAS = {
   misPostulaciones: '/mis-postulaciones',
   perfil: '/perfil',
   perfilEditar: '/perfil/editar',
+  publicaciones: '/publicaciones',
+  nuevaPublicacion: '/publicaciones/nueva',
+  bloqueados: '/bloqueados',
   sinPermiso: '/sin-permiso',
   cuentaAdministrativa: '/cuenta-administrativa',
   // Panel de administración (Filament). Lo sirve el backend, no es una ruta de esta aplicación.
@@ -30,3 +33,9 @@ export const rutaPostulacionesVacante = (id: string) => `/empresa/vacantes/${id}
 
 // Ruta con el perfil de otra persona (HU-27 / FE-26). El slug lo genera el servidor.
 export const rutaPerfilPublico = (slug: string) => `/perfiles/${encodeURIComponent(slug)}`
+
+// Detalle de una publicación de la comunidad (HU-18).
+export const rutaPublicacion = (id: string) => `/publicaciones/${encodeURIComponent(id)}`
+
+// Editar una publicación propia (HU-22).
+export const rutaEditarPublicacion = (id: string) => `/publicaciones/${encodeURIComponent(id)}/editar`

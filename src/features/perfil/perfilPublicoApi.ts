@@ -1,6 +1,8 @@
 import { USAR_FIXTURES } from '@/features/auth/sesionApi'
 import { perfilPublicoDesdeServidor, type PerfilPublicoServidor } from '@/features/perfil/conversiones'
 import type { PerfilPublico } from '@/features/perfil/tipos'
+import { redPerfilDesdeServidor, type RedPerfilServidor } from '@/features/red/conversiones'
+import type { RedPerfil } from '@/features/red/tipos'
 import { leerPostulacionesDemo } from '@/features/postulaciones/postulacionesDemo'
 import { ApiError } from '@/shared/api/apiError'
 import { api } from '@/shared/api/client'
@@ -51,15 +53,27 @@ function buscarPerfilDemo(slug: string): PerfilPublicoServidor | undefined {
   }
 }
 
+// Perfil de otra persona con su relación con quien mira: seguidores, si lo sigue y si lo bloqueó.
+export type PerfilPublicoConRed = {
+  perfil: PerfilPublico
+  red: RedPerfil
+}
+
 // Perfil de otra persona (HU-27, API-16). Quien puede verlo lo ve completo. Si el slug no existe o
 // quien mira no puede verlo, el servidor responde 404 en los dos casos, sin distinguirlos.
-export async function obtenerPerfilPublico(slug: string): Promise<PerfilPublico> {
+// Junto al perfil llega el bloque «red» para los botones de seguir y bloquear (HU-28, HU-31).
+export async function obtenerPerfilPublico(slug: string): Promise<PerfilPublicoConRed> {
   if (USAR_FIXTURES) {
     await pausa(400)
     const encontrado = buscarPerfilDemo(slug)
     if (!encontrado) throw new ApiError(404, 'No encontramos ese perfil.')
-    return perfilPublicoDesdeServidor(encontrado)
+    return {
+      perfil: perfilPublicoDesdeServidor(encontrado),
+      red: { usuarioId: encontrado.id, seguidores: 0, seguidos: 0, loSigues: false, loBloqueaste: false },
+    }
   }
-  const respuesta = await api.get<{ data: PerfilPublicoServidor }>(`/api/v1/perfiles/${encodeURIComponent(slug)}`)
-  return perfilPublicoDesdeServidor(respuesta.data)
+  const respuesta = await api.get<{ data: PerfilPublicoServidor; red: RedPerfilServidor }>(
+    `/api/v1/perfiles/${encodeURIComponent(slug)}`,
+  )
+  return { perfil: perfilPublicoDesdeServidor(respuesta.data), red: redPerfilDesdeServidor(respuesta.red) }
 }

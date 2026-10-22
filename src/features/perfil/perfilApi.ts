@@ -8,6 +8,8 @@ import {
 import type { PerfilDatos } from '@/features/perfil/perfilEsquema'
 import type { Carrera, Perfil } from '@/features/perfil/tipos'
 import { USAR_FIXTURES } from '@/features/auth/sesionApi'
+import { redPropiaDesdeServidor, type RedPropiaServidor } from '@/features/red/conversiones'
+import type { RedPropia } from '@/features/red/tipos'
 import { ApiError } from '@/shared/api/apiError'
 import { api } from '@/shared/api/client'
 
@@ -46,6 +48,21 @@ export async function obtenerPerfil(): Promise<Perfil | null> {
     return perfilDesdeServidor(respuesta.data)
   } catch (error) {
     if (error instanceof ApiError && error.status === 404) return null
+    throw error
+  }
+}
+
+// Perfil propio con sus contadores de seguidores y seguidos (HU-28), para «Mi perfil».
+// Devuelve perfil null si todavía no lo ha creado (404).
+export async function obtenerPerfilConRed(): Promise<{ perfil: Perfil | null; red: RedPropia }> {
+  if (USAR_FIXTURES) {
+    return { perfil: leerPerfilDemo(), red: redPropiaDesdeServidor(undefined) }
+  }
+  try {
+    const respuesta = await api.get<{ data: PerfilServidor; red?: RedPropiaServidor }>('/api/v1/me/perfil')
+    return { perfil: perfilDesdeServidor(respuesta.data), red: redPropiaDesdeServidor(respuesta.red) }
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) return { perfil: null, red: redPropiaDesdeServidor(undefined) }
     throw error
   }
 }
