@@ -7,6 +7,7 @@ import { listarMisPostulaciones } from '@/features/postulaciones/postulacionesAp
 import type { Postulacion } from '@/features/postulaciones/tipos'
 import { RUTAS } from '@/shared/lib/rutas'
 import EmptyState from '@/shared/ui/EmptyState'
+import EncabezadoPagina from '@/shared/ui/EncabezadoPagina'
 import ErrorState from '@/shared/ui/ErrorState'
 
 // Historial de postulaciones de la persona con sesión (HU-46 / FE-24).
@@ -61,14 +62,17 @@ export default function MisPostulacionesPage() {
   }
 
   return (
-    <section className="mx-auto max-w-3xl space-y-4">
-      <h1 className="text-2xl font-bold">Mis postulaciones</h1>
+    <section className="space-y-6">
+      <EncabezadoPagina
+        titulo="Mis postulaciones"
+        descripcion="Aquí ves las vacantes a las que te postulaste y en qué etapa va cada una."
+      />
 
       {cargando && (
-        <div className="space-y-3" role="status" aria-label="Cargando postulaciones">
-          <Skeleton className="h-24 w-full" />
-          <Skeleton className="h-24 w-full" />
-          <Skeleton className="h-24 w-full" />
+        <div className="space-y-4" role="status" aria-label="Cargando postulaciones">
+          <Skeleton className="h-36 w-full rounded-xl" />
+          <Skeleton className="h-36 w-full rounded-xl" />
+          <Skeleton className="h-36 w-full rounded-xl" />
         </div>
       )}
 
