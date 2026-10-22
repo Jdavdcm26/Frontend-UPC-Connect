@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { obtenerCarreras } from '@/features/perfil/perfilApi'
 import type { Carrera } from '@/features/perfil/tipos'
@@ -8,9 +7,9 @@ import ApplyButton from '@/features/postulaciones/ApplyButton'
 import {
   ETIQUETA_ESTADO,
   ETIQUETA_MODALIDAD,
-  ETIQUETA_TIPO,
   type Vacante,
 } from '@/features/vacantes/tipos'
+import VacancyTypeBadge from '@/features/vacantes/VacancyTypeBadge'
 import { obtenerVacante } from '@/features/vacantes/vacantesApi'
 import { ApiError } from '@/shared/api/apiError'
 import { RUTAS } from '@/shared/lib/rutas'
@@ -106,7 +105,7 @@ export default function VacanteDetallePage() {
       <header className="space-y-2">
         <div className="flex items-start justify-between gap-2">
           <h1 className="text-2xl font-bold">{datos.titulo}</h1>
-          <Badge variant="outline">{ETIQUETA_TIPO[datos.tipo]}</Badge>
+          <VacancyTypeBadge tipo={datos.tipo} />
         </div>
         <p>{datos.empresa}</p>
         <p className="text-sm text-muted-foreground">

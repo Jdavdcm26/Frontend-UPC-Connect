@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
-import { Badge } from '@/components/ui/badge'
-import { ETIQUETA_MODALIDAD, ETIQUETA_TIPO, type Vacante } from '@/features/vacantes/tipos'
+import { ETIQUETA_MODALIDAD, type Vacante } from '@/features/vacantes/tipos'
+import VacancyTypeBadge from '@/features/vacantes/VacancyTypeBadge'
 import { RUTAS } from '@/shared/lib/rutas'
 
 // Tarjeta de una vacante en el listado (FE-21). El título lleva al detalle (FE-22).
@@ -13,7 +13,7 @@ export default function VacancyCard({ vacante }: { vacante: Vacante }) {
             {vacante.titulo}
           </Link>
         </h2>
-        <Badge variant="outline">{ETIQUETA_TIPO[vacante.tipo]}</Badge>
+        <VacancyTypeBadge tipo={vacante.tipo} />
       </div>
       <p className="text-sm">{vacante.empresa}</p>
       <p className="text-sm text-muted-foreground">
