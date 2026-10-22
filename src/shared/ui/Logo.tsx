@@ -20,7 +20,7 @@ export default function Logo({ destino, subtitulo }: Props) {
       </span>
       <span className="flex flex-col leading-tight">
         <span className="text-base font-semibold tracking-tight text-foreground">UPC Connect</span>
-        {subtitulo && <span className="text-xs text-muted-foreground">{subtitulo}</span>}
+        {subtitulo && <span className="hidden text-xs text-muted-foreground sm:block">{subtitulo}</span>}
       </span>
     </Link>
   )

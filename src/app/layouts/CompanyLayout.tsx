@@ -3,5 +3,5 @@ import { ENLACES_EMPRESA } from '@/app/navegacion'
 
 // Diseño para cuentas de empresa con sesión iniciada.
 export default function CompanyLayout() {
-  return <AppShell nombre="UPC Connect · Empresa" enlaces={ENLACES_EMPRESA} />
+  return <AppShell subtitulo="Portal de empresas" enlaces={ENLACES_EMPRESA} />
 }
