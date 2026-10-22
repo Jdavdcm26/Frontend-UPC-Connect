@@ -21,24 +21,44 @@ export default function TargetCareersField({ carreras, valor, onChange, error, i
 
   return (
     <fieldset aria-describedby={error ? 'carreras-error' : undefined} className="space-y-2">
-      <legend className="text-sm font-medium">Carreras objetivo</legend>
-      <div className="grid gap-2 sm:grid-cols-2">
+      {/* El título de la sección ya está en la tarjeta; la leyenda queda para los lectores de pantalla. */}
+      <legend className="sr-only">Carreras objetivo</legend>
+      <p aria-live="polite" className="text-sm font-medium text-primary">
+        {valor.length === 0
+          ? 'Ninguna carrera seleccionada'
+          : `${valor.length} ${valor.length === 1 ? 'carrera seleccionada' : 'carreras seleccionadas'}`}
+      </p>
+      <div className="grid gap-3 sm:grid-cols-2">
         {carreras
           .filter((carrera) => carrera.activa)
           .map((carrera, posicion) => {
             const id = String(carrera.id)
             const idCasilla = `carrera-${id}`
+            const idFacultad = `${idCasilla}-facultad`
             return (
-              <div key={id} className="flex items-center gap-2">
+              // La etiqueta se estira sobre toda la tarjeta (after:absolute) para que cualquier clic marque la casilla.
+              <div
+                key={id}
+                className="relative flex items-start gap-3 rounded-lg border bg-background p-3 transition-colors hover:bg-muted/60 has-[[aria-checked=true]]:border-primary has-[[aria-checked=true]]:bg-primary-soft"
+              >
                 <Checkbox
                   ref={posicion === 0 ? inputRef : undefined}
                   id={idCasilla}
+                  aria-describedby={carrera.facultad ? idFacultad : undefined}
+                  className="z-10 mt-0.5"
                   checked={valor.includes(id)}
                   onCheckedChange={(marcada) => alternar(id, marcada === true)}
                 />
-                <Label htmlFor={idCasilla} className="font-normal">
-                  {carrera.nombre}
-                </Label>
+                <div className="min-w-0 space-y-0.5">
+                  <Label htmlFor={idCasilla} className="font-medium after:absolute after:inset-0 after:content-['']">
+                    {carrera.nombre}
+                  </Label>
+                  {carrera.facultad && (
+                    <p id={idFacultad} className="text-xs text-muted-foreground">
+                      {carrera.facultad}
+                    </p>
+                  )}
+                </div>
               </div>
             )
           })}
