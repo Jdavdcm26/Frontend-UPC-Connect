@@ -61,8 +61,11 @@ async function solicitar<T>(metodo: Metodo, ruta: string, cuerpo?: unknown): Pro
   const esEscritura = metodo !== 'GET'
   if (esEscritura) await obtenerCsrf()
 
+  // Un FormData (archivos) viaja tal cual: el navegador pone el Content-Type multipart con su «boundary».
+  // Cualquier otro cuerpo viaja como JSON.
+  const esFormulario = cuerpo instanceof FormData
   const headers: Record<string, string> = { Accept: 'application/json' }
-  if (cuerpo !== undefined) headers['Content-Type'] = 'application/json'
+  if (cuerpo !== undefined && !esFormulario) headers['Content-Type'] = 'application/json'
   const token = leerCookie('XSRF-TOKEN')
   if (esEscritura && token) headers['X-XSRF-TOKEN'] = token
 
@@ -72,7 +75,7 @@ async function solicitar<T>(metodo: Metodo, ruta: string, cuerpo?: unknown): Pro
       method: metodo,
       headers,
       credentials: 'include', // envía la cookie de sesión
-      body: cuerpo !== undefined ? JSON.stringify(cuerpo) : undefined,
+      body: esFormulario ? cuerpo : cuerpo !== undefined ? JSON.stringify(cuerpo) : undefined,
     })
   } catch {
     throw new ApiError(0, 'No hay conexión con el servidor. Revisa tu internet.')
@@ -96,4 +99,7 @@ export const api = {
   put: <T>(ruta: string, cuerpo?: unknown) => solicitar<T>('PUT', ruta, cuerpo),
   patch: <T>(ruta: string, cuerpo?: unknown) => solicitar<T>('PATCH', ruta, cuerpo),
   delete: <T>(ruta: string) => solicitar<T>('DELETE', ruta),
+  // Envía archivos (por ejemplo, imágenes) como multipart/form-data, con la misma cookie, CSRF y manejo de errores.
+  // Solo POST: PHP no lee archivos que llegan en un PUT o PATCH multipart.
+  postFormulario: <T>(ruta: string, formulario: FormData) => solicitar<T>('POST', ruta, formulario),
 }
