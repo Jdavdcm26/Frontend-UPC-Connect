@@ -1,14 +1,19 @@
+import { ShieldAlert } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { Button } from '@/components/ui/button'
+import { RUTAS } from '@/shared/lib/rutas'
+import PantallaEstado from '@/shared/ui/PantallaEstado'
 
 // Se muestra cuando la persona no tiene permiso para ver la página (403).
 export default function ForbiddenPage() {
   return (
-    <div className="space-y-2">
-      <h1 className="text-2xl font-bold">Sin permiso</h1>
-      <p>No tienes permiso para ver esta página.</p>
-      <Link to="/" className="text-primary underline">
-        Volver al inicio
-      </Link>
+    <div className="mx-auto max-w-md py-8">
+      <PantallaEstado icono={ShieldAlert} tono="error" titulo="Sin permiso">
+        <p className="text-muted-foreground">No tienes permiso para ver esta página.</p>
+        <Button asChild>
+          <Link to={RUTAS.raiz}>Volver al inicio</Link>
+        </Button>
+      </PantallaEstado>
     </div>
   )
 }

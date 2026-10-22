@@ -8,6 +8,7 @@ import { reenviarVerificacionApi } from '@/features/auth/verificacionApi'
 import { ApiError } from '@/shared/api/apiError'
 import { correo } from '@/shared/lib/validaciones'
 import FormField from '@/shared/ui/FormField'
+import MensajeFormulario from '@/shared/ui/MensajeFormulario'
 
 const esquema = z.object({ correo })
 type Datos = z.infer<typeof esquema>
@@ -45,15 +46,11 @@ export default function ReenviarVerificacion() {
       </FormField>
 
       {error !== undefined && (
-        <p role="alert" className="text-sm text-destructive">
+        <MensajeFormulario tipo="error">
           {error instanceof ApiError ? error.message : 'No pudimos enviar el enlace.'}
-        </p>
+        </MensajeFormulario>
       )}
-      {enviado && (
-        <p role="status" className="text-sm text-muted-foreground">
-          Listo, te enviamos un nuevo enlace. Revisa tu correo.
-        </p>
-      )}
+      {enviado && <MensajeFormulario tipo="exito">Listo, te enviamos un nuevo enlace. Revisa tu correo.</MensajeFormulario>}
 
       <Button type="submit" className="w-full" disabled={enviando}>
         {enviando ? 'Enviando...' : 'Reenviar enlace'}
