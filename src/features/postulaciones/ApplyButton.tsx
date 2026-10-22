@@ -2,9 +2,15 @@ import { Button } from '@/components/ui/button'
 import ApplyDialog from '@/features/postulaciones/ApplyDialog'
 import type { Vacante } from '@/features/vacantes/tipos'
 
+type Props = {
+  vacante: Vacante
+  // Se llama al terminar el envío de la postulación, con éxito o con error.
+  onPostulado: () => void
+}
+
 // Muestra la acción de postularse según la vacante (HU-45 / FE-23).
 // Para llegar al detalle ya se exige tener el perfil completo (RequirePerfil), así que no se revisa aquí.
-export default function ApplyButton({ vacante }: { vacante: Vacante }) {
+export default function ApplyButton({ vacante, onPostulado }: Props) {
   if (vacante.yaPostulado) {
     return <Button disabled>✓ Postulado</Button>
   }
@@ -15,5 +21,5 @@ export default function ApplyButton({ vacante }: { vacante: Vacante }) {
     return <Button disabled>Postularme</Button>
   }
 
-  return <ApplyDialog vacanteId={vacante.id} vacanteTitulo={vacante.titulo} />
+  return <ApplyDialog vacanteId={vacante.id} vacanteTitulo={vacante.titulo} onPostulado={onPostulado} />
 }

@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router'
 import { toast } from 'sonner'
@@ -17,13 +17,7 @@ import {
   type Vacante,
 } from '@/features/vacantes/tipos'
 import { vacanteEsquema, type VacanteDatos } from '@/features/vacantes/vacanteEsquema'
-import {
-  CLAVE_MIS_VACANTES,
-  actualizarVacante,
-  claveMiVacante,
-  claveVacante,
-  crearVacante,
-} from '@/features/vacantes/vacantesApi'
+import { actualizarVacante, crearVacante } from '@/features/vacantes/vacantesApi'
 import { ApiError } from '@/shared/api/apiError'
 import { aplicarErroresServidor } from '@/shared/lib/erroresServidor'
 import { hoyLocal } from '@/shared/lib/fechas'
@@ -69,7 +63,8 @@ type Props = {
 // Formulario para publicar o editar una vacante, práctica o pasantía (HU-41 / FE-19, FE-20).
 export default function VacancyForm({ carreras, vacante }: Props) {
   const navigate = useNavigate()
-  const queryClient = useQueryClient()
+  const [enviando, setEnviando] = useState(false)
+  const [errorEnvio, setErrorEnvio] = useState<unknown>()
   const valoresIniciales = vacante ? valoresDesdeVacante(vacante) : VALORES_INICIALES
 
   const {
@@ -84,32 +79,33 @@ export default function VacancyForm({ carreras, vacante }: Props) {
     defaultValues: valoresIniciales,
   })
 
-  const guardado = useMutation({
-    mutationFn: (datos: VacanteDatos) => (vacante ? actualizarVacante(vacante.id, datos) : crearVacante(datos)),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: CLAVE_MIS_VACANTES })
+  // Las listas de vacantes se piden de nuevo solas al entrar a ellas, así que no hay nada más que actualizar.
+  async function guardar(datos: VacanteDatos) {
+    setEnviando(true)
+    setErrorEnvio(undefined)
+    try {
       if (vacante) {
-        void queryClient.invalidateQueries({ queryKey: claveMiVacante(vacante.id) })
-        void queryClient.invalidateQueries({ queryKey: claveVacante(vacante.id) })
-        void queryClient.invalidateQueries({ queryKey: ['vacantes'] })
+        await actualizarVacante(vacante.id, datos)
         toast.success('Vacante actualizada.')
         void navigate(RUTAS.empresaVacantes)
       } else {
+        await crearVacante(datos)
         toast.success('Vacante publicada.')
         reset(VALORES_INICIALES)
       }
-    },
-    // Los errores de validación (422) van a cada campo; el resto (por ejemplo, empresa no aprobada) se muestra arriba.
-    onError: (error) => {
+    } catch (error) {
+      // Los errores de validación (422) van a cada campo; el resto (por ejemplo, empresa no aprobada) se muestra arriba.
+      setErrorEnvio(error)
       aplicarErroresServidor(error, setError)
-    },
-  })
+    } finally {
+      setEnviando(false)
+    }
+  }
 
-  const errorGeneral =
-    guardado.error instanceof ApiError && guardado.error.status !== 422 ? guardado.error.message : undefined
+  const errorGeneral = errorEnvio instanceof ApiError && errorEnvio.status !== 422 ? errorEnvio.message : undefined
 
   return (
-    <form noValidate onSubmit={handleSubmit((datos) => guardado.mutate(datos))} className="space-y-4">
+    <form noValidate onSubmit={handleSubmit(guardar)} className="space-y-4">
       {errorGeneral && (
         <p role="alert" className="rounded-md border border-destructive p-3 text-sm text-destructive">
           {errorGeneral}
@@ -196,8 +192,8 @@ export default function VacancyForm({ carreras, vacante }: Props) {
         </FormField>
       </div>
 
-      <Button type="submit" disabled={guardado.isPending}>
-        {guardado.isPending
+      <Button type="submit" disabled={enviando}>
+        {enviando
           ? vacante
             ? 'Guardando...'
             : 'Publicando...'

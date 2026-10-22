@@ -257,9 +257,6 @@ export async function crearVacante(datos: VacanteDatos): Promise<void> {
   }
 }
 
-// Clave de caché de la lista de vacantes de la empresa.
-export const CLAVE_MIS_VACANTES = ['mis-vacantes']
-
 // Vacantes de la empresa que inició sesión, en todos los estados, por cursor (FE-20).
 export async function listarMisVacantes(cursor: string | null): Promise<PaginaVacantes> {
   if (USAR_FIXTURES) {
@@ -278,9 +275,6 @@ export async function listarMisVacantes(cursor: string | null): Promise<PaginaVa
   const respuesta = await api.get<PaginaServidor>(`/api/v1/empresa/vacantes${consulta ? `?${consulta}` : ''}`)
   return paginaDesdeServidor(respuesta)
 }
-
-// Clave de caché de una vacante propia de la empresa.
-export const claveMiVacante = (id: string) => ['mi-vacante', id]
 
 // Detalle de una vacante propia (FE-20). Una vacante de otra empresa responde 404.
 export async function obtenerMiVacante(id: string): Promise<Vacante> {
@@ -377,8 +371,6 @@ export async function listarVacantes(filtros: FiltrosVacantes, cursor: string | 
   return paginaDesdeServidor(respuesta)
 }
 
-// Clave de caché del detalle público de una vacante.
-export const claveVacante = (id: string) => ['vacante', id]
 
 // Detalle público de una vacante (FE-22). Si no existe, el error es 404.
 export async function obtenerVacante(id: string): Promise<Vacante> {

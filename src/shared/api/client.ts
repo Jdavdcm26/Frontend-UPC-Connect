@@ -22,6 +22,13 @@ function leerCookie(nombre: string): string | null {
   return par ? decodeURIComponent(par.split('=')[1]) : null
 }
 
+// La sesión vence (401/419) y algún componente de más arriba (SessionProvider)
+// necesita enterarse sin que exista una caché global que lo avise sola.
+let alSesionExpirada: (() => void) | null = null
+export function configurarSesionExpirada(fn: (() => void) | null): void {
+  alSesionExpirada = fn
+}
+
 // Pide la cookie CSRF una sola vez, antes de la primera escritura.
 let csrfListo = false
 async function obtenerCsrf() {
@@ -74,6 +81,8 @@ async function solicitar<T>(metodo: Metodo, ruta: string, cuerpo?: unknown): Pro
   if (!respuesta.ok) {
     // Con 419 la cookie CSRF venció: se vuelve a pedir en la próxima escritura.
     if (respuesta.status === 419) csrfListo = false
+    // 401/419: la sesión ya no es válida en el servidor. Se avisa para que la app pase a "sin sesión".
+    if (respuesta.status === 401 || respuesta.status === 419) alSesionExpirada?.()
     throw await crearError(respuesta)
   }
   if (respuesta.status === 204) return undefined as T

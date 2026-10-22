@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -16,14 +15,15 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 import { LIMITES_POSTULACION } from '@/features/postulaciones/limites'
 import { postulacionEsquema, type PostulacionDatos } from '@/features/postulaciones/postulacionEsquema'
-import { CLAVE_POSTULACIONES, postularse } from '@/features/postulaciones/postulacionesApi'
-import { claveVacante } from '@/features/vacantes/vacantesApi'
+import { postularse } from '@/features/postulaciones/postulacionesApi'
 import { ApiError } from '@/shared/api/apiError'
 import FormField from '@/shared/ui/FormField'
 
 type Props = {
   vacanteId: string
   vacanteTitulo: string
+  // Con éxito o con error, la página vuelve a pedir la vacante para mostrar lo que dice el servidor.
+  onPostulado: () => void
 }
 
 type FormularioProps = Props & {
@@ -32,8 +32,8 @@ type FormularioProps = Props & {
 }
 
 // Formulario con el mensaje opcional. Vive dentro de la ventana, así que se vacía al cerrarla.
-function FormularioPostulacion({ vacanteId, vacanteTitulo, onTerminado }: FormularioProps) {
-  const queryClient = useQueryClient()
+function FormularioPostulacion({ vacanteId, vacanteTitulo, onPostulado, onTerminado }: FormularioProps) {
+  const [enviando, setEnviando] = useState(false)
   const {
     register,
     handleSubmit,
@@ -44,28 +44,26 @@ function FormularioPostulacion({ vacanteId, vacanteTitulo, onTerminado }: Formul
     defaultValues: { mensaje: '' },
   })
 
-  const envio = useMutation({
-    mutationFn: (datos: PostulacionDatos) => postularse(vacanteId, datos.mensaje),
-    onSuccess: () => {
+  async function enviar(datos: PostulacionDatos) {
+    setEnviando(true)
+    try {
+      await postularse(vacanteId, datos.mensaje)
       toast.success('Te postulaste a la vacante.')
       onTerminado()
-    },
-    onError: (error) => {
+    } catch (error) {
       // El aviso queda como notificación porque, si ya estabas postulado o la vacante se cerró,
       // esta ventana desaparece al actualizarse el detalle.
       toast.error(error instanceof ApiError ? error.message : 'No pudimos enviar tu postulación. Intenta de nuevo.')
-    },
-    // Con éxito o con error, el detalle y las listas se actualizan con lo que dice el servidor.
-    onSettled: () => {
-      void queryClient.invalidateQueries({ queryKey: claveVacante(vacanteId) })
-      void queryClient.invalidateQueries({ queryKey: CLAVE_POSTULACIONES })
-    },
-  })
+    } finally {
+      setEnviando(false)
+      onPostulado()
+    }
+  }
 
   const escritos = useWatch({ control, name: 'mensaje' }).length
 
   return (
-    <form noValidate onSubmit={handleSubmit((datos) => envio.mutate(datos))} className="min-w-0 space-y-4">
+    <form noValidate onSubmit={handleSubmit(enviar)} className="min-w-0 space-y-4">
       <DialogHeader>
         <DialogTitle>Postularme</DialogTitle>
         <DialogDescription>
@@ -83,11 +81,11 @@ function FormularioPostulacion({ vacanteId, vacanteTitulo, onTerminado }: Formul
       </FormField>
 
       <DialogFooter>
-        <Button type="button" variant="outline" onClick={onTerminado} disabled={envio.isPending}>
+        <Button type="button" variant="outline" onClick={onTerminado} disabled={enviando}>
           Cancelar
         </Button>
-        <Button type="submit" disabled={envio.isPending}>
-          {envio.isPending ? 'Enviando…' : 'Enviar postulación'}
+        <Button type="submit" disabled={enviando}>
+          {enviando ? 'Enviando…' : 'Enviar postulación'}
         </Button>
       </DialogFooter>
     </form>
@@ -95,7 +93,7 @@ function FormularioPostulacion({ vacanteId, vacanteTitulo, onTerminado }: Formul
 }
 
 // Botón "Postularme" que abre la ventana con el mensaje opcional (HU-45 / FE-23).
-export default function ApplyDialog({ vacanteId, vacanteTitulo }: Props) {
+export default function ApplyDialog({ vacanteId, vacanteTitulo, onPostulado }: Props) {
   const [abierto, setAbierto] = useState(false)
 
   return (
@@ -107,6 +105,7 @@ export default function ApplyDialog({ vacanteId, vacanteTitulo }: Props) {
         <FormularioPostulacion
           vacanteId={vacanteId}
           vacanteTitulo={vacanteTitulo}
+          onPostulado={onPostulado}
           onTerminado={() => setAbierto(false)}
         />
       </DialogContent>

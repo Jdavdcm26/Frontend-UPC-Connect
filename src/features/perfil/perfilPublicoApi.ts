@@ -5,8 +5,6 @@ import { leerPostulacionesDemo } from '@/features/postulaciones/postulacionesDem
 import { ApiError } from '@/shared/api/apiError'
 import { api } from '@/shared/api/client'
 
-// Clave de TanStack Query del perfil de otra persona.
-export const clavePerfilPublico = (slug: string) => ['perfiles', slug] as const
 
 const pausa = (ms: number) => new Promise((resolver) => setTimeout(resolver, ms))
 

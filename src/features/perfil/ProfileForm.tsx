@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -10,7 +10,7 @@ import { perfilAFormulario } from '@/features/perfil/conversiones'
 import InterestsField from '@/features/perfil/InterestsField'
 import { LIMITES } from '@/features/perfil/limites'
 import { esquemaPerfil, type PerfilDatos } from '@/features/perfil/perfilEsquema'
-import { CLAVE_PERFIL, guardarPerfil } from '@/features/perfil/perfilApi'
+import { guardarPerfil } from '@/features/perfil/perfilApi'
 import SemesterField from '@/features/perfil/SemesterField'
 import type { Carrera, Perfil } from '@/features/perfil/tipos'
 import { ApiError } from '@/shared/api/apiError'
@@ -22,11 +22,14 @@ type Props = {
   perfil: Perfil | null
   // Los egresados escriben su año de grado y no tienen semestre; los estudiantes, al revés.
   esEgresado: boolean
+  // Recibe el perfil que devuelve el servidor, para que la pantalla lo muestre de inmediato.
+  onGuardado: (perfil: Perfil) => void
 }
 
 // Formulario para crear y editar el perfil básico (HU-09 / FE-15).
-export default function ProfileForm({ carreras, perfil, esEgresado }: Props) {
-  const queryClient = useQueryClient()
+export default function ProfileForm({ carreras, perfil, esEgresado, onGuardado }: Props) {
+  const [enviando, setEnviando] = useState(false)
+  const [error, setError] = useState<unknown>()
   const {
     register,
     control,
@@ -44,23 +47,28 @@ export default function ProfileForm({ carreras, perfil, esEgresado }: Props) {
       ? [...carreras, { id: perfil.carreraId, nombre: perfil.carreraNombre, facultad: '', activa: false }]
       : carreras
 
-  const guardado = useMutation({
-    mutationFn: (datos: PerfilDatos) => guardarPerfil(datos, esEgresado),
-    // Los cambios se ven de inmediato: se actualiza el perfil que tiene la app.
-    onSuccess: (nuevo) => {
-      queryClient.setQueryData(CLAVE_PERFIL, nuevo)
+  async function guardar(datos: PerfilDatos) {
+    setEnviando(true)
+    setError(undefined)
+    try {
+      const nuevo = await guardarPerfil(datos, esEgresado)
+      onGuardado(nuevo)
       toast.success('Perfil guardado.')
-    },
-  })
+    } catch (e) {
+      setError(e)
+    } finally {
+      setEnviando(false)
+    }
+  }
 
-  const mensajeError = guardado.isError
-    ? guardado.error instanceof ApiError
-      ? guardado.error.message
+  const mensajeError = error
+    ? error instanceof ApiError
+      ? error.message
       : 'No pudimos guardar tu perfil. Intenta de nuevo.'
     : undefined
 
   return (
-    <form noValidate onSubmit={handleSubmit((datos) => guardado.mutate(datos))} className="space-y-4">
+    <form noValidate onSubmit={handleSubmit(guardar)} className="space-y-4">
       {mensajeError && (
         <p role="alert" className="text-sm text-destructive">
           {mensajeError}
@@ -140,8 +148,8 @@ export default function ProfileForm({ carreras, perfil, esEgresado }: Props) {
         )}
       />
 
-      <Button type="submit" disabled={guardado.isPending}>
-        {guardado.isPending ? 'Guardando...' : 'Guardar perfil'}
+      <Button type="submit" disabled={enviando}>
+        {enviando ? 'Guardando...' : 'Guardar perfil'}
       </Button>
     </form>
   )

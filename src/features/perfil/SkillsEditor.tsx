@@ -1,10 +1,8 @@
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { etiquetaNivel } from '@/features/perfil/formato'
-import { agregarHabilidad, buscarHabilidades, claveHabilidades, quitarHabilidad } from '@/features/perfil/habilidadesApi'
+import { agregarHabilidad, buscarHabilidades, quitarHabilidad } from '@/features/perfil/habilidadesApi'
 import { LIMITES } from '@/features/perfil/limites'
-import { CLAVE_PERFIL } from '@/features/perfil/perfilApi'
 import SkillCombobox from '@/features/perfil/SkillCombobox'
 import type { HabilidadCatalogo, HabilidadPerfil, NivelHabilidad, Perfil } from '@/features/perfil/tipos'
 import { ApiError } from '@/shared/api/apiError'
@@ -13,6 +11,8 @@ import SelectField from '@/shared/ui/SelectField'
 
 type Props = {
   habilidades: HabilidadPerfil[]
+  // El servidor responde con el perfil actualizado: así la lista cambia de inmediato.
+  onActualizar: (perfil: Perfil) => void
 }
 
 const SIN_NIVEL = 'SIN_NIVEL'
@@ -34,56 +34,69 @@ function mensajeDeError(error: unknown): string {
 
 // Habilidades del perfil: se buscan en el catálogo, se agregan sin duplicados y se quitan (HU-11 / FE-17).
 // Cada cambio se guarda al momento y no depende del botón «Guardar perfil».
-export default function SkillsEditor({ habilidades }: Props) {
-  const queryClient = useQueryClient()
+export default function SkillsEditor({ habilidades, onActualizar }: Props) {
   const entrada = useRef<HTMLInputElement>(null)
   const [texto, setTexto] = useState('')
   const [nivel, setNivel] = useState(SIN_NIVEL)
   const [error, setError] = useState<string>()
+  const [sugerencias, setSugerencias] = useState<HabilidadCatalogo[]>()
+  const [agregando, setAgregando] = useState(false)
+  const [quitando, setQuitando] = useState(false)
 
   // Se busca cuando la persona deja de escribir, no en cada tecla.
   const busqueda = useDebounce(texto.trim())
-  const sugerencias = useQuery({
-    queryKey: claveHabilidades(busqueda),
-    queryFn: () => buscarHabilidades(busqueda),
-    enabled: busqueda !== '',
-    // El catálogo cambia poco: no hace falta pedirlo de nuevo cada vez.
-    staleTime: 5 * 60 * 1000,
-    // Mientras llegan las nuevas sugerencias se siguen viendo las anteriores.
-    placeholderData: keepPreviousData,
-  })
+  useEffect(() => {
+    if (busqueda === '') return
+    // Si llega una respuesta de una búsqueda vieja, se ignora.
+    let vigente = true
+    // Mientras llegan las nuevas sugerencias se siguen viendo las anteriores (no se borran aquí).
+    buscarHabilidades(busqueda)
+      .then((datos) => {
+        if (vigente) setSugerencias(datos)
+      })
+      .catch(() => {
+        if (vigente) setSugerencias([])
+      })
+    return () => {
+      vigente = false
+    }
+  }, [busqueda])
 
-  // El servidor responde con el perfil actualizado: así la lista cambia de inmediato.
-  const alActualizar = (perfil: Perfil) => queryClient.setQueryData(CLAVE_PERFIL, perfil)
-
-  const agregar = useMutation({
-    mutationFn: (habilidad: HabilidadCatalogo) =>
-      agregarHabilidad(habilidad, nivel === SIN_NIVEL ? null : (nivel as NivelHabilidad)),
-    onSuccess: (perfil) => {
-      alActualizar(perfil)
+  async function agregar(habilidad: HabilidadCatalogo) {
+    setAgregando(true)
+    try {
+      const perfil = await agregarHabilidad(habilidad, nivel === SIN_NIVEL ? null : (nivel as NivelHabilidad))
+      onActualizar(perfil)
       setTexto('')
       setError(undefined)
       toast.success('Habilidad agregada.')
-    },
-    onError: (e) => setError(mensajeDeError(e)),
-  })
+    } catch (e) {
+      setError(mensajeDeError(e))
+    } finally {
+      setAgregando(false)
+    }
+  }
 
-  const quitar = useMutation({
-    mutationFn: quitarHabilidad,
-    onSuccess: (perfil) => {
-      alActualizar(perfil)
+  async function quitar(id: string) {
+    setQuitando(true)
+    try {
+      const perfil = await quitarHabilidad(id)
+      onActualizar(perfil)
       setError(undefined)
       toast.success('Habilidad quitada.')
       // La habilidad quitada desaparece junto con su botón: el foco vuelve al campo de búsqueda.
       entrada.current?.focus()
-    },
-    onError: (e) => setError(mensajeDeError(e)),
-  })
+    } catch (e) {
+      setError(mensajeDeError(e))
+    } finally {
+      setQuitando(false)
+    }
+  }
 
   const lleno = habilidades.length >= LIMITES.habilidades
   const yaAgregadas = new Set(habilidades.map((h) => h.id))
   // Con el texto vacío no se busca, así que no se muestran sugerencias viejas.
-  const lista = busqueda === '' || texto.trim() === '' ? undefined : sugerencias.data
+  const lista = busqueda === '' || texto.trim() === '' ? undefined : sugerencias
 
   return (
     <section aria-labelledby="titulo-habilidades" className="space-y-4">
@@ -109,7 +122,7 @@ export default function SkillsEditor({ habilidades }: Props) {
           sugerencias={lista}
           yaAgregadas={yaAgregadas}
           onElegir={(habilidad) => {
-            if (!agregar.isPending) agregar.mutate(habilidad)
+            if (!agregando) void agregar(habilidad)
           }}
           deshabilitado={lleno}
           inputRef={entrada}
@@ -135,9 +148,9 @@ export default function SkillsEditor({ habilidades }: Props) {
               <button
                 type="button"
                 aria-label={`Quitar ${habilidad.nombre}`}
-                disabled={quitar.isPending}
+                disabled={quitando}
                 className="rounded-full px-1 hover:bg-muted disabled:opacity-50"
-                onClick={() => quitar.mutate(habilidad.id)}
+                onClick={() => void quitar(habilidad.id)}
               >
                 ×
               </button>

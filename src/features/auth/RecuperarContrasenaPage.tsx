@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation } from '@tanstack/react-query'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
@@ -34,24 +33,37 @@ export default function RecuperarContrasenaPage() {
   // El token de la verificación sirve una sola vez: si el envío falla, se pide uno nuevo.
   const [intento, setIntento] = useState(0)
 
-  const solicitud = useMutation({
-    mutationFn: solicitarRecuperacionApi,
-    onError: (error) => {
+  const [enviando, setEnviando] = useState(false)
+  const [enviado, setEnviado] = useState(false)
+  const [errorEnvio, setErrorEnvio] = useState<unknown>()
+
+  async function solicitar(datos: SolicitarRecuperacionDatos) {
+    setEnviando(true)
+    setErrorEnvio(undefined)
+    try {
+      await solicitarRecuperacionApi(datos)
+      setEnviado(true)
+    } catch (error) {
+      setErrorEnvio(error)
       aplicarErroresServidor(error, setError)
       setValue('captcha', '')
       setIntento((n) => n + 1)
-    },
-  })
+    } finally {
+      setEnviando(false)
+    }
+  }
 
   // Los errores de validación (422) van a cada campo; el resto se muestra arriba.
   const errorGeneral =
-    solicitud.error instanceof ApiError && solicitud.error.status !== 422
-      ? solicitud.error.message
-      : solicitud.isError && !(solicitud.error instanceof ApiError)
+    errorEnvio instanceof ApiError
+      ? errorEnvio.status !== 422
+        ? errorEnvio.message
+        : undefined
+      : errorEnvio !== undefined
         ? 'No pudimos enviar el enlace.'
         : undefined
 
-  if (solicitud.isSuccess) {
+  if (enviado) {
     return (
       <section className="mx-auto max-w-sm space-y-4 text-center">
         <h1 className="text-2xl font-bold">Revisa tu correo</h1>
@@ -68,7 +80,7 @@ export default function RecuperarContrasenaPage() {
   return (
     <form
       noValidate
-      onSubmit={handleSubmit((datos) => solicitud.mutate(datos))}
+      onSubmit={handleSubmit(solicitar)}
       className="mx-auto max-w-sm space-y-4"
     >
       <h1 className="text-2xl font-bold">Recuperar contraseña</h1>
@@ -94,8 +106,8 @@ export default function RecuperarContrasenaPage() {
         )}
       />
 
-      <Button type="submit" className="w-full" disabled={solicitud.isPending}>
-        {solicitud.isPending ? 'Enviando...' : 'Enviar enlace'}
+      <Button type="submit" className="w-full" disabled={enviando}>
+        {enviando ? 'Enviando...' : 'Enviar enlace'}
       </Button>
 
       <p className="text-center text-sm text-muted-foreground">

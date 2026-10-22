@@ -1,12 +1,13 @@
-import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import VacancyActions from '@/features/vacantes/VacancyActions'
 import VacancyStateBadge from '@/features/vacantes/VacancyStateBadge'
-import { ETIQUETA_MODALIDAD, ETIQUETA_TIPO, type EstadoVacante } from '@/features/vacantes/tipos'
-import { CLAVE_MIS_VACANTES, cambiarEstadoVacante, listarMisVacantes } from '@/features/vacantes/vacantesApi'
+import { ETIQUETA_MODALIDAD, ETIQUETA_TIPO, type EstadoVacante, type Vacante } from '@/features/vacantes/tipos'
+import { cambiarEstadoVacante, listarMisVacantes } from '@/features/vacantes/vacantesApi'
+import { ApiError } from '@/shared/api/apiError'
 import { RUTAS } from '@/shared/lib/rutas'
 
 const MENSAJE_ESTADO: Record<EstadoVacante, string> = {
@@ -17,26 +18,62 @@ const MENSAJE_ESTADO: Record<EstadoVacante, string> = {
 
 // Lista de las vacantes de la empresa con sus acciones, por cursor (FE-20).
 export default function MisVacantesPage() {
-  const queryClient = useQueryClient()
-  const vacantes = useInfiniteQuery({
-    queryKey: CLAVE_MIS_VACANTES,
-    queryFn: ({ pageParam }) => listarMisVacantes(pageParam),
-    initialPageParam: null as string | null,
-    getNextPageParam: (ultima) => ultima.siguiente,
-  })
+  const [lista, setLista] = useState<Vacante[]>([])
+  const [siguiente, setSiguiente] = useState<string | null>(null)
+  const [cargando, setCargando] = useState(true)
+  const [cargandoMas, setCargandoMas] = useState(false)
+  const [error, setError] = useState<unknown>()
+  const [cambiando, setCambiando] = useState(false)
 
-  const cambio = useMutation({
-    mutationFn: ({ id, estado }: { id: string; estado: EstadoVacante }) => cambiarEstadoVacante(id, estado),
-    onSuccess: (_, { estado }) => {
+  // Primera página al entrar.
+  useEffect(() => {
+    let vigente = true
+    listarMisVacantes(null)
+      .then((pagina) => {
+        if (!vigente) return
+        setLista(pagina.vacantes)
+        setSiguiente(pagina.siguiente)
+      })
+      .catch((e) => {
+        if (vigente) setError(e)
+      })
+      .finally(() => {
+        if (vigente) setCargando(false)
+      })
+    return () => {
+      vigente = false
+    }
+  }, [])
+
+  async function cargarMas() {
+    if (siguiente === null) return
+    setCargandoMas(true)
+    try {
+      const pagina = await listarMisVacantes(siguiente)
+      setLista((actual) => [...actual, ...pagina.vacantes])
+      setSiguiente(pagina.siguiente)
+    } catch (e) {
+      toast.error(e instanceof ApiError ? e.message : 'No pudimos cargar más vacantes. Intenta de nuevo.')
+    } finally {
+      setCargandoMas(false)
+    }
+  }
+
+  // Al cambiar el estado se actualiza esa vacante en la lista, sin volver a pedir todas las páginas.
+  async function cambiarEstado(id: string, estado: EstadoVacante) {
+    setCambiando(true)
+    try {
+      await cambiarEstadoVacante(id, estado)
+      setLista((actual) => actual.map((v) => (v.id === id ? { ...v, estado } : v)))
       toast.success(MENSAJE_ESTADO[estado])
-      void queryClient.invalidateQueries({ queryKey: CLAVE_MIS_VACANTES })
-    },
-    onError: (error) => {
-      toast.error(error.message)
-    },
-  })
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'No pudimos cambiar el estado. Intenta de nuevo.')
+    } finally {
+      setCambiando(false)
+    }
+  }
 
-  if (vacantes.isPending) {
+  if (cargando) {
     return (
       <div className="mx-auto max-w-3xl space-y-4" role="status" aria-label="Cargando vacantes">
         <Skeleton className="h-8 w-48" />
@@ -46,15 +83,13 @@ export default function MisVacantesPage() {
     )
   }
 
-  if (vacantes.isError) {
+  if (error) {
     return (
       <p role="alert" className="text-center text-destructive">
         No pudimos cargar tus vacantes. Recarga la página para intentar de nuevo.
       </p>
     )
   }
-
-  const lista = vacantes.data.pages.flatMap((pagina) => pagina.vacantes)
 
   return (
     <section className="mx-auto max-w-3xl space-y-4">
@@ -81,18 +116,18 @@ export default function MisVacantesPage() {
               <p className="text-sm text-muted-foreground">Cierra el {vacante.fechaCierre}</p>
               <VacancyActions
                 vacante={vacante}
-                ocupado={cambio.isPending}
-                onCambiarEstado={(estado) => cambio.mutate({ id: vacante.id, estado })}
+                ocupado={cambiando}
+                onCambiarEstado={(estado) => void cambiarEstado(vacante.id, estado)}
               />
             </li>
           ))}
         </ul>
       )}
 
-      {vacantes.hasNextPage && (
+      {siguiente !== null && (
         <div className="text-center">
-          <Button variant="outline" disabled={vacantes.isFetchingNextPage} onClick={() => void vacantes.fetchNextPage()}>
-            {vacantes.isFetchingNextPage ? 'Cargando...' : 'Cargar más'}
+          <Button variant="outline" disabled={cargandoMas} onClick={() => void cargarMas()}>
+            {cargandoMas ? 'Cargando...' : 'Cargar más'}
           </Button>
         </div>
       )}

@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation } from '@tanstack/react-query'
+import { useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { Link, useLocation } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
@@ -26,11 +26,24 @@ export default function RestablecerContrasenaPage() {
 
   const contrasenaEscrita = useWatch({ control, name: 'contrasena' })
 
-  const cambio = useMutation({
-    mutationFn: (datos: RestablecerDatos) => restablecerContrasenaApi(search, datos),
-  })
+  const [enviando, setEnviando] = useState(false)
+  const [cambiada, setCambiada] = useState(false)
+  const [error, setError] = useState<unknown>()
 
-  if (cambio.isSuccess) {
+  async function guardar(datos: RestablecerDatos) {
+    setEnviando(true)
+    setError(undefined)
+    try {
+      await restablecerContrasenaApi(search, datos)
+      setCambiada(true)
+    } catch (e) {
+      setError(e ?? new Error())
+    } finally {
+      setEnviando(false)
+    }
+  }
+
+  if (cambiada) {
     return (
       <section className="mx-auto max-w-sm space-y-4 text-center">
         <h1 className="text-2xl font-bold">Contraseña actualizada</h1>
@@ -47,14 +60,14 @@ export default function RestablecerContrasenaPage() {
   return (
     <form
       noValidate
-      onSubmit={handleSubmit((datos) => cambio.mutate(datos))}
+      onSubmit={handleSubmit(guardar)}
       className="mx-auto max-w-sm space-y-4"
     >
       <h1 className="text-2xl font-bold">Crear contraseña nueva</h1>
 
-      {cambio.isError && (
+      {error !== undefined && (
         <div role="alert" className="space-y-1 text-sm text-destructive">
-          <p>{cambio.error instanceof ApiError ? cambio.error.message : 'No pudimos cambiar la contraseña.'}</p>
+          <p>{error instanceof ApiError ? error.message : 'No pudimos cambiar la contraseña.'}</p>
           <Link to={RUTAS.recuperarContrasena} className="underline">
             Pedir un enlace nuevo
           </Link>
@@ -75,8 +88,8 @@ export default function RestablecerContrasenaPage() {
         )}
       </FormField>
 
-      <Button type="submit" className="w-full" disabled={cambio.isPending}>
-        {cambio.isPending ? 'Guardando...' : 'Guardar contraseña'}
+      <Button type="submit" className="w-full" disabled={enviando}>
+        {enviando ? 'Guardando...' : 'Guardar contraseña'}
       </Button>
     </form>
   )

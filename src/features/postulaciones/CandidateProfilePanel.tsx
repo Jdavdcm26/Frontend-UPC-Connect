@@ -1,45 +1,69 @@
-import { useQuery } from '@tanstack/react-query'
-import { useEffect, useRef, type RefObject } from 'react'
+import { useEffect, useRef, useState, type RefObject } from 'react'
 import { Link, Navigate } from 'react-router'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { resumenAcademico } from '@/features/perfil/formato'
 import ProfileSection from '@/features/perfil/ProfileSection'
 import ApplicationStateBadge from '@/features/postulaciones/ApplicationStateBadge'
-import { claveDetalleRecibida, obtenerPostulacionRecibida } from '@/features/postulaciones/postulacionesEmpresaApi'
+import { obtenerPostulacionRecibida } from '@/features/postulaciones/postulacionesEmpresaApi'
 import StateChangeSelect from '@/features/postulaciones/StateChangeSelect'
 import StateHistory from '@/features/postulaciones/StateHistory'
-import type { DetallePostulacionRecibida } from '@/features/postulaciones/tipos'
+import type { DetallePostulacionRecibida, EstadoPostulacion } from '@/features/postulaciones/tipos'
 import { ApiError } from '@/shared/api/apiError'
 import { RUTAS, rutaPerfilPublico } from '@/shared/lib/rutas'
 
 type Props = {
   postulacionId: string
-  // Vacante a la que pertenece la postulación (para actualizar su lista al cambiar el estado).
-  vacanteId: string
+  // Avisa a la lista cuando cambia el estado, para que lo muestre sin volver a pedirla.
+  onEstadoCambiado: (postulacionId: string, estado: EstadoPostulacion) => void
   onCerrar: () => void
 }
 
 // Panel lateral con el perfil visible del candidato, su mensaje y el historial (HU-47 / FE-25).
-export default function CandidateProfilePanel({ postulacionId, vacanteId, onCerrar }: Props) {
-  const detalle = useQuery({
-    queryKey: claveDetalleRecibida(postulacionId),
-    queryFn: () => obtenerPostulacionRecibida(postulacionId),
-  })
+export default function CandidateProfilePanel({ postulacionId, onEstadoCambiado, onCerrar }: Props) {
+  const [detalle, setDetalle] = useState<DetallePostulacionRecibida>()
+  const [cargando, setCargando] = useState(true)
+  const [error, setError] = useState<unknown>()
+
+  // La página monta este panel con key={postulacionId}: cada postulación empieza con el estado limpio.
+  useEffect(() => {
+    let vigente = true
+    obtenerPostulacionRecibida(postulacionId)
+      .then((datos) => {
+        if (vigente) setDetalle(datos)
+      })
+      .catch((e) => {
+        if (vigente) setError(e)
+      })
+      .finally(() => {
+        if (vigente) setCargando(false)
+      })
+    return () => {
+      vigente = false
+    }
+  }, [postulacionId])
+
+  const cargado = !cargando && error === undefined && detalle !== undefined
 
   // Al abrir el panel, el foco pasa al título para que el teclado y los lectores de pantalla lo noten.
   const titulo = useRef<HTMLHeadingElement>(null)
   useEffect(() => {
-    if (detalle.isSuccess) titulo.current?.focus()
-  }, [detalle.isSuccess, postulacionId])
+    if (cargado) titulo.current?.focus()
+  }, [cargado, postulacionId])
 
-  if (detalle.error instanceof ApiError && (detalle.error.status === 403 || detalle.error.status === 404)) {
+  // El servidor responde con el detalle actualizado: el panel y la lista lo muestran de inmediato.
+  function alCambiar(nuevo: DetallePostulacionRecibida) {
+    setDetalle(nuevo)
+    onEstadoCambiado(nuevo.id, nuevo.estado)
+  }
+
+  if (error instanceof ApiError && (error.status === 403 || error.status === 404)) {
     return <Navigate to={RUTAS.sinPermiso} replace />
   }
 
   return (
     <aside aria-label="Perfil del candidato" className="space-y-4 rounded-lg border p-4">
-      {detalle.isPending && (
+      {cargando && (
         <div className="space-y-3" role="status" aria-label="Cargando perfil del candidato">
           <Skeleton className="h-7 w-48" />
           <Skeleton className="h-5 w-64" />
@@ -47,17 +71,15 @@ export default function CandidateProfilePanel({ postulacionId, vacanteId, onCerr
         </div>
       )}
 
-      {detalle.isError && (
+      {!cargando && error !== undefined && (
         <p role="alert" className="text-sm text-destructive">
           No pudimos cargar el perfil del candidato. Intenta de nuevo en un momento.
         </p>
       )}
 
-      {detalle.isSuccess && (
-        <Contenido detalle={detalle.data} vacanteId={vacanteId} titulo={titulo} onCerrar={onCerrar} />
-      )}
+      {cargado && detalle && <Contenido detalle={detalle} titulo={titulo} onCambiado={alCambiar} onCerrar={onCerrar} />}
 
-      {!detalle.isSuccess && (
+      {!cargado && (
         <Button variant="outline" size="sm" onClick={onCerrar}>
           Cerrar
         </Button>
@@ -68,12 +90,12 @@ export default function CandidateProfilePanel({ postulacionId, vacanteId, onCerr
 
 type ContenidoProps = {
   detalle: DetallePostulacionRecibida
-  vacanteId: string
   titulo: RefObject<HTMLHeadingElement | null>
+  onCambiado: (detalle: DetallePostulacionRecibida) => void
   onCerrar: () => void
 }
 
-function Contenido({ detalle, vacanteId, titulo, onCerrar }: ContenidoProps) {
+function Contenido({ detalle, titulo, onCambiado, onCerrar }: ContenidoProps) {
   const c = detalle.candidato
   const datosAcademicos = resumenAcademico(c)
 
@@ -95,8 +117,8 @@ function Contenido({ detalle, vacanteId, titulo, onCerrar }: ContenidoProps) {
       <StateChangeSelect
         key={detalle.estado}
         postulacionId={detalle.id}
-        vacanteId={vacanteId}
         estadoActual={detalle.estado}
+        onCambiado={onCambiado}
       />
 
       {detalle.mensaje && (
