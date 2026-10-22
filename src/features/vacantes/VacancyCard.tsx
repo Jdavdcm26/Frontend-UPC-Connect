@@ -1,4 +1,4 @@
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 import { Badge } from '@/components/ui/badge'
 import { ETIQUETA_MODALIDAD, ETIQUETA_TIPO, type Vacante } from '@/features/vacantes/tipos'
 import { RUTAS } from '@/shared/lib/rutas'

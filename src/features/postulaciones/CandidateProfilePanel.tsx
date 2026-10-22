@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type RefObject } from 'react'
-import { Link, Navigate } from 'react-router'
+import { Link, Navigate } from 'react-router-dom'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { resumenAcademico } from '@/features/perfil/formato'
