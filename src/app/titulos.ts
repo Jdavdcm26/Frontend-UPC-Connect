@@ -2,7 +2,6 @@
 // para decir dónde está la persona. Cada línea es: patrón de la ruta -> nombre de la pantalla.
 const TITULOS: [RegExp, string][] = [
   [/^\/$/, 'Inicio'],
-  [/^\/catalogo$/, 'Catálogo de vacantes'],
   [/^\/iniciar-sesion$/, 'Iniciar sesión'],
   [/^\/registro$/, 'Crear cuenta'],
   [/^\/revisa-tu-correo$/, 'Revisa tu correo'],

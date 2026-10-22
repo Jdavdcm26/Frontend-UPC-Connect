@@ -1,4 +1,4 @@
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 import ApplicationStateBadge from '@/features/postulaciones/ApplicationStateBadge'
 import type { Postulacion } from '@/features/postulaciones/tipos'
 import { formatearFecha } from '@/shared/lib/fechas'

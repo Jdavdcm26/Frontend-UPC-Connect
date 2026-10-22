@@ -30,7 +30,7 @@ describe('destinoPermitido', () => {
   })
 
   it('las rutas públicas sirven para cualquier rol', () => {
-    expect(destinoPermitido('/catalogo', 'empresa')).toBe('/catalogo')
+    expect(destinoPermitido('/politica-de-privacidad', 'empresa')).toBe('/politica-de-privacidad')
     expect(destinoPermitido('/politica-de-privacidad', 'candidato')).toBe('/politica-de-privacidad')
   })
 })

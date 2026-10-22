@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router'
+import { Link, useParams } from 'react-router-dom'
 import { Skeleton } from '@/components/ui/skeleton'
 import { obtenerCarreras } from '@/features/perfil/perfilApi'
 import type { Carrera } from '@/features/perfil/tipos'
