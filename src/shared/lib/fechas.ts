@@ -29,3 +29,19 @@ export function formatearDia(fecha: string): string {
   const [anio, mes, dia] = fecha.split('-').map(Number)
   return new Date(anio, mes - 1, dia).toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' })
 }
+
+const MINUTO = 60_000
+const HORA = 60 * MINUTO
+const DIA = 24 * HORA
+
+// Cuánto hace que pasó algo, para publicaciones y comentarios: «hace 5 minutos», «hace 2 días».
+// Pasada una semana se muestra la fecha. Una fecha un poco en el futuro (relojes desfasados) es «hace un momento».
+export function formatearHace(iso: string, ahora: Date = new Date()): string {
+  const diferencia = ahora.getTime() - new Date(iso).getTime()
+  const plural = (n: number, unidad: string) => `hace ${n} ${unidad}${n === 1 ? '' : 's'}`
+  if (diferencia < MINUTO) return 'hace un momento'
+  if (diferencia < HORA) return plural(Math.floor(diferencia / MINUTO), 'minuto')
+  if (diferencia < DIA) return plural(Math.floor(diferencia / HORA), 'hora')
+  if (diferencia < 7 * DIA) return plural(Math.floor(diferencia / DIA), 'día')
+  return formatearFecha(iso)
+}
