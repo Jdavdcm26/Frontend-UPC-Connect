@@ -1,3 +1,4 @@
+import { Briefcase, FilePlus2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
@@ -6,6 +7,7 @@ import { useSession } from '@/features/auth/useSession'
 import ApprovalBanner from '@/features/inicio/ApprovalBanner'
 import DashboardCard from '@/features/inicio/DashboardCard'
 import QuickActions, { type Acceso } from '@/features/inicio/QuickActions'
+import Saludo from '@/features/inicio/Saludo'
 import VacancySummaryTable from '@/features/inicio/VacancySummaryTable'
 import type { Vacante } from '@/features/vacantes/tipos'
 import { listarMisVacantes } from '@/features/vacantes/vacantesApi'
@@ -14,8 +16,8 @@ import EmptyState from '@/shared/ui/EmptyState'
 import ErrorState from '@/shared/ui/ErrorState'
 
 const ACCESOS: Acceso[] = [
-  { ruta: RUTAS.empresaNuevaVacante, titulo: 'Publicar vacante', descripcion: 'Crea una nueva oferta.' },
-  { ruta: RUTAS.empresaVacantes, titulo: 'Mis vacantes', descripcion: 'Edita, pausa o cierra tus ofertas.' },
+  { ruta: RUTAS.empresaNuevaVacante, titulo: 'Publicar vacante', descripcion: 'Crea una nueva oferta.', icono: FilePlus2 },
+  { ruta: RUTAS.empresaVacantes, titulo: 'Mis vacantes', descripcion: 'Edita, pausa o cierra tus ofertas.', icono: Briefcase },
 ]
 
 // Inicio de la empresa (HU-03 / FE-29): vacantes con su conteo de postulaciones y accesos.
@@ -52,8 +54,8 @@ export default function InicioEmpresaPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6">
-      <h1 className="text-2xl font-bold">Inicio</h1>
+    <div className="space-y-6">
+      <Saludo titulo="Inicio">Publica tus vacantes y revisa a los candidatos que se postulan.</Saludo>
 
       {/* Solo cuando el servidor dice expresamente que no está aprobada. */}
       {usuario?.empresaAprobada === false && <ApprovalBanner />}

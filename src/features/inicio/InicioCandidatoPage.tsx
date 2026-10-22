@@ -1,3 +1,4 @@
+import { ClipboardList, Search, UserRound } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
@@ -5,6 +6,8 @@ import { Skeleton } from '@/components/ui/skeleton'
 import DashboardCard from '@/features/inicio/DashboardCard'
 import QuickActions, { type Acceso } from '@/features/inicio/QuickActions'
 import RecentApplications from '@/features/inicio/RecentApplications'
+import Saludo from '@/features/inicio/Saludo'
+import { resumenAcademico } from '@/features/perfil/formato'
 import { obtenerPerfil } from '@/features/perfil/perfilApi'
 import type { Perfil } from '@/features/perfil/tipos'
 import { listarMisPostulaciones } from '@/features/postulaciones/postulacionesApi'
@@ -17,9 +20,9 @@ import ErrorState from '@/shared/ui/ErrorState'
 const CANTIDAD_RECIENTES = 3
 
 const ACCESOS: Acceso[] = [
-  { ruta: RUTAS.vacantes, titulo: 'Vacantes', descripcion: 'Busca y filtra ofertas para tu carrera.' },
-  { ruta: RUTAS.perfil, titulo: 'Mi perfil', descripcion: 'Revisa y actualiza tus datos.' },
-  { ruta: RUTAS.misPostulaciones, titulo: 'Mis postulaciones', descripcion: 'Sigue el estado de cada una.' },
+  { ruta: RUTAS.vacantes, titulo: 'Vacantes', descripcion: 'Busca y filtra ofertas para tu carrera.', icono: Search },
+  { ruta: RUTAS.misPostulaciones, titulo: 'Mis postulaciones', descripcion: 'Sigue el estado de cada una.', icono: ClipboardList },
+  { ruta: RUTAS.perfil, titulo: 'Mi perfil', descripcion: 'Revisa y actualiza tus datos.', icono: UserRound },
 ]
 
 // Inicio del candidato (HU-03 / FE-28): accesos y postulaciones recientes.
@@ -68,8 +71,17 @@ export default function InicioCandidatoPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6">
-      <h1 className="text-2xl font-bold">{perfil ? `Hola, ${perfil.nombres}` : 'Inicio'}</h1>
+    <div className="space-y-6">
+      <Saludo
+        titulo={perfil ? `Hola, ${perfil.nombres}` : 'Inicio'}
+        detalle={
+          perfil
+            ? resumenAcademico({ carrera: perfil.carreraNombre, semestre: perfil.semestre, anioGrado: perfil.anioGrado })
+            : undefined
+        }
+      >
+        Explora las vacantes, postúlate y sigue el estado de cada postulación.
+      </Saludo>
 
       <QuickActions accesos={ACCESOS} />
 
