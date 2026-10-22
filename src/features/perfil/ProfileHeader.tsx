@@ -1,5 +1,6 @@
 import { GraduationCap, MapPin, Pencil } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { cn } from 'cn'
 import { buttonVariants } from '@/components/ui/button'
 import { inicialesDeNombre } from '@/shared/lib/iniciales'
 import { RUTAS } from '@/shared/lib/rutas'
@@ -31,7 +32,7 @@ export default function ProfileHeader({ nombres, apellidos, titular, detalle, ci
             {inicialesDeNombre(nombres, apellidos)}
           </span>
           {!soloLectura && (
-            <Link to={RUTAS.perfilEditar} className={buttonVariants({ variant: 'outline' })}>
+            <Link to={RUTAS.perfilEditar} className={cn(buttonVariants({ variant: 'outline' }))}>
               <Pencil aria-hidden="true" />
               Editar perfil
             </Link>

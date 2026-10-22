@@ -1,6 +1,6 @@
-import { ArrowLeft, Building2, CalendarClock, GraduationCap, Lock, MapPin, Monitor } from 'lucide-react'
+import { Building2, CalendarClock, GraduationCap, Lock, MapPin, Monitor } from 'lucide-react'
 import { useEffect, useState, type ReactNode } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { Skeleton } from '@/components/ui/skeleton'
 import { obtenerCarreras } from '@/features/perfil/perfilApi'
 import type { Carrera } from '@/features/perfil/tipos'
@@ -15,15 +15,11 @@ import { obtenerVacante } from '@/features/vacantes/vacantesApi'
 import { ApiError } from '@/shared/api/apiError'
 import { formatearDia } from '@/shared/lib/fechas'
 import { RUTAS } from '@/shared/lib/rutas'
-import { claseEnlace } from '@/shared/ui/estilosEnlace'
+import AvisoInformativo from '@/shared/ui/AvisoInformativo'
+import EnlaceVolver from '@/shared/ui/EnlaceVolver'
 import ErrorState from '@/shared/ui/ErrorState'
 
-const VolverAlListado = () => (
-  <Link to={RUTAS.vacantes} className={`${claseEnlace} inline-flex items-center gap-1.5 text-sm`}>
-    <ArrowLeft aria-hidden="true" className="size-4" />
-    Volver a vacantes
-  </Link>
-)
+const VolverAlListado = () => <EnlaceVolver to={RUTAS.vacantes}>Volver a vacantes</EnlaceVolver>
 
 // Recuadro de una sección del detalle (descripción, requisitos, carreras objetivo).
 function Seccion({ titulo, children }: { titulo: string; children: ReactNode }) {
@@ -125,15 +121,11 @@ export default function VacanteDetallePage() {
       <VolverAlListado />
 
       {!datos.abierta && (
-        <p
-          role="status"
-          className="flex items-start gap-3 rounded-xl border border-ambar/30 bg-ambar-soft p-4 text-sm font-medium text-ambar"
-        >
-          <Lock aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
+        <AvisoInformativo icono={Lock}>
           {datos.estado === 'ACTIVA'
             ? 'La fecha de cierre de esta vacante ya pasó y no recibe postulaciones.'
             : `Esta vacante está ${ETIQUETA_ESTADO[datos.estado].toLowerCase()} y no recibe postulaciones.`}
-        </p>
+        </AvisoInformativo>
       )}
 
       {/* En pantallas angostas el orden es: encabezado, postulación y secciones; en anchas, las secciones
