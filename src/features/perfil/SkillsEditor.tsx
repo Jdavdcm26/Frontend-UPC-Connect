@@ -1,3 +1,4 @@
+import { Zap } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { etiquetaNivel } from '@/features/perfil/formato'
@@ -7,6 +8,7 @@ import SkillCombobox from '@/features/perfil/SkillCombobox'
 import type { HabilidadCatalogo, HabilidadPerfil, NivelHabilidad, Perfil } from '@/features/perfil/tipos'
 import { ApiError } from '@/shared/api/apiError'
 import { useDebounce } from '@/shared/lib/useDebounce'
+import EtiquetaQuitable from '@/shared/ui/EtiquetaQuitable'
 import SelectField from '@/shared/ui/SelectField'
 
 type Props = {
@@ -99,8 +101,14 @@ export default function SkillsEditor({ habilidades, onActualizar }: Props) {
   const lista = busqueda === '' || texto.trim() === '' ? undefined : sugerencias
 
   return (
-    <section aria-labelledby="titulo-habilidades" className="space-y-4">
-      <h2 id="titulo-habilidades" className="text-lg font-semibold">
+    <section
+      aria-labelledby="titulo-habilidades"
+      className="space-y-4 rounded-xl border bg-card p-5 shadow-sm sm:p-6"
+    >
+      <h2 id="titulo-habilidades" className="flex items-center gap-2.5 text-xl font-semibold">
+        <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary">
+          <Zap aria-hidden="true" className="size-4.5" />
+        </span>
         Habilidades
       </h2>
 
@@ -142,19 +150,14 @@ export default function SkillsEditor({ habilidades, onActualizar }: Props) {
       ) : (
         <ul className="flex flex-wrap gap-2" aria-label="Habilidades agregadas">
           {habilidades.map((habilidad) => (
-            <li key={habilidad.id} className="flex items-center gap-1 rounded-full border px-3 py-1 text-sm">
-              {habilidad.nombre}
-              {habilidad.nivel && <span className="text-muted-foreground"> · {etiquetaNivel(habilidad.nivel)}</span>}
-              <button
-                type="button"
-                aria-label={`Quitar ${habilidad.nombre}`}
-                disabled={quitando}
-                className="rounded-full px-1 hover:bg-muted disabled:opacity-50"
-                onClick={() => void quitar(habilidad.id)}
-              >
-                ×
-              </button>
-            </li>
+            <EtiquetaQuitable
+              key={habilidad.id}
+              texto={habilidad.nombre}
+              detalle={habilidad.nivel ? etiquetaNivel(habilidad.nivel) : undefined}
+              etiquetaQuitar={`Quitar ${habilidad.nombre}`}
+              deshabilitado={quitando}
+              onQuitar={() => void quitar(habilidad.id)}
+            />
           ))}
         </ul>
       )}

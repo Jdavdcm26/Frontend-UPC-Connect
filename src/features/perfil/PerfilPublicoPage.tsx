@@ -6,6 +6,7 @@ import { obtenerPerfilPublico } from '@/features/perfil/perfilPublicoApi'
 import PublicProfileView from '@/features/perfil/PublicProfileView'
 import type { PerfilPublico } from '@/features/perfil/tipos'
 import { ApiError } from '@/shared/api/apiError'
+import ErrorState from '@/shared/ui/ErrorState'
 
 // Perfil de otra persona: /perfiles/:slug (HU-27 / FE-26).
 // Con key={slug}, al pasar de un perfil a otro el contenido se monta de nuevo con su estado limpio.
@@ -38,10 +39,9 @@ function PerfilPublicoContenido({ slug }: { slug: string }) {
 
   if (cargando) {
     return (
-      <div className="mx-auto max-w-2xl space-y-4" role="status" aria-label="Cargando perfil">
-        <Skeleton className="h-8 w-64" />
-        <Skeleton className="h-5 w-48" />
-        <Skeleton className="h-24 w-full" />
+      <div className="space-y-6" role="status" aria-label="Cargando perfil">
+        <Skeleton className="h-60 w-full rounded-xl" />
+        <Skeleton className="h-32 w-full rounded-xl" />
       </div>
     )
   }
@@ -51,9 +51,7 @@ function PerfilPublicoContenido({ slug }: { slug: string }) {
 
   if (error || !perfil) {
     return (
-      <p role="alert" className="text-center text-destructive">
-        No pudimos cargar este perfil. Recarga la página para intentar de nuevo.
-      </p>
+      <ErrorState mensaje="No pudimos cargar este perfil. Recarga la página para intentar de nuevo." />
     )
   }
 

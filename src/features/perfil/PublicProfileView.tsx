@@ -13,16 +13,17 @@ export default function PublicProfileView({ perfil }: { perfil: PerfilPublico })
   })
 
   return (
-    <article className="mx-auto max-w-2xl space-y-6">
+    <article className="space-y-6">
       <ProfileHeader
-        nombre={`${perfil.nombres} ${perfil.apellidos}`}
+        nombres={perfil.nombres}
+        apellidos={perfil.apellidos}
         titular={perfil.titular}
         detalle={detalle}
+        ciudad={perfil.ciudad}
         soloLectura
       />
       <ProfileDetails
         descripcion={perfil.descripcion}
-        ciudad={perfil.ciudad}
         intereses={perfil.intereses}
         habilidades={perfil.habilidades}
       />

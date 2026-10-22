@@ -1,5 +1,7 @@
+import { Compass, ExternalLink, GraduationCap, History, MapPin, MessageSquareText, UserRound, X } from 'lucide-react'
 import { useEffect, useRef, useState, type RefObject } from 'react'
 import { Link, Navigate } from 'react-router-dom'
+import { cn } from 'cn'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { resumenAcademico } from '@/features/perfil/formato'
@@ -10,7 +12,10 @@ import StateChangeSelect from '@/features/postulaciones/StateChangeSelect'
 import StateHistory from '@/features/postulaciones/StateHistory'
 import type { DetallePostulacionRecibida, EstadoPostulacion } from '@/features/postulaciones/tipos'
 import { ApiError } from '@/shared/api/apiError'
+import { inicialesDeNombre } from '@/shared/lib/iniciales'
 import { RUTAS, rutaPerfilPublico } from '@/shared/lib/rutas'
+import DatoIcono from '@/shared/ui/DatoIcono'
+import ErrorState from '@/shared/ui/ErrorState'
 
 type Props = {
   postulacionId: string
@@ -62,25 +67,27 @@ export default function CandidateProfilePanel({ postulacionId, onEstadoCambiado,
   }
 
   return (
-    <aside aria-label="Perfil del candidato" className="space-y-4 rounded-lg border p-4">
+    <aside
+      aria-label="Perfil del candidato"
+      className="space-y-5 rounded-xl border bg-card p-5 shadow-sm sm:p-6 lg:sticky lg:top-24"
+    >
       {cargando && (
         <div className="space-y-3" role="status" aria-label="Cargando perfil del candidato">
-          <Skeleton className="h-7 w-48" />
+          <Skeleton className="h-14 w-full rounded-xl" />
           <Skeleton className="h-5 w-64" />
           <Skeleton className="h-20 w-full" />
         </div>
       )}
 
       {!cargando && error !== undefined && (
-        <p role="alert" className="text-sm text-destructive">
-          No pudimos cargar el perfil del candidato. Intenta de nuevo en un momento.
-        </p>
+        <ErrorState mensaje="No pudimos cargar el perfil del candidato. Intenta de nuevo en un momento." />
       )}
 
       {cargado && detalle && <Contenido detalle={detalle} titulo={titulo} onCambiado={alCambiar} onCerrar={onCerrar} />}
 
       {!cargado && (
-        <Button variant="outline" size="sm" onClick={onCerrar}>
+        <Button variant="outline" onClick={onCerrar}>
+          <X aria-hidden="true" />
           Cerrar
         </Button>
       )}
@@ -99,19 +106,31 @@ function Contenido({ detalle, titulo, onCambiado, onCerrar }: ContenidoProps) {
   const c = detalle.candidato
   const datosAcademicos = resumenAcademico(c)
 
-
   return (
     <>
-      <header className="space-y-1">
-        <div className="flex items-start justify-between gap-2">
-          <h2 ref={titulo} tabIndex={-1} className="text-xl font-bold focus:outline-none">
+      <header className="flex items-start gap-4">
+        <span
+          aria-hidden="true"
+          className="flex size-14 shrink-0 items-center justify-center rounded-xl bg-primary text-xl font-bold text-primary-foreground"
+        >
+          {inicialesDeNombre(c.nombres, c.apellidos)}
+        </span>
+        <div className="min-w-0 flex-1 space-y-1.5">
+          <ApplicationStateBadge estado={detalle.estado} />
+          <h2 ref={titulo} tabIndex={-1} className="break-words text-xl font-bold focus:outline-none">
             {c.nombres} {c.apellidos}
           </h2>
-          <ApplicationStateBadge estado={detalle.estado} />
+          {c.titular && <p className="break-words">{c.titular}</p>}
+          <div className="flex flex-col gap-1">
+            <DatoIcono icono={GraduationCap}>{datosAcademicos}</DatoIcono>
+            {c.ciudad && (
+              <DatoIcono icono={MapPin}>
+                <span className="sr-only">Ciudad: </span>
+                {c.ciudad}
+              </DatoIcono>
+            )}
+          </div>
         </div>
-        {c.titular && <p>{c.titular}</p>}
-        <p className="text-sm text-muted-foreground">{datosAcademicos}</p>
-        {c.ciudad && <p className="text-sm text-muted-foreground">{c.ciudad}</p>}
       </header>
 
       <StateChangeSelect
@@ -122,22 +141,24 @@ function Contenido({ detalle, titulo, onCambiado, onCerrar }: ContenidoProps) {
       />
 
       {detalle.mensaje && (
-        <ProfileSection titulo="Mensaje de la postulación">
-          <p className="whitespace-pre-line break-words text-sm text-muted-foreground">{detalle.mensaje}</p>
+        <ProfileSection titulo="Mensaje de la postulación" icono={MessageSquareText} plana>
+          <p className="whitespace-pre-line break-words rounded-lg bg-muted/60 p-3 text-sm text-muted-foreground">
+            {detalle.mensaje}
+          </p>
         </ProfileSection>
       )}
 
       {c.descripcion && (
-        <ProfileSection titulo="Acerca del candidato">
+        <ProfileSection titulo="Acerca del candidato" icono={UserRound} plana>
           <p className="whitespace-pre-line break-words text-sm text-muted-foreground">{c.descripcion}</p>
         </ProfileSection>
       )}
 
       {c.intereses.length > 0 && (
-        <ProfileSection titulo="Intereses">
+        <ProfileSection titulo="Intereses" icono={Compass} plana>
           <ul className="flex flex-wrap gap-2">
             {c.intereses.map((interes) => (
-              <li key={interes} className="rounded-full border px-3 py-1 text-sm">
+              <li key={interes} className="rounded-full bg-tint-strong px-3 py-1 text-sm font-medium break-words">
                 {interes}
               </li>
             ))}
@@ -145,17 +166,19 @@ function Contenido({ detalle, titulo, onCambiado, onCerrar }: ContenidoProps) {
         </ProfileSection>
       )}
 
-      <ProfileSection titulo="Historial">
+      <ProfileSection titulo="Historial" icono={History} plana>
         <StateHistory historial={detalle.historial} />
       </ProfileSection>
 
       <div className="flex flex-wrap gap-2">
         {c.slug && (
-          <Link to={rutaPerfilPublico(c.slug)} className={buttonVariants({ variant: 'outline', size: 'sm' })}>
+          <Link to={rutaPerfilPublico(c.slug)} className={cn(buttonVariants({ variant: 'outline' }))}>
+            <ExternalLink aria-hidden="true" />
             Ver perfil completo
           </Link>
         )}
-        <Button variant="outline" size="sm" onClick={onCerrar}>
+        <Button variant="outline" onClick={onCerrar}>
+          <X aria-hidden="true" />
           Cerrar
         </Button>
       </div>

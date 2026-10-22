@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { iniciales } from '@/shared/lib/iniciales'
+import { iniciales, inicialesDeNombre } from '@/shared/lib/iniciales'
 
 describe('iniciales', () => {
   it('usa la inicial de las dos primeras partes del correo', () => {
@@ -17,5 +17,22 @@ describe('iniciales', () => {
     expect(iniciales('')).toBe('?')
     expect(iniciales('@correo.com')).toBe('?')
     expect(iniciales('...@correo.com')).toBe('?')
+  })
+})
+
+
+describe('inicialesDeNombre', () => {
+  it('usa la inicial del primer nombre y del primer apellido', () => {
+    expect(inicialesDeNombre('Ana María', 'Pérez Gómez')).toBe('AP')
+    expect(inicialesDeNombre('  ángel ', ' ñoño')).toBe('ÁÑ')
+  })
+
+  it('funciona con solo una de las dos partes', () => {
+    expect(inicialesDeNombre('Ana', '')).toBe('A')
+    expect(inicialesDeNombre('', 'Pérez')).toBe('P')
+  })
+
+  it('devuelve un signo de interrogación si no hay nombre', () => {
+    expect(inicialesDeNombre('', '  ')).toBe('?')
   })
 })

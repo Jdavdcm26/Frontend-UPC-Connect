@@ -4,7 +4,7 @@ import type { Postulacion } from '@/features/postulaciones/tipos'
 // Lista de tarjetas de postulaciones (FE-24).
 export default function ApplicationList({ postulaciones }: { postulaciones: Postulacion[] }) {
   return (
-    <ul className="space-y-3">
+    <ul className="space-y-4">
       {postulaciones.map((postulacion) => (
         <li key={postulacion.id}>
           <ApplicationCard postulacion={postulacion} />

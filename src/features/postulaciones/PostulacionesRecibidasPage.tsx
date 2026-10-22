@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link, Navigate, useParams, useSearchParams } from 'react-router-dom'
+import { Navigate, useParams, useSearchParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import CandidateList from '@/features/postulaciones/CandidateList'
@@ -12,6 +12,8 @@ import { obtenerMiVacante } from '@/features/vacantes/vacantesApi'
 import { ApiError } from '@/shared/api/apiError'
 import { RUTAS } from '@/shared/lib/rutas'
 import EmptyState from '@/shared/ui/EmptyState'
+import EncabezadoPagina from '@/shared/ui/EncabezadoPagina'
+import EnlaceVolver from '@/shared/ui/EnlaceVolver'
 import ErrorState from '@/shared/ui/ErrorState'
 
 // 403 y 404 significan que la vacante no existe o es de otra empresa: se muestra «Sin permiso».
@@ -117,16 +119,13 @@ function PostulacionesRecibidas({ id }: { id: string }) {
   }
 
   return (
-    <section className="mx-auto max-w-5xl space-y-4">
-      <Link to={RUTAS.empresaVacantes} className="text-sm underline">
-        ← Volver a mis vacantes
-      </Link>
-      <div className="space-y-1">
-        <h1 className="text-2xl font-bold">Postulaciones recibidas</h1>
-        {vacante && <p className="text-muted-foreground">{vacante.titulo}</p>}
+    <section className="space-y-6">
+      <div className="space-y-4">
+        <EnlaceVolver to={RUTAS.empresaVacantes}>Volver a mis vacantes</EnlaceVolver>
+        <EncabezadoPagina titulo="Postulaciones recibidas" descripcion={vacante?.titulo} />
       </div>
 
-      <div className={seleccionada ? 'grid gap-4 lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-start' : 'mx-auto max-w-3xl'}>
+      <div className={seleccionada ? 'grid gap-6 lg:grid-cols-[minmax(0,1fr)_26rem] lg:items-start' : undefined}>
         {/* En pantallas angostas el panel aparece arriba de la lista; en anchas, a su lado. */}
         {seleccionada && (
           <div className="lg:order-last">
@@ -140,9 +139,9 @@ function PostulacionesRecibidas({ id }: { id: string }) {
         )}
         <div className="space-y-4">
           {cargando && (
-            <div className="space-y-3" role="status" aria-label="Cargando postulaciones">
-              <Skeleton className="h-24 w-full" />
-              <Skeleton className="h-24 w-full" />
+            <div className="space-y-4" role="status" aria-label="Cargando postulaciones">
+              <Skeleton className="h-28 w-full rounded-xl" />
+              <Skeleton className="h-28 w-full rounded-xl" />
             </div>
           )}
 

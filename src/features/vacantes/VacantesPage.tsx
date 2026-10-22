@@ -9,6 +9,9 @@ import type { Vacante } from '@/features/vacantes/tipos'
 import VacancyFilters from '@/features/vacantes/VacancyFilters'
 import VacancyList from '@/features/vacantes/VacancyList'
 import { listarVacantes } from '@/features/vacantes/vacantesApi'
+import EmptyState from '@/shared/ui/EmptyState'
+import EncabezadoPagina from '@/shared/ui/EncabezadoPagina'
+import ErrorState from '@/shared/ui/ErrorState'
 
 // Listado de vacantes para el candidato. Los filtros viven en la URL (FE-21).
 export default function VacantesPage() {
@@ -18,6 +21,8 @@ export default function VacantesPage() {
   const claveFiltros = params.toString()
 
   const [carreras, setCarreras] = useState<Carrera[]>([])
+  // Cambiar este número monta de nuevo los resultados (botón «Reintentar»).
+  const [intento, setIntento] = useState(0)
 
   // Las carreras solo alimentan el filtro: si fallan, el filtro queda vacío.
   useEffect(() => {
@@ -37,19 +42,26 @@ export default function VacantesPage() {
   }
 
   return (
-    <section className="mx-auto max-w-3xl space-y-4">
-      <h1 className="text-2xl font-bold">Vacantes</h1>
+    <section className="space-y-6">
+      <EncabezadoPagina
+        titulo="Vacantes"
+        descripcion="Encuentra vacantes, prácticas y pasantías. Filtra por ciudad, carrera, tipo de oferta y modalidad."
+      />
 
       {/* La clave vuelve a cargar los filtros cuando cambia la URL (por ejemplo, con «atrás»). */}
       <VacancyFilters key={`filtros-${claveFiltros}`} filtros={filtros} carreras={carreras} onAplicar={aplicar} />
 
       {/* Con otros filtros, los resultados se montan de nuevo y empiezan desde la primera página. */}
-      <ResultadosVacantes key={`resultados-${claveFiltros}`} filtros={filtros} />
+      <ResultadosVacantes
+        key={`resultados-${claveFiltros}-${intento}`}
+        filtros={filtros}
+        onReintentar={() => setIntento((n) => n + 1)}
+      />
     </section>
   )
 }
 
-function ResultadosVacantes({ filtros }: { filtros: FiltrosVacantes }) {
+function ResultadosVacantes({ filtros, onReintentar }: { filtros: FiltrosVacantes; onReintentar: () => void }) {
   const [lista, setLista] = useState<Vacante[]>([])
   const [siguiente, setSiguiente] = useState<string | null>(null)
   const [cargando, setCargando] = useState(true)
@@ -94,21 +106,25 @@ function ResultadosVacantes({ filtros }: { filtros: FiltrosVacantes }) {
   return (
     <>
       {cargando && (
-        <div className="space-y-3" role="status" aria-label="Cargando vacantes">
-          <Skeleton className="h-24 w-full" />
-          <Skeleton className="h-24 w-full" />
-          <Skeleton className="h-24 w-full" />
+        <div className="space-y-4" role="status" aria-label="Cargando vacantes">
+          <Skeleton className="h-28 w-full rounded-xl" />
+          <Skeleton className="h-28 w-full rounded-xl" />
+          <Skeleton className="h-28 w-full rounded-xl" />
         </div>
       )}
 
       {!cargando && error !== undefined && (
-        <p role="alert" className="text-center text-destructive">
-          No pudimos cargar las vacantes. Intenta de nuevo en un momento.
-        </p>
+        <ErrorState
+          mensaje="No pudimos cargar las vacantes. Intenta de nuevo en un momento."
+          onReintentar={onReintentar}
+        />
       )}
 
       {!cargando && error === undefined && lista.length === 0 && (
-        <p className="text-muted-foreground">No encontramos vacantes con esos filtros.</p>
+        <EmptyState
+          titulo="No encontramos vacantes"
+          descripcion="No hay vacantes con esos filtros. Prueba con otros o pulsa «Limpiar»."
+        />
       )}
 
       {lista.length > 0 && <VacancyList vacantes={lista} />}
