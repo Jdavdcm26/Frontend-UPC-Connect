@@ -1,3 +1,4 @@
+import { RefreshCw } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -48,7 +49,7 @@ export default function StateChangeSelect({ postulacionId, estadoActual, onCambi
   const etiquetaElegida = ETIQUETA_ESTADO_POSTULACION[elegido]
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3 rounded-lg bg-muted/60 p-4">
       <SelectField
         id="estado-postulacion"
         etiqueta="Nuevo estado"
@@ -57,11 +58,8 @@ export default function StateChangeSelect({ postulacionId, estadoActual, onCambi
         valor={elegido}
         onChange={(valor) => setElegido(valor as EstadoPostulacion)}
       />
-      <Button
-        size="sm"
-        disabled={elegido === estadoActual || cambiando}
-        onClick={() => setConfirmando(true)}
-      >
+      <Button disabled={elegido === estadoActual || cambiando} onClick={() => setConfirmando(true)}>
+        <RefreshCw aria-hidden="true" />
         {cambiando ? 'Cambiando…' : 'Cambiar estado'}
       </Button>
       <ConfirmDialog
