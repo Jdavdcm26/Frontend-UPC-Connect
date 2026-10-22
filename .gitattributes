@@ -1,0 +1,3 @@
+# Todos los archivos de texto se guardan con saltos de línea LF.
+# Así Windows, Mac y Linux no marcan cambios falsos ni muestran advertencias LF/CRLF.
+* text=auto eol=lf
