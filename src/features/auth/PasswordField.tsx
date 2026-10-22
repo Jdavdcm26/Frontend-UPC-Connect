@@ -1,3 +1,4 @@
+import { Check, Circle } from 'lucide-react'
 import type { UseFormRegisterReturn } from 'react-hook-form'
 import { Input } from '@/components/ui/input'
 import FormField from '@/shared/ui/FormField'
@@ -32,8 +33,9 @@ export default function PasswordField({ id, etiqueta, valor, registro, error }: 
         )}
       </FormField>
       <ul id={idRequisitos} className="text-sm text-muted-foreground">
-        <li className={cumple ? 'text-foreground' : undefined}>
-          <span aria-hidden="true">{cumple ? '✓' : '○'}</span> Al menos {MINIMO} caracteres{' '}
+        <li className={cumple ? 'flex items-center gap-1.5 font-medium text-primary' : 'flex items-center gap-1.5'}>
+          {cumple ? <Check aria-hidden="true" className="size-4" /> : <Circle aria-hidden="true" className="size-4" />}
+          <span>Al menos {MINIMO} caracteres</span>
           <span className="sr-only">{cumple ? '(cumplido)' : '(pendiente)'}</span>
         </li>
       </ul>

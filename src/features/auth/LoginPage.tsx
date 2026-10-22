@@ -1,9 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { LogIn } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import EncabezadoAuth from '@/features/auth/EncabezadoAuth'
 import { loginEsquema, type LoginDatos } from '@/features/auth/loginEsquema'
 import { iniciarSesionApi } from '@/features/auth/loginApi'
 import { destinoPermitido, rutaInicioPorRol } from '@/features/auth/rutaPorRol'
@@ -11,6 +13,8 @@ import { useSession } from '@/features/auth/useSession'
 import { ApiError } from '@/shared/api/apiError'
 import { RUTAS } from '@/shared/lib/rutas'
 import FormField from '@/shared/ui/FormField'
+import { claseEnlace } from '@/shared/ui/estilosEnlace'
+import MensajeFormulario from '@/shared/ui/MensajeFormulario'
 
 // Solo se acepta volver a rutas internas de la app.
 function destinoSeguro(desde: unknown): string | null {
@@ -56,15 +60,15 @@ export default function LoginPage() {
     <form
       noValidate
       onSubmit={handleSubmit(iniciarSesion)}
-      className="mx-auto max-w-sm space-y-4"
+      className="space-y-5"
     >
-      <h1 className="text-2xl font-bold">Iniciar sesión</h1>
+      <EncabezadoAuth
+        icono={LogIn}
+        titulo="Iniciar sesión"
+        descripcion="Entra con tu correo institucional y tu contraseña."
+      />
 
-      {mensajeError && (
-        <p role="alert" className="text-sm text-destructive">
-          {mensajeError}
-        </p>
-      )}
+      {mensajeError && <MensajeFormulario tipo="error">{mensajeError}</MensajeFormulario>}
 
       <FormField id="correo" etiqueta="Correo institucional" error={errors.correo?.message}>
         {(campo) => <Input type="email" autoComplete="email" {...campo} {...register('correo')} />}
@@ -81,13 +85,13 @@ export default function LoginPage() {
       </Button>
 
       <p className="text-center text-sm text-muted-foreground">
-        <Link to={RUTAS.recuperarContrasena} className="underline">
+        <Link to={RUTAS.recuperarContrasena} className={claseEnlace}>
           ¿Olvidaste tu contraseña?
         </Link>
       </p>
       <p className="text-center text-sm text-muted-foreground">
         ¿No tienes cuenta?{' '}
-        <Link to={RUTAS.registro} className="underline">
+        <Link to={RUTAS.registro} className={claseEnlace}>
           Regístrate
         </Link>
       </p>

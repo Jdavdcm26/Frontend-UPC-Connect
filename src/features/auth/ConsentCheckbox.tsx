@@ -4,6 +4,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { VERSION_POLITICA } from '@/features/auth/politica'
 import { RUTAS } from '@/shared/lib/rutas'
+import { claseEnlace } from '@/shared/ui/estilosEnlace'
 
 type Props = {
   checked: boolean
@@ -28,13 +29,13 @@ export default function ConsentCheckbox({ checked, onChange, error, inputRef }: 
           aria-invalid={Boolean(error)}
           aria-describedby={error ? ID_ERROR : undefined}
         />
-        <Label htmlFor={ID} className="font-normal leading-snug">
+        <Label htmlFor={ID} className="block font-normal leading-snug">
           Acepto la{' '}
           <Link
             to={RUTAS.politicaPrivacidad}
             target="_blank"
             rel="noopener noreferrer"
-            className="underline"
+            className={claseEnlace}
           >
             política de privacidad
             <span className="sr-only"> (se abre en otra pestaña)</span>

@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { UserPlus } from 'lucide-react'
 import { useState } from 'react'
 import { Controller, useForm, useWatch } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
@@ -6,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import CaptchaTurnstile from '@/features/auth/CaptchaTurnstile'
 import ConsentCheckbox from '@/features/auth/ConsentCheckbox'
+import EncabezadoAuth from '@/features/auth/EncabezadoAuth'
 import PasswordField from '@/features/auth/PasswordField'
 import { registroEsquema, type RegistroDatos } from '@/features/auth/registroEsquema'
 import { registrarApi } from '@/features/auth/registroApi'
@@ -13,6 +15,8 @@ import { ApiError } from '@/shared/api/apiError'
 import { aplicarErroresServidor } from '@/shared/lib/erroresServidor'
 import { RUTAS } from '@/shared/lib/rutas'
 import FormField from '@/shared/ui/FormField'
+import { claseEnlace } from '@/shared/ui/estilosEnlace'
+import MensajeFormulario from '@/shared/ui/MensajeFormulario'
 
 // Formulario de registro (HU-01 / FE-10).
 export default function RegistroPage() {
@@ -66,15 +70,15 @@ export default function RegistroPage() {
     <form
       noValidate
       onSubmit={handleSubmit(registrarse)}
-      className="mx-auto max-w-sm space-y-4"
+      className="space-y-5"
     >
-      <h1 className="text-2xl font-bold">Crear cuenta</h1>
+      <EncabezadoAuth
+        icono={UserPlus}
+        titulo="Crear cuenta"
+        descripcion="Regístrate con el correo institucional de tu universidad, por ejemplo nombre@unicesar.edu.co."
+      />
 
-      {errorGeneral && (
-        <p role="alert" className="text-sm text-destructive">
-          {errorGeneral}
-        </p>
-      )}
+      {errorGeneral && <MensajeFormulario tipo="error">{errorGeneral}</MensajeFormulario>}
 
       <FormField id="correo" etiqueta="Correo institucional" error={errors.correo?.message}>
         {(campo) => <Input type="email" autoComplete="email" {...campo} {...campoCorreo} />}
@@ -121,7 +125,7 @@ export default function RegistroPage() {
 
       <p className="text-center text-sm text-muted-foreground">
         ¿Ya tienes cuenta?{' '}
-        <Link to={RUTAS.iniciarSesion} className="underline">
+        <Link to={RUTAS.iniciarSesion} className={claseEnlace}>
           Inicia sesión
         </Link>
       </p>
