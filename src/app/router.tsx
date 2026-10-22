@@ -31,7 +31,6 @@ export const router = createBrowserRouter([
     HydrateFallback: PantallaCarga,
     children: [
       { index: true, element: <RedirigirSiHaySesion><HomePage /></RedirigirSiHaySesion> },
-      { path: 'catalogo', lazy: cargar(() => import('@/app/pages/CatalogoPage')) },
       { path: 'politica-de-privacidad', lazy: cargar(() => import('@/features/auth/PoliticaPrivacidadPage')) },
       {
         element: <AuthLayout />,
