@@ -11,7 +11,7 @@ function mensajeBloqueo(segundos?: number): string {
 }
 
 const CREDENCIALES_INVALIDAS = 'Correo o contraseña incorrectos. Revísalos e intenta de nuevo.'
-
+const CONEXION_INVALIDA = 'No se pudo conectar a la base de datos o backend'
 // Con fixtures: un correo con «admin» o «moderador» entra con ese rol, y con «empresa», como empresa.
 function rolDemo(correo: string): Rol {
   if (correo.includes('admin')) return 'admin'
@@ -51,6 +51,8 @@ export async function iniciarSesionApi(datos: LoginDatos): Promise<void> {
       if (error.status === 422) throw new ApiError(422, error.campos.email?.[0] ?? CREDENCIALES_INVALIDAS)
       // El bloqueo por intentos (429) trae el tiempo de espera en errors.email.
       if (error.status === 429) throw new ApiError(429, error.campos.email?.[0] ?? error.message, {}, error.reintentarEn)
+
+      if(error.status === 500) throw new ApiError(500, CONEXION_INVALIDA) 
     }
     // Los demás errores llevan el mensaje del servidor tal cual.
     throw error
