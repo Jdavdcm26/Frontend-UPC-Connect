@@ -19,8 +19,8 @@ export default function SeccionPublicacionesAutor({ titulo, autorId, puedeIntera
 
   return (
     <section aria-labelledby={idTitulo} className="space-y-4">
-      <h2 id={idTitulo} className="flex items-center gap-2.5 text-xl font-semibold">
-        <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary">
+      <h2 id={idTitulo} className="flex items-center gap-2.5 text-xl font-bold tracking-tight">
+        <span className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-primary/20 bg-linear-to-br from-primary/15 to-emerald-500/10 text-primary shadow-2xs">
           <Newspaper aria-hidden="true" className="size-4.5" />
         </span>
         {titulo}

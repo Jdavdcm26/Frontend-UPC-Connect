@@ -69,11 +69,11 @@ export default function CandidateProfilePanel({ postulacionId, onEstadoCambiado,
   return (
     <aside
       aria-label="Perfil del candidato"
-      className="space-y-5 rounded-xl border bg-card p-5 shadow-sm sm:p-6 lg:sticky lg:top-24"
+      className="space-y-5 rounded-2xl border border-border/80 bg-card/95 p-5 shadow-xs backdrop-blur-xs sm:p-6 lg:sticky lg:top-24"
     >
       {cargando && (
         <div className="space-y-3" role="status" aria-label="Cargando perfil del candidato">
-          <Skeleton className="h-14 w-full rounded-xl" />
+          <Skeleton className="h-14 w-full rounded-2xl" />
           <Skeleton className="h-5 w-64" />
           <Skeleton className="h-20 w-full" />
         </div>
@@ -111,7 +111,7 @@ function Contenido({ detalle, titulo, onCambiado, onCerrar }: ContenidoProps) {
       <header className="flex items-start gap-4">
         <span
           aria-hidden="true"
-          className="flex size-14 shrink-0 items-center justify-center rounded-xl bg-primary text-xl font-bold text-primary-foreground"
+          className="flex size-14 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-primary to-emerald-700 text-xl font-bold text-white shadow-xs shadow-primary/20"
         >
           {inicialesDeNombre(c.nombres, c.apellidos)}
         </span>
@@ -142,7 +142,7 @@ function Contenido({ detalle, titulo, onCambiado, onCerrar }: ContenidoProps) {
 
       {detalle.mensaje && (
         <ProfileSection titulo="Mensaje de la postulación" icono={MessageSquareText} plana>
-          <p className="whitespace-pre-line break-words rounded-lg bg-muted/60 p-3 text-sm text-muted-foreground">
+          <p className="whitespace-pre-line break-words rounded-xl border border-border/60 bg-muted/50 p-3 text-sm text-muted-foreground">
             {detalle.mensaje}
           </p>
         </ProfileSection>
@@ -158,7 +158,7 @@ function Contenido({ detalle, titulo, onCambiado, onCerrar }: ContenidoProps) {
         <ProfileSection titulo="Intereses" icono={Compass} plana>
           <ul className="flex flex-wrap gap-2">
             {c.intereses.map((interes) => (
-              <li key={interes} className="rounded-full bg-tint-strong px-3 py-1 text-sm font-medium break-words">
+              <li key={interes} className="rounded-full border border-border/60 bg-muted/60 px-3 py-1 text-sm font-medium break-words">
                 {interes}
               </li>
             ))}

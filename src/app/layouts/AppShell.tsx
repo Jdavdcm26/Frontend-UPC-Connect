@@ -25,7 +25,7 @@ export default function AppShell({ subtitulo, enlaces }: Props) {
     <div className="flex min-h-screen flex-col bg-canvas">
       <SaltarAlContenido />
       <AnunciarRuta />
-      <header className="sticky top-0 z-40 border-b bg-background/90 backdrop-blur">
+      <header className="sticky top-0 z-40 border-b border-border/70 bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/70 shadow-2xs">
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
           <Logo destino={enlaces[0].ruta} subtitulo={subtitulo} />
           <nav aria-label="Principal" className="hidden items-center gap-1 md:flex">

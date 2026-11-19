@@ -10,7 +10,7 @@ export default defineConfig({
   // Redirige /api al backend de desarrollo: imita el mismo dominio de staging (cookies sin CORS).
   server: {
     proxy: {
-      '/api': 'http://localhost:8000',
+      '/api': process.env.VITE_PROXY_TARGET || 'http://localhost:8000',
     },
   },
   resolve: {

@@ -51,8 +51,8 @@ function PublicacionDetalleContenido({ id }: { id: string }) {
     return (
       <div className="mx-auto max-w-3xl space-y-4" role="status" aria-label="Cargando publicación">
         <Skeleton className="h-5 w-40" />
-        <Skeleton className="h-64 w-full rounded-xl" />
-        <Skeleton className="h-40 w-full rounded-xl" />
+        <Skeleton className="h-64 w-full rounded-2xl" />
+        <Skeleton className="h-40 w-full rounded-2xl" />
       </div>
     )
   }

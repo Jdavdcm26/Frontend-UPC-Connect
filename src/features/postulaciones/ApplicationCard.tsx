@@ -11,19 +11,19 @@ import DatoIcono from '@/shared/ui/DatoIcono'
 // sobre la tarjeta (after:absolute) y lleva a la vacante.
 export default function ApplicationCard({ postulacion }: { postulacion: Postulacion }) {
   return (
-    <article className="relative space-y-4 rounded-xl border bg-card p-5 shadow-sm transition-all hover:border-primary/40 hover:shadow-md has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring motion-reduce:transition-none sm:p-6">
+    <article className="relative space-y-4 rounded-2xl border border-border/80 bg-card/95 p-5 shadow-xs backdrop-blur-xs transition-all duration-200 hover:border-primary/40 hover:shadow-md has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring motion-reduce:transition-none sm:p-6">
       {/* En pantallas angostas la etiqueta de estado va arriba para que el título tenga todo el ancho. */}
       <div className="flex flex-col-reverse items-start gap-2 sm:flex-row sm:justify-between sm:gap-3">
         <div className="min-w-0 space-y-1.5">
-          <h2 className="text-lg font-semibold">
+          <h2 className="text-lg font-bold tracking-tight">
             <Link
               to={`${RUTAS.vacantes}/${postulacion.vacanteId}`}
-              className="break-words outline-none after:absolute after:inset-0 after:content-[''] hover:underline"
+              className="break-words outline-none after:absolute after:inset-0 after:content-[''] transition-colors hover:text-primary"
             >
               {postulacion.vacanteTitulo}
             </Link>
           </h2>
-          <div className="flex flex-wrap gap-x-5 gap-y-1">
+          <div className="flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-muted-foreground">
             <DatoIcono icono={Building2}>{postulacion.empresa}</DatoIcono>
             <DatoIcono icono={CalendarDays}>Enviada el {formatearFecha(postulacion.creadaEn)}</DatoIcono>
           </div>
@@ -34,10 +34,10 @@ export default function ApplicationCard({ postulacion }: { postulacion: Postulac
       <ApplicationProgress estado={postulacion.estado} />
 
       {postulacion.mensaje && (
-        <div className="flex items-start gap-3 rounded-lg bg-muted/60 p-3 text-sm">
-          <MessageSquareText aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+        <div className="flex items-start gap-3 rounded-xl border border-border/60 bg-muted/50 p-3 text-sm">
+          <MessageSquareText aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-primary" />
           <p className="whitespace-pre-line break-words text-muted-foreground">
-            <span className="font-medium text-foreground">Tu mensaje: </span>
+            <span className="font-semibold text-foreground">Tu mensaje: </span>
             {postulacion.mensaje}
           </p>
         </div>

@@ -111,6 +111,7 @@
 .dark {
     --background: oklch(0.145 0 0);
     --foreground: oklch(0.985 0 0);
+    --color-canvas: #0b1116;
     --card: oklch(0.205 0 0);
     --card-foreground: oklch(0.985 0 0);
     --popover: oklch(0.205 0 0);
@@ -145,15 +146,34 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
-    }
+  }
   body {
-    @apply bg-background text-foreground;
-    }
+    @apply bg-background text-foreground antialiased;
+    line-height: 1.5;
+  }
   html {
     @apply font-sans;
-    }
-  /* Los títulos van con las letras un poco más juntas, como en el diseño. */
-  h1, h2 {
-    @apply tracking-tight;
-    }
+  }
+  /* Títulos equilibrados y párrafos con saltos de línea más parejos. */
+  h1, h2, h3, h4, h5, h6 {
+    @apply tracking-tight font-semibold text-foreground;
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+}
+
+/* Lienzo con un degradado ambiental muy sutil que aporta profundidad sin ruido visual.
+   Se deja sin background-attachment: fixed para no forzar repintados al hacer scroll. */
+.bg-canvas {
+  background-color: var(--color-canvas);
+  background-image:
+    radial-gradient(ellipse 90% 60% at 50% -20%, color-mix(in oklab, var(--primary) 7%, transparent), transparent),
+    radial-gradient(ellipse 60% 40% at 100% 25%, color-mix(in oklab, #0284c7 4%, transparent), transparent);
+}
+
+.dark .bg-canvas {
+  background-image:
+    radial-gradient(ellipse 90% 60% at 50% -20%, color-mix(in oklab, var(--primary) 12%, transparent), transparent);
 }

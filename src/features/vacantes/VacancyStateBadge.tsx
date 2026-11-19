@@ -4,8 +4,8 @@ import { ETIQUETA_ESTADO, type EstadoVacante } from '@/features/vacantes/tipos'
 
 // Color e ícono de cada estado de la vacante. El texto siempre dice el estado.
 const ESTILO: Record<EstadoVacante, { clases: string; icono: LucideIcon }> = {
-  ACTIVA: { clases: 'bg-primary-soft text-primary', icono: CircleDot },
-  PAUSADA: { clases: 'bg-ambar-soft text-ambar', icono: Pause },
+  ACTIVA: { clases: 'border border-primary/20 bg-primary/10 text-primary', icono: CircleDot },
+  PAUSADA: { clases: 'border border-ambar/20 bg-ambar-soft text-ambar', icono: Pause },
   CERRADA: { clases: 'border border-border bg-estado-recibida-soft text-estado-recibida', icono: Lock },
 }
 

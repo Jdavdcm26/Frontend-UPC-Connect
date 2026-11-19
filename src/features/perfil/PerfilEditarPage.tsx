@@ -40,7 +40,7 @@ export default function PerfilEditarPage() {
     return (
       <div className="mx-auto max-w-3xl space-y-4" role="status" aria-label="Cargando perfil">
         <Skeleton className="h-9 w-56" />
-        <Skeleton className="h-96 w-full rounded-xl" />
+        <Skeleton className="h-96 w-full rounded-2xl" />
       </div>
     )
   }
@@ -70,7 +70,7 @@ export default function PerfilEditarPage() {
       {perfil ? (
         <SkillsEditor habilidades={perfil.habilidades} onActualizar={setPerfil} />
       ) : (
-        <p className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-5 text-sm text-muted-foreground">
+        <p className="rounded-2xl border-[1.5px] border-dashed border-border bg-card/60 p-5 text-sm text-muted-foreground backdrop-blur-xs">
           Guarda tu perfil para poder agregar habilidades.
         </p>
       )}

@@ -12,7 +12,7 @@ export default function AvisoInformativo({ icono: Icono = Info, children }: Prop
   return (
     <p
       role="status"
-      className="flex items-start gap-3 rounded-xl border border-ambar/30 bg-ambar-soft p-3 text-sm font-medium text-ambar sm:p-4"
+      className="flex items-start gap-3 rounded-xl border border-ambar/30 bg-ambar-soft p-3 text-sm font-medium text-ambar shadow-2xs sm:p-4"
     >
       <Icono aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
       <span className="min-w-0 break-words">{children}</span>

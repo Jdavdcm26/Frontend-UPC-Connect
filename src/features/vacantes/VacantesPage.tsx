@@ -107,9 +107,9 @@ function ResultadosVacantes({ filtros, onReintentar }: { filtros: FiltrosVacante
     <>
       {cargando && (
         <div className="space-y-4" role="status" aria-label="Cargando vacantes">
-          <Skeleton className="h-28 w-full rounded-xl" />
-          <Skeleton className="h-28 w-full rounded-xl" />
-          <Skeleton className="h-28 w-full rounded-xl" />
+          <Skeleton className="h-28 w-full rounded-2xl" />
+          <Skeleton className="h-28 w-full rounded-2xl" />
+          <Skeleton className="h-28 w-full rounded-2xl" />
         </div>
       )}
 

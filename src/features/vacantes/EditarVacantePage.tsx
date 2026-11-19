@@ -53,8 +53,8 @@ function EditarVacanteContenido({ id }: { id: string }) {
     return (
       <div className="mx-auto max-w-3xl space-y-4" role="status" aria-label="Cargando formulario">
         <Skeleton className="h-9 w-56" />
-        <Skeleton className="h-64 w-full rounded-xl" />
-        <Skeleton className="h-48 w-full rounded-xl" />
+        <Skeleton className="h-64 w-full rounded-2xl" />
+        <Skeleton className="h-48 w-full rounded-2xl" />
       </div>
     )
   }

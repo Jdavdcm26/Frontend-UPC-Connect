@@ -16,15 +16,15 @@ export default function PublicLayout() {
     <div className="flex min-h-screen flex-col bg-canvas">
       <SaltarAlContenido />
       <AnunciarRuta />
-      <header className="sticky top-0 z-40 border-b bg-background/90 backdrop-blur">
+      <header className="sticky top-0 z-40 border-b border-border/70 bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/70 shadow-2xs">
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-2 px-4 max-[339px]:px-3 sm:gap-4 sm:px-6 lg:px-8">
           <Logo destino={RUTAS.raiz} subtitulo="Universidad Popular del Cesar" />
           {!cargando && usuario === null && (
-            <nav aria-label="Acceso" className="flex items-center gap-1 sm:gap-2">
-              <Button asChild variant="ghost" size="sm" className="px-2 sm:px-3">
+            <nav aria-label="Acceso" className="flex items-center gap-1.5 sm:gap-2.5">
+              <Button asChild variant="ghost" size="sm" className="px-2.5 font-medium hover:bg-muted/70 sm:px-3">
                 <Link to={RUTAS.iniciarSesion}>Iniciar sesión</Link>
               </Button>
-              <Button asChild size="sm">
+              <Button asChild size="sm" className="shadow-xs shadow-primary/20 font-medium">
                 <Link to={RUTAS.registro}>Registrarse</Link>
               </Button>
             </nav>

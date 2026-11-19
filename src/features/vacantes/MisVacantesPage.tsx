@@ -23,7 +23,7 @@ import ErrorState from '@/shared/ui/ErrorState'
 const ACENTO_ESTADO: Record<EstadoVacante, string> = {
   ACTIVA: 'border-l-primary',
   PAUSADA: 'border-l-ambar',
-  CERRADA: 'border-l-slate-400',
+  CERRADA: 'border-l-slate-400 dark:border-l-slate-500',
 }
 
 const MENSAJE_ESTADO: Record<EstadoVacante, string> = {
@@ -101,8 +101,8 @@ export default function MisVacantesPage() {
     return (
       <div className="space-y-4" role="status" aria-label="Cargando vacantes">
         <Skeleton className="h-9 w-56" />
-        <Skeleton className="h-40 w-full rounded-xl" />
-        <Skeleton className="h-40 w-full rounded-xl" />
+        <Skeleton className="h-40 w-full rounded-2xl" />
+        <Skeleton className="h-40 w-full rounded-2xl" />
       </div>
     )
   }
@@ -144,7 +144,7 @@ export default function MisVacantesPage() {
             <li
               key={vacante.id}
               className={cn(
-                'space-y-3 rounded-xl border border-l-4 bg-card p-5 shadow-sm sm:p-6',
+                'space-y-3 rounded-2xl border border-l-4 border-border/80 bg-card/95 p-5 shadow-xs backdrop-blur-xs sm:p-6',
                 ACENTO_ESTADO[vacante.estado],
               )}
             >
@@ -152,8 +152,8 @@ export default function MisVacantesPage() {
                 <VacancyStateBadge estado={vacante.estado} />
                 <VacancyTypeBadge tipo={vacante.tipo} />
               </div>
-              <h2 className="break-words text-lg font-semibold">{vacante.titulo}</h2>
-              <div className="flex flex-wrap gap-x-5 gap-y-1">
+              <h2 className="break-words text-lg font-bold tracking-tight text-foreground">{vacante.titulo}</h2>
+              <div className="flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-muted-foreground">
                 <DatoIcono icono={MapPin}>
                   {ETIQUETA_MODALIDAD[vacante.modalidad]} · {vacante.ciudad}
                 </DatoIcono>

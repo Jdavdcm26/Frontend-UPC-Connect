@@ -24,8 +24,8 @@ const VolverAlListado = () => <EnlaceVolver to={RUTAS.vacantes}>Volver a vacante
 // Recuadro de una sección del detalle (descripción, requisitos, carreras objetivo).
 function Seccion({ titulo, children }: { titulo: string; children: ReactNode }) {
   return (
-    <section className="space-y-3 rounded-xl border bg-card p-5 shadow-sm sm:p-6">
-      <h2 className="text-xl font-semibold">{titulo}</h2>
+    <section className="space-y-3 rounded-2xl border border-border/80 bg-card/95 p-5 shadow-xs backdrop-blur-xs sm:p-6">
+      <h2 className="text-xl font-bold tracking-tight text-foreground">{titulo}</h2>
       {children}
     </section>
   )
@@ -90,8 +90,8 @@ export default function VacanteDetallePage() {
     return (
       <div className="space-y-4" role="status" aria-label="Cargando vacante">
         <Skeleton className="h-5 w-40" />
-        <Skeleton className="h-36 w-full rounded-xl" />
-        <Skeleton className="h-48 w-full rounded-xl" />
+        <Skeleton className="h-36 w-full rounded-2xl" />
+        <Skeleton className="h-48 w-full rounded-2xl" />
       </div>
     )
   }
@@ -131,20 +131,22 @@ export default function VacanteDetallePage() {
       {/* En pantallas angostas el orden es: encabezado, postulación y secciones; en anchas, las secciones
           quedan a la izquierda y la tarjeta de postulación a la derecha. */}
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:grid-rows-[auto_1fr]">
-        <header className="space-y-3 rounded-xl border bg-card p-5 shadow-sm sm:p-6 lg:col-start-1 lg:row-start-1">
+        <header className="relative space-y-3 overflow-hidden rounded-2xl border border-border/80 bg-card/95 p-5 shadow-xs backdrop-blur-xs before:absolute before:inset-x-0 before:top-0 before:h-1 before:bg-linear-to-r before:from-primary before:via-emerald-500 before:to-teal-500 sm:p-6 lg:col-start-1 lg:row-start-1">
           <VacancyTypeBadge tipo={datos.tipo} />
-          <h1 className="break-words text-2xl font-bold sm:text-3xl">{datos.titulo}</h1>
+          <h1 className="break-words text-2xl font-extrabold tracking-tight sm:text-3xl">{datos.titulo}</h1>
           <p className="flex items-center gap-2 text-lg text-muted-foreground">
-            <Building2 aria-hidden="true" className="size-5 shrink-0" />
+            <span className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
+              <Building2 aria-hidden="true" className="size-5" />
+            </span>
             {datos.empresa}
           </p>
         </header>
 
         <aside aria-label="Postulación" className="lg:col-start-2 lg:row-span-2 lg:row-start-1">
-          <div className="space-y-4 rounded-xl border bg-card p-5 shadow-sm lg:sticky lg:top-24">
+          <div className="space-y-4 rounded-2xl border border-border/80 bg-card/95 p-5 shadow-xs backdrop-blur-xs lg:sticky lg:top-24">
             {/* Al terminar de postularse (bien o mal), se vuelve a pedir la vacante para saber si ya está postulado. */}
             <ApplyButton vacante={datos} onPostulado={() => setRecargas((n) => n + 1)} />
-            <dl className="divide-y border-t">
+            <dl className="divide-y border-t border-border/70">
               <Dato icono={Monitor} etiqueta="Modalidad">
                 {ETIQUETA_MODALIDAD[datos.modalidad]}
               </Dato>
@@ -173,7 +175,7 @@ export default function VacanteDetallePage() {
                 {nombresCarreras.map((nombre) => (
                   <li
                     key={nombre}
-                    className="inline-flex items-center gap-1.5 rounded-full bg-primary-soft px-3 py-1.5 text-sm font-medium text-primary"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-sm font-semibold text-primary"
                   >
                     <GraduationCap aria-hidden="true" className="size-4" />
                     {nombre}

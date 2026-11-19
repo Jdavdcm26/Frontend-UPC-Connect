@@ -51,8 +51,8 @@ export default function NuevaPublicacionPage() {
 
       {cargando && (
         <div className="space-y-4" role="status" aria-label="Cargando formulario">
-          <Skeleton className="h-56 w-full rounded-xl" />
-          <Skeleton className="h-48 w-full rounded-xl" />
+          <Skeleton className="h-56 w-full rounded-2xl" />
+          <Skeleton className="h-48 w-full rounded-2xl" />
         </div>
       )}
 

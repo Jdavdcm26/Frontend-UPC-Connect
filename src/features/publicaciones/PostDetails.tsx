@@ -20,7 +20,7 @@ function Fila({ icono: Icono, etiqueta, children }: { icono: LucideIcon; etiquet
 export default function PostDetails({ detalles }: { detalles: Publicacion['detalles'] }) {
   if (!detalles) return null
   return (
-    <dl className="space-y-2 rounded-lg border bg-tint p-3 sm:p-4">
+    <dl className="space-y-2 rounded-xl border border-border/70 bg-muted/40 p-3 sm:p-4">
       {detalles.tipo === 'SERVICIO' ? (
         <>
           <Fila icono={Shapes} etiqueta="Área">{detalles.area}</Fila>

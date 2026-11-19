@@ -34,11 +34,11 @@ export default function ProfileDetails({ descripcion, intereses = [], habilidade
                 {habilidades.map((habilidad) => (
                   <li
                     key={habilidad.id}
-                    className="inline-flex items-center gap-2 rounded-lg border bg-background px-3 py-1.5 text-sm font-medium"
+                    className="inline-flex items-center gap-2 rounded-xl border border-border/80 bg-background/80 px-3 py-1.5 text-sm font-medium"
                   >
                     {habilidad.nombre}
                     {habilidad.nivel && (
-                      <span className="rounded-full bg-primary-soft px-2 py-0.5 text-xs font-semibold text-primary">
+                      <span className="rounded-full border border-primary/20 bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
                         {etiquetaNivel(habilidad.nivel)}
                       </span>
                     )}
@@ -54,7 +54,7 @@ export default function ProfileDetails({ descripcion, intereses = [], habilidade
         <ProfileSection titulo="Intereses" icono={Compass}>
           <ul className="flex flex-wrap gap-2">
             {intereses.map((interes) => (
-              <li key={interes} className="rounded-full bg-tint-strong px-3 py-1 text-sm font-medium break-words">
+              <li key={interes} className="rounded-full border border-border/60 bg-muted/60 px-3 py-1 text-sm font-medium break-words">
                 {interes}
               </li>
             ))}

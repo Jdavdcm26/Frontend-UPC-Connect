@@ -39,7 +39,7 @@ export default function TargetCareersField({ carreras, valor, onChange, error, i
               // La etiqueta se estira sobre toda la tarjeta (after:absolute) para que cualquier clic marque la casilla.
               <div
                 key={id}
-                className="relative flex items-start gap-3 rounded-lg border bg-background p-3 transition-colors hover:bg-muted/60 has-[[aria-checked=true]]:border-primary has-[[aria-checked=true]]:bg-primary-soft"
+                className="relative flex items-start gap-3 rounded-xl border border-border/80 bg-background/80 p-3 transition-colors hover:bg-muted/60 has-[[aria-checked=true]]:border-primary/50 has-[[aria-checked=true]]:bg-primary/10"
               >
                 <Checkbox
                   ref={posicion === 0 ? inputRef : undefined}

@@ -1,4 +1,5 @@
 import {
+  ArrowRight,
   Building2,
   FilePlus2,
   GraduationCap,
@@ -12,8 +13,8 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { Button } from '@/components/ui/button'
 import { RUTAS } from '@/shared/lib/rutas'
-import { claseEnlace } from '@/shared/ui/estilosEnlace'
 
 type Beneficio = { icono: LucideIcon; titulo: string; texto: string }
 
@@ -21,57 +22,61 @@ const PARA_CANDIDATOS: Beneficio[] = [
   {
     icono: Briefcase,
     titulo: 'Prácticas, pasantías y vacantes',
-    texto: 'Todas las ofertas en un mismo lugar, con filtros por carrera, tipo, modalidad y ciudad.',
+    texto: 'Ofertas validadas con filtros por carrera, modalidad, tipo y ciudad.',
   },
   {
     icono: Send,
-    titulo: 'Postulación con tu mensaje',
-    texto: 'Envía tu postulación con un mensaje para la empresa y revisa a cuáles ya te postulaste.',
+    titulo: 'Postulación ágil con mensaje',
+    texto: 'Envía tu postulación con un mensaje personalizado y revisa tu historial.',
   },
   {
     icono: ListChecks,
-    titulo: 'Seguimiento del estado',
-    texto: 'Consulta si tu postulación fue recibida, está en revisión, tiene entrevista o fue seleccionada.',
+    titulo: 'Seguimiento transparente',
+    texto: 'Conoce en tiempo real si tu postulación está en revisión, entrevista o seleccionada.',
   },
   {
     icono: UserRound,
-    titulo: 'Perfil con tus habilidades',
-    texto: 'Muestra tu carrera, tu semestre o año de grado y tus habilidades a las empresas.',
+    titulo: 'Perfil profesional académico',
+    texto: 'Muestra tu carrera, semestre, año de grado y competencias destacadas.',
   },
 ]
 
 const PARA_EMPRESAS: Beneficio[] = [
   {
     icono: ShieldCheck,
-    titulo: 'Cuentas dadas de alta por la UPC',
-    texto: 'Las empresas no se registran solas: la UPC da de alta cada cuenta.',
+    titulo: 'Cuentas validadas por la UPC',
+    texto: 'Red segura y confiable: la universidad da de alta a cada empresa aliada.',
   },
   {
     icono: FilePlus2,
-    titulo: 'Publica y administra vacantes',
-    texto: 'Crea ofertas, edítalas, páusalas o ciérralas cuando quieras.',
+    titulo: 'Publica y gestiona vacantes',
+    texto: 'Crea ofertas dirigidas a carreras específicas, edítalas o ciérralas fácilmente.',
   },
   {
     icono: Users,
-    titulo: 'Revisa las postulaciones',
-    texto: 'Mira quién se postuló y abre el perfil completo de cada candidato.',
+    titulo: 'Acceso al mejor talento joven',
+    texto: 'Evalúa perfiles completos de postulantes de manera ordenada y centralizada.',
   },
   {
     icono: RefreshCw,
-    titulo: 'Mantén informados a los candidatos',
-    texto: 'Cambia el estado de cada postulación para que cada persona sepa en qué va.',
+    titulo: 'Feedback directo a postulantes',
+    texto: 'Actualiza los estados para una comunicación transparente y profesional.',
   },
 ]
 
-function Lista({ beneficios }: { beneficios: Beneficio[] }) {
+function Lista({ beneficios, colorClase }: { beneficios: Beneficio[]; colorClase: string }) {
   return (
     <ul className="space-y-4">
       {beneficios.map(({ icono: Icono, titulo, texto }) => (
-        <li key={titulo} className="flex gap-3">
-          <Icono aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-primary" />
-          <div>
-            <p className="font-medium">{titulo}</p>
-            <p className="text-sm text-muted-foreground">{texto}</p>
+        <li key={titulo} className="group/item flex items-start gap-3.5">
+          <span
+            className={`flex size-9 shrink-0 items-center justify-center rounded-lg border transition-colors ${colorClase}`}
+          >
+            <Icono aria-hidden="true" className="size-4.5" />
+          </span>
+          <div className="space-y-0.5">
+            <p className="text-sm font-semibold text-foreground">{titulo}</p>
+            <p className="text-xs leading-relaxed text-muted-foreground">{texto}</p>
           </div>
         </li>
       ))}
@@ -79,42 +84,83 @@ function Lista({ beneficios }: { beneficios: Beneficio[] }) {
   )
 }
 
-// Qué gana cada tipo de cuenta. Solo se cuenta lo que la aplicación hace hoy.
+// Qué gana cada tipo de cuenta.
 export default function Beneficios() {
   return (
-    <section aria-labelledby="titulo-beneficios" className="space-y-8">
-      <div className="max-w-2xl space-y-2">
-        <h2 id="titulo-beneficios" className="text-3xl font-bold">
-          Pensada para quienes buscan y para quienes contratan
+    <section aria-labelledby="titulo-beneficios" className="space-y-10">
+      <div className="max-w-2xl space-y-3">
+        <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+          Ventajas y características
+        </div>
+        <h2 id="titulo-beneficios" className="text-3xl font-extrabold tracking-tight sm:text-4xl">
+          Diseñada para conectar el talento con las empresas
         </h2>
-        <p className="text-muted-foreground">
-          Una sola plataforma para estudiantes, egresados y las empresas que la UPC da de alta.
+        <p className="text-muted-foreground sm:text-lg">
+          Una plataforma oficial y estructurada para estudiantes, graduados y organizaciones aliadas.
         </p>
       </div>
-      <div className="grid gap-6 md:grid-cols-2">
-        <article className="flex flex-col gap-6 rounded-xl border bg-card p-6 shadow-sm">
-          <header className="flex items-center gap-3">
-            <span className="flex size-11 items-center justify-center rounded-xl bg-primary-soft text-primary">
-              <GraduationCap aria-hidden="true" className="size-6" />
+
+      <div className="grid gap-8 md:grid-cols-2">
+        {/* Tarjeta Candidatos */}
+        <article className="relative flex flex-col gap-6 overflow-hidden rounded-2xl border border-border/80 bg-card/90 p-6 shadow-sm backdrop-blur-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md sm:p-8 motion-reduce:transform-none before:absolute before:inset-x-0 before:top-0 before:h-1 before:bg-linear-to-r before:from-primary before:to-emerald-500">
+          <header className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <span className="flex size-11 items-center justify-center rounded-xl bg-primary/10 text-primary border border-primary/20">
+                <GraduationCap aria-hidden="true" className="size-6" />
+              </span>
+              <div>
+                <h3 className="text-xl font-bold">Estudiantes y egresados</h3>
+                <p className="text-xs text-muted-foreground">Oportunidades para impulsar tu carrera</p>
+              </div>
+            </div>
+            <span className="rounded-full border border-primary/20 bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary">
+              Candidatos
             </span>
-            <h3 className="text-xl font-semibold">Para estudiantes y egresados</h3>
           </header>
-          <Lista beneficios={PARA_CANDIDATOS} />
-          <Link to={RUTAS.registro} className={`${claseEnlace} mt-auto w-fit`}>
-            Crear cuenta de estudiante o egresado
-          </Link>
+
+          <Lista
+            beneficios={PARA_CANDIDATOS}
+            colorClase="bg-primary/10 text-primary border-primary/20 group-hover/item:bg-primary group-hover/item:text-white group-hover/item:border-primary"
+          />
+
+          <div className="mt-auto pt-4 border-t border-border/60">
+            <Button asChild className="w-full sm:w-auto gap-2 font-medium shadow-xs">
+              <Link to={RUTAS.registro}>
+                Crear cuenta de estudiante
+                <ArrowRight aria-hidden="true" className="size-4" />
+              </Link>
+            </Button>
+          </div>
         </article>
-        <article className="flex flex-col gap-6 rounded-xl border bg-card p-6 shadow-sm">
-          <header className="flex items-center gap-3">
-            <span className="flex size-11 items-center justify-center rounded-xl bg-tint-strong text-primary">
-              <Building2 aria-hidden="true" className="size-6" />
+
+        {/* Tarjeta Empresas */}
+        <article className="relative flex flex-col gap-6 overflow-hidden rounded-2xl border border-border/80 bg-card/90 p-6 shadow-sm backdrop-blur-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-teal-500/40 hover:shadow-md sm:p-8 motion-reduce:transform-none before:absolute before:inset-x-0 before:top-0 before:h-1 before:bg-linear-to-r before:from-teal-600 before:to-emerald-500">
+          <header className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <span className="flex size-11 items-center justify-center rounded-xl bg-teal-500/10 text-teal-700 dark:text-teal-400 border border-teal-500/20">
+                <Building2 aria-hidden="true" className="size-6" />
+              </span>
+              <div>
+                <h3 className="text-xl font-bold">Empresas y organizaciones</h3>
+                <p className="text-xs text-muted-foreground">Acceso al potencial formativo upecista</p>
+              </div>
+            </div>
+            <span className="rounded-full bg-teal-500/10 px-2.5 py-0.5 text-xs font-semibold text-teal-700 dark:text-teal-400">
+              Aliados
             </span>
-            <h3 className="text-xl font-semibold">Para empresas</h3>
           </header>
-          <Lista beneficios={PARA_EMPRESAS} />
-          <p className="mt-auto text-sm text-muted-foreground">
-            Si tu empresa aún no tiene cuenta, la UPC debe darla de alta.
-          </p>
+
+          <Lista
+            beneficios={PARA_EMPRESAS}
+            colorClase="bg-teal-500/10 text-teal-700 dark:text-teal-400 border-teal-500/20 group-hover/item:bg-teal-600 group-hover/item:text-white group-hover/item:border-teal-600"
+          />
+
+          <div className="mt-auto pt-4 border-t border-border/60">
+            <div className="rounded-xl bg-muted/60 p-3 text-xs text-muted-foreground">
+              <span className="font-semibold text-foreground">Proceso institucional: </span>
+              Las empresas son validadas y habilitadas directamente por el área encargada de la UPC para garantizar procesos transparentes.
+            </div>
+          </div>
         </article>
       </div>
     </section>
