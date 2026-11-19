@@ -13,9 +13,9 @@ type Props = {
 export default function EncabezadoPagina({ titulo, descripcion, acciones }: Props) {
   return (
     <header className="flex flex-wrap items-end justify-between gap-4">
-      <div className="min-w-0 space-y-1">
-        <h1 className="text-2xl font-bold sm:text-3xl">{titulo}</h1>
-        {descripcion && <p className="max-w-2xl text-muted-foreground">{descripcion}</p>}
+      <div className="min-w-0 space-y-1.5">
+        <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">{titulo}</h1>
+        {descripcion && <p className="max-w-2xl text-muted-foreground leading-relaxed">{descripcion}</p>}
       </div>
       {acciones}
     </header>

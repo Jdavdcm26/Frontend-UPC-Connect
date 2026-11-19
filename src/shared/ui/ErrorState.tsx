@@ -12,12 +12,14 @@ export default function ErrorState({ mensaje, onReintentar }: Props) {
   return (
     <div
       role="alert"
-      className="flex flex-col items-center gap-3 rounded-xl border border-destructive/30 bg-red-50 p-8 text-center"
+      className="flex flex-col items-center gap-4 rounded-2xl border border-destructive/25 bg-destructive/5 p-8 text-center backdrop-blur-xs sm:p-10"
     >
-      <TriangleAlert aria-hidden="true" className="size-6 text-destructive" />
-      <p className="text-destructive">{mensaje}</p>
+      <span className="flex size-12 items-center justify-center rounded-full bg-destructive/10">
+        <TriangleAlert aria-hidden="true" className="size-6 text-destructive" />
+      </span>
+      <p className="max-w-xs text-sm font-medium leading-relaxed text-destructive">{mensaje}</p>
       {onReintentar && (
-        <Button variant="outline" onClick={onReintentar}>
+        <Button variant="outline" onClick={onReintentar} className="shadow-xs">
           Reintentar
         </Button>
       )}
