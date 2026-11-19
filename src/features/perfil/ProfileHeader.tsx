@@ -37,13 +37,13 @@ export default function ProfileHeader({
   acciones,
 }: Props) {
   return (
-    <header className="overflow-hidden rounded-xl border bg-card shadow-sm">
-      <div aria-hidden="true" className="h-24 bg-linear-to-r from-primary to-emerald-600 sm:h-28" />
-      <div className="px-5 pb-5 sm:px-6 sm:pb-6">
-        <div className="-mt-12 flex flex-wrap items-end justify-between gap-4">
+    <header className="overflow-hidden rounded-2xl border border-border/80 bg-card/95 shadow-xs backdrop-blur-xs">
+      <div aria-hidden="true" className="h-28 bg-linear-to-r from-[#00522b] via-primary to-emerald-600 sm:h-32" />
+      <div className="px-5 pb-6 sm:px-6 sm:pb-7">
+        <div className="-mt-13 flex flex-wrap items-end justify-between gap-4">
           <span
             aria-hidden="true"
-            className="flex size-24 items-center justify-center rounded-2xl bg-primary text-3xl font-bold text-primary-foreground ring-4 ring-card"
+            className="flex size-26 items-center justify-center rounded-2xl bg-linear-to-br from-primary to-emerald-700 text-3xl font-bold text-white ring-4 ring-card shadow-lg shadow-primary/20"
           >
             {inicialesDeNombre(nombres, apellidos)}
           </span>

@@ -44,8 +44,8 @@ export default function PerfilPage() {
   if (cargando) {
     return (
       <div className="space-y-6" role="status" aria-label="Cargando perfil">
-        <Skeleton className="h-60 w-full rounded-xl" />
-        <Skeleton className="h-32 w-full rounded-xl" />
+        <Skeleton className="h-60 w-full rounded-2xl" />
+        <Skeleton className="h-32 w-full rounded-2xl" />
       </div>
     )
   }
