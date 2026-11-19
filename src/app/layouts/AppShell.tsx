@@ -25,34 +25,40 @@ export default function AppShell({ subtitulo, enlaces }: Props) {
     <div className="flex min-h-screen flex-col bg-canvas">
       <SaltarAlContenido />
       <AnunciarRuta />
-      <header className="sticky top-0 z-40 border-b border-border/70 bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/70 shadow-2xs">
-        <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+      <header className="sticky top-0 z-40 border-b border-border/60 bg-card/85 shadow-card backdrop-blur-xl">
+        <div className="mx-auto flex h-17 w-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
           <Logo destino={enlaces[0].ruta} subtitulo={subtitulo} />
           <nav aria-label="Principal" className="hidden items-center gap-1 md:flex">
-            {enlaces.map((enlace) => (
+            {enlaces.map(({ ruta, etiqueta, icono: Icono }) => (
               <NavLink
-                key={enlace.ruta}
-                to={enlace.ruta}
+                key={ruta}
+                to={ruta}
                 end
                 className={({ isActive }) => claseEnlaceMenu(isActive)}
               >
-                {enlace.etiqueta}
+                {Icono && <Icono aria-hidden="true" className="size-4" />}
+                {etiqueta}
               </NavLink>
             ))}
           </nav>
           <div className="flex items-center gap-3">
             <div className="hidden items-center gap-3 md:flex">
               <CerrarSesionBoton />
-              {usuario && <AvatarIniciales correo={usuario.correo} />}
+              {usuario && (
+                <span className="flex size-10 items-center justify-center rounded-full bg-linear-to-br from-primary/15 to-emerald-500/10 p-0.5 ring-1 ring-primary/20">
+                  <AvatarIniciales correo={usuario.correo} />
+                </span>
+              )}
             </div>
             <MenuMovil enlaces={enlaces} correo={usuario?.correo} />
           </div>
         </div>
+        <div aria-hidden="true" className="h-0.5 w-full bg-linear-to-r from-primary via-emerald-500 to-transparent" />
       </header>
       <main
         id="contenido"
         tabIndex={-1}
-        className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 focus:outline-none sm:px-6 lg:px-8 lg:py-8"
+        className="mx-auto w-full max-w-7xl flex-1 px-4 py-7 focus:outline-none sm:px-6 lg:px-8 lg:py-9"
       >
         <Outlet />
       </main>

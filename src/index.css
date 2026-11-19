@@ -6,9 +6,17 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Escala de radios pensada para tarjetas: 10–18 px, sin esquinas exageradas. */
 @theme inline {
     --font-heading: var(--font-sans);
     --font-sans: 'Geist Variable', sans-serif;
+    --radius-sm: 0.625rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 0.875rem;
+    --radius-xl: 1rem;
+    --radius-2xl: 1.125rem;
+    --radius-3xl: 1.375rem;
+    --radius-4xl: 1.75rem;
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -40,59 +48,60 @@
     --color-card: var(--card);
     --color-foreground: var(--foreground);
     --color-background: var(--background);
-    --radius-sm: calc(var(--radius) * 0.6);
-    --radius-md: calc(var(--radius) * 0.8);
-    --radius-lg: var(--radius);
-    --radius-xl: calc(var(--radius) * 1.4);
-    --radius-2xl: calc(var(--radius) * 1.8);
-    --radius-3xl: calc(var(--radius) * 2.2);
-    --radius-4xl: calc(var(--radius) * 2.6);
 }
 
 :root {
-    --background: #ffffff;
-    --foreground: #0b1c30;
+    /* Lienzo cálido y tarjetas blancas: la profundidad nace del contraste entre ambos. */
+    --background: #f7f8f6;
+    --foreground: #202b36;
     --card: #ffffff;
-    --card-foreground: #0b1c30;
+    --card-foreground: #202b36;
     --popover: #ffffff;
-    --popover-foreground: #0b1c30;
-    --primary: #006837; /* verde institucional UPC */
+    --popover-foreground: #202b36;
+    --primary: #087443;
     --primary-foreground: #ffffff;
-    --secondary: #f1f5f9;
-    --secondary-foreground: #1e293b;
-    --muted: #f1f5f9;
-    --muted-foreground: #566275; /* contraste 5,5:1 o más sobre blanco y sobre el lienzo */
-    --accent: #f1f5f9;
-    --accent-foreground: #1e293b;
-    --destructive: #b91c1c; /* rojo oscuro: el texto rojo sobre fondo rosado también llega a 4,5:1 */
-    --border: #e2e8f0;
-    --input: #7d8ba0; /* borde de campos: 3:1 contra el fondo (WCAG 1.4.11) */
-    --ring: #006837; /* anillo de foco visible */
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --radius: 0.625rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.708 0 0);
+    --secondary: #e2f1e8;
+    --secondary-foreground: #065c35;
+    --muted: #edf1eb;
+    /* #69727c mantiene el cariz gris de la paleta sugerida con contraste AA sobre el lienzo. */
+    --muted-foreground: #69727c;
+    --accent: #e2f1e8;
+    --accent-foreground: #065c35;
+    --destructive: #b42318;
+    --border: #e1e7df;
+    --input: #7d8ba0;
+    --ring: #087443;
+    --chart-1: #087443;
+    --chart-2: #10a06a;
+    --chart-3: #065c35;
+    --chart-4: #0f766e;
+    --chart-5: #a16207;
+    --radius: 0.875rem;
+    --sidebar: #f4f7f2;
+    --sidebar-foreground: #202b36;
+    --sidebar-primary: #087443;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #e2f1e8;
+    --sidebar-accent-foreground: #065c35;
+    --sidebar-border: #e1e7df;
+    --sidebar-ring: #087443;
+
+    /* Sombras y radios propios, reutilizables desde CSS y desde Tailwind. */
+    --radio-tarjeta: 1.125rem;
+    --sombra-tarjeta: 0 1px 2px rgb(16 43 31 / 0.04), 0 10px 28px -18px rgb(16 43 31 / 0.22);
+    --sombra-elevada: 0 18px 40px -18px rgb(8 116 67 / 0.32), 0 4px 10px -6px rgb(8 116 67 / 0.16);
+    --sombra-banner: 0 26px 50px -26px rgb(6 92 53 / 0.55);
 }
 
 /* Colores del sistema de diseño que no existen en shadcn: lienzo, tintes y etiquetas de estado.
    Cada etiqueta usa un texto oscuro sobre un fondo suave (contraste 4,5:1 o más). */
 @theme {
-    --color-canvas: #f8f9ff;
-    --color-tint: #eff4ff;
-    --color-tint-strong: #e5eeff;
-    --color-primary-hover: #00522b;
-    --color-primary-active: #004323;
-    --color-primary-soft: #e8f5e9;
+    --color-canvas: #f7f8f6;
+    --color-tint: #e2f1e8;
+    --color-tint-strong: #cfe6d7;
+    --color-primary-hover: #065c35;
+    --color-primary-active: #054b2b;
+    --color-primary-soft: #e2f1e8;
     --color-ambar: #92400e;
     --color-ambar-soft: #fef3c7;
 
@@ -102,45 +111,49 @@
     --color-estado-revision-soft: #eef2ff;
     --color-estado-entrevista: #6d28d9;
     --color-estado-entrevista-soft: #f5f3ff;
-    --color-estado-seleccionado: #006837;
-    --color-estado-seleccionado-soft: #e8f5e9;
-    --color-estado-rechazado: #b91c1c;
+    --color-estado-seleccionado: #065c35;
+    --color-estado-seleccionado-soft: #e2f1e8;
+    --color-estado-rechazado: #b42318;
     --color-estado-rechazado-soft: #fef2f2;
+
+    --shadow-card: var(--sombra-tarjeta);
+    --shadow-lift: var(--sombra-elevada);
+    --shadow-banner: var(--sombra-banner);
 }
 
 .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --color-canvas: #0b1116;
-    --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.205 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.922 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.556 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.488 0.243 264.376);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(1 0 0 / 10%);
-    --sidebar-ring: oklch(0.556 0 0);
+    --background: #0c1410;
+    --foreground: #eaf3ed;
+    --color-canvas: #0a120e;
+    --card: #121d17;
+    --card-foreground: #eaf3ed;
+    --popover: #121d17;
+    --popover-foreground: #eaf3ed;
+    --primary: #34d399;
+    --primary-foreground: #052e1b;
+    --secondary: #1a2b21;
+    --secondary-foreground: #d5f2e2;
+    --muted: #18251d;
+    --muted-foreground: #a9b8ae;
+    --accent: #1a2b21;
+    --accent-foreground: #d5f2e2;
+    --destructive: #f87171;
+    --border: #2a4033;
+    --input: #547060;
+    --ring: #34d399;
+    --chart-1: #34d399;
+    --chart-2: #10b981;
+    --chart-3: #6ee7b7;
+    --chart-4: #2dd4bf;
+    --chart-5: #fbbf24;
+    --sidebar: #101a14;
+    --sidebar-foreground: #eaf3ed;
+    --sidebar-primary: #34d399;
+    --sidebar-primary-foreground: #052e1b;
+    --sidebar-accent: #1a2b21;
+    --sidebar-accent-foreground: #d5f2e2;
+    --sidebar-border: #2a4033;
+    --sidebar-ring: #34d399;
 }
 
 @layer base {
@@ -169,11 +182,77 @@
 .bg-canvas {
   background-color: var(--color-canvas);
   background-image:
-    radial-gradient(ellipse 90% 60% at 50% -20%, color-mix(in oklab, var(--primary) 7%, transparent), transparent),
-    radial-gradient(ellipse 60% 40% at 100% 25%, color-mix(in oklab, #0284c7 4%, transparent), transparent);
+    radial-gradient(ellipse 85% 55% at 50% -18%, color-mix(in oklab, var(--primary) 8%, transparent), transparent),
+    radial-gradient(ellipse 55% 40% at 100% 20%, color-mix(in oklab, #10b981 4%, transparent), transparent);
 }
 
 .dark .bg-canvas {
   background-image:
-    radial-gradient(ellipse 90% 60% at 50% -20%, color-mix(in oklab, var(--primary) 12%, transparent), transparent);
+    radial-gradient(ellipse 85% 55% at 50% -18%, color-mix(in oklab, var(--primary) 10%, transparent), transparent);
+}
+
+/* ---------- Primitivas visuales compartidas ---------- */
+
+.tarjeta {
+  background: var(--card);
+  border: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
+  border-radius: var(--radio-tarjeta);
+  box-shadow: var(--sombra-tarjeta);
+}
+
+.elevable {
+  transition:
+    transform 280ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 280ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 280ms ease;
+}
+
+.elevable:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--sombra-elevada);
+  border-color: color-mix(in srgb, var(--primary) 28%, var(--border));
+}
+
+.elevable:focus-visible {
+  outline: none;
+  box-shadow: var(--sombra-elevada), 0 0 0 3px color-mix(in srgb, var(--ring) 30%, transparent);
+}
+
+.degradado-institucional {
+  background:
+    radial-gradient(circle at 12% 12%, rgb(255 255 255 / 0.16), transparent 32%),
+    radial-gradient(circle at 88% 92%, rgb(16 185 129 / 0.3), transparent 38%),
+    linear-gradient(120deg, #043d24 0%, #065c35 40%, #087443 72%, #0e8f55 100%);
+}
+
+.rejilla-sutil {
+  background-image:
+    linear-gradient(rgb(255 255 255 / 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.055) 1px, transparent 1px);
+  background-size: 28px 28px;
+  -webkit-mask-image: linear-gradient(to right, black, transparent 78%);
+  mask-image: linear-gradient(to right, black, transparent 78%);
+}
+
+@keyframes entrada {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.entrar {
+  animation: entrada 480ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .entrar {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .elevable {
+    transition: none;
+  }
+  .elevable:hover {
+    transform: none;
+  }
 }

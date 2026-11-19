@@ -12,9 +12,9 @@ export default function ErrorState({ mensaje, onReintentar }: Props) {
   return (
     <div
       role="alert"
-      className="flex flex-col items-center gap-4 rounded-2xl border border-destructive/25 bg-destructive/5 p-8 text-center backdrop-blur-xs sm:p-10"
+      className="tarjeta flex flex-col items-center gap-4 border-destructive/20 bg-destructive/5 p-8 text-center backdrop-blur-xs sm:p-10"
     >
-      <span className="flex size-12 items-center justify-center rounded-full bg-destructive/10">
+      <span className="flex size-14 items-center justify-center rounded-2xl bg-destructive/10 ring-1 ring-destructive/15">
         <TriangleAlert aria-hidden="true" className="size-6 text-destructive" />
       </span>
       <p className="max-w-xs text-sm font-medium leading-relaxed text-destructive">{mensaje}</p>

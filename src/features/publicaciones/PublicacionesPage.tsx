@@ -1,8 +1,9 @@
-import { PenSquare, UserX } from 'lucide-react'
+import { Newspaper, PenSquare, UserX } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { useSession } from '@/features/auth/useSession'
+import ComunidadSidebar from '@/features/publicaciones/ComunidadSidebar'
 import FeedPublicaciones from '@/features/publicaciones/FeedPublicaciones'
 import { filtrosPublicacionesAUrl, filtrosPublicacionesDesdeUrl, type FiltrosPublicaciones } from '@/features/publicaciones/filtros'
 import PestanasAlcance from '@/features/publicaciones/PestanasAlcance'
@@ -62,8 +63,10 @@ export default function PublicacionesPage() {
           }
 
   return (
-    <section className="mx-auto max-w-3xl space-y-6">
+    <div className="space-y-7">
       <EncabezadoPagina
+        eyebrow="Comunidad UPC"
+        icono={Newspaper}
         titulo="Publicaciones"
         descripcion={
           esCandidato
@@ -72,7 +75,7 @@ export default function PublicacionesPage() {
         }
         acciones={
           esCandidato && (
-            <Button asChild>
+            <Button asChild className="shadow-card hover:shadow-lift">
               <Link to={RUTAS.nuevaPublicacion}>
                 <PenSquare aria-hidden="true" />
                 Publicar
@@ -82,24 +85,30 @@ export default function PublicacionesPage() {
         }
       />
 
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        {/* Las empresas no siguen a nadie: solo ven la comunidad. */}
-        {esCandidato ? <PestanasAlcance filtros={filtros} /> : <span />}
-        <Link to={RUTAS.bloqueados} className={`${claseEnlace} inline-flex items-center gap-1.5 text-sm`}>
-          <UserX aria-hidden="true" className="size-4" />
-          Cuentas bloqueadas
-        </Link>
+      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_17rem]">
+        <div className="min-w-0 space-y-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            {/* Las empresas no siguen a nadie: solo ven la comunidad. */}
+            {esCandidato ? <PestanasAlcance filtros={filtros} /> : <span />}
+            <Link to={RUTAS.bloqueados} className={`${claseEnlace} inline-flex items-center gap-1.5 text-sm`}>
+              <UserX aria-hidden="true" className="size-4" />
+              Cuentas bloqueadas
+            </Link>
+          </div>
+
+          <PostFilters filtros={filtros} categorias={categorias} onCambiar={cambiar} />
+
+          <FeedPublicaciones
+            key={`${claveFiltros}-${filtros.alcance}-${intento}`}
+            filtros={filtros}
+            puedeInteractuar={esCandidato}
+            vacio={vacio}
+            onReintentar={() => setIntento((n) => n + 1)}
+          />
+        </div>
+
+        <ComunidadSidebar categorias={categorias} filtros={filtros} onCambiar={cambiar} esCandidato={esCandidato} />
       </div>
-
-      <PostFilters filtros={filtros} categorias={categorias} onCambiar={cambiar} />
-
-      <FeedPublicaciones
-        key={`${claveFiltros}-${filtros.alcance}-${intento}`}
-        filtros={filtros}
-        puedeInteractuar={esCandidato}
-        vacio={vacio}
-        onReintentar={() => setIntento((n) => n + 1)}
-      />
-    </section>
+    </div>
   )
 }

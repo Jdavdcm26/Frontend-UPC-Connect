@@ -9,6 +9,7 @@ import ProfileDetails from '@/features/perfil/ProfileDetails'
 import ProfileHeader from '@/features/perfil/ProfileHeader'
 import type { Perfil } from '@/features/perfil/tipos'
 import SeccionPublicacionesAutor from '@/features/publicaciones/SeccionPublicacionesAutor'
+import { useConteoPublicaciones } from '@/features/publicaciones/useConteoPublicaciones'
 import type { RedPropia } from '@/features/red/tipos'
 import { RUTAS } from '@/shared/lib/rutas'
 import ErrorState from '@/shared/ui/ErrorState'
@@ -17,6 +18,7 @@ import { claseEnlace } from '@/shared/ui/estilosEnlace'
 // Mi perfil: vista de lectura (HU-09 / FE-16), con seguidores y seguidos (HU-28) y mis publicaciones.
 export default function PerfilPage() {
   const { usuario } = useSession()
+  const publicaciones = useConteoPublicaciones(usuario?.id)
   const [perfil, setPerfil] = useState<Perfil | null>(null)
   const [red, setRed] = useState<RedPropia>()
   const [cargando, setCargando] = useState(true)
@@ -75,6 +77,10 @@ export default function PerfilPage() {
         detalle={detalle}
         ciudad={datos.ciudad}
         contadores={red}
+        estadisticas={{
+          publicaciones: publicaciones.total,
+          habilidades: datos.habilidades.length,
+        }}
       />
 
       <ProfileDetails

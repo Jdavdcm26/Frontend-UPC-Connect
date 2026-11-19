@@ -27,30 +27,31 @@ export default function MenuMovil({ enlaces, correo }: Props) {
   return (
     <Sheet open={abierto} onOpenChange={setAbierto}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="md:hidden">
+        <Button variant="outline" size="icon" className="md:hidden shadow-card">
           <Menu aria-hidden="true" />
           <span className="sr-only">Abrir menú</span>
         </Button>
       </SheetTrigger>
-      <SheetContent>
-        <SheetHeader>
-          <SheetTitle>Menú</SheetTitle>
+      <SheetContent className="bg-canvas">
+        <SheetHeader className="border-b border-border/60 pb-5">
+          <SheetTitle className="text-xl">Menú</SheetTitle>
           <SheetDescription>{correo ? `Sesión de ${correo}` : 'Navegación principal'}</SheetDescription>
         </SheetHeader>
-        <nav aria-label="Principal" className="flex flex-col gap-1">
-          {enlaces.map((enlace) => (
+        <nav aria-label="Principal" className="flex flex-col gap-1.5 pt-5">
+          {enlaces.map(({ ruta, etiqueta, icono: Icono }) => (
             <NavLink
-              key={enlace.ruta}
-              to={enlace.ruta}
+              key={ruta}
+              to={ruta}
               end
               onClick={() => setAbierto(false)}
-              className={({ isActive }) => claseEnlaceMenu(isActive, 'py-2.5 text-base')}
+              className={({ isActive }) => claseEnlaceMenu(isActive, 'py-2.5 text-base after:hidden')}
             >
-              {enlace.etiqueta}
+              {Icono && <Icono aria-hidden="true" className="size-4.5" />}
+              {etiqueta}
             </NavLink>
           ))}
         </nav>
-        <div className="mt-auto">
+        <div className="mt-auto border-t border-border/60 pt-4">
           <CerrarSesionBoton size="default" className="w-full" />
         </div>
       </SheetContent>

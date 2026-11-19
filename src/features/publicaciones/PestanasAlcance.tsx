@@ -14,7 +14,7 @@ const PESTANAS: { alcance: Alcance; etiqueta: string; icono: LucideIcon }[] = [
 // La actual se marca con aria-current y en negrita, no solo con color.
 export default function PestanasAlcance({ filtros }: { filtros: FiltrosPublicaciones }) {
   return (
-    <nav aria-label="Qué publicaciones ver" className="inline-flex rounded-xl border border-border/80 bg-card/95 p-1 shadow-xs backdrop-blur-xs">
+    <nav aria-label="Qué publicaciones ver" className="tarjeta inline-flex rounded-xl p-1">
       {PESTANAS.map(({ alcance, etiqueta, icono: Icono }) => {
         const actual = filtros.alcance === alcance
         const consulta = filtrosPublicacionesAUrl({ ...filtros, alcance }).toString()
@@ -25,7 +25,7 @@ export default function PestanasAlcance({ filtros }: { filtros: FiltrosPublicaci
             aria-current={actual ? 'page' : undefined}
             className={cn(
               'inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring motion-reduce:transition-none',
-              actual ? 'bg-primary/10 font-semibold text-primary shadow-2xs' : 'font-medium text-muted-foreground hover:bg-muted/70 hover:text-foreground',
+              actual ? 'bg-primary font-semibold text-white shadow-card' : 'font-medium text-muted-foreground hover:bg-primary/5 hover:text-primary',
             )}
           >
             <Icono aria-hidden="true" className="size-4" />

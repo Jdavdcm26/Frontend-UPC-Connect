@@ -1,4 +1,4 @@
-import { RotateCcw, Search } from 'lucide-react'
+import { RotateCcw, Search, SlidersHorizontal } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -56,20 +56,30 @@ export default function VacancyFilters({ filtros, carreras, onAplicar }: Props) 
   }
 
   return (
-    <form
-      onSubmit={enviar}
-      aria-label="Filtros de vacantes"
-      className="rounded-2xl border border-border/80 bg-card/95 p-5 shadow-xs backdrop-blur-xs sm:p-6"
-    >
+    <form onSubmit={enviar} aria-label="Filtros de vacantes" className="tarjeta space-y-5 p-5 sm:p-6">
+      <div className="flex items-center gap-2.5 border-b border-border/60 pb-4">
+        <span className="flex size-9 items-center justify-center rounded-xl border border-primary/20 bg-linear-to-br from-primary/15 to-emerald-500/8 text-primary shadow-2xs">
+          <SlidersHorizontal aria-hidden="true" className="size-4.5" />
+        </span>
+        <div>
+          <h2 className="text-sm font-bold text-foreground">Encuentra tu oportunidad</h2>
+          <p className="text-[11px] text-muted-foreground">Ajusta la búsqueda a tu perfil</p>
+        </div>
+      </div>
+
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <FormField id="filtro-texto" etiqueta="Buscar">
           {(campo) => (
-            <Input
-              placeholder="Cargo o palabra clave"
-              value={borrador.texto}
-              onChange={(e) => cambiar('texto', e.target.value)}
-              {...campo}
-            />
+            <div className="relative">
+              <Search aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Cargo o palabra clave"
+                className="pl-9"
+                value={borrador.texto}
+                onChange={(e) => cambiar('texto', e.target.value)}
+                {...campo}
+              />
+            </div>
           )}
         </FormField>
         <FormField id="filtro-ciudad" etiqueta="Ciudad">
@@ -102,7 +112,7 @@ export default function VacancyFilters({ filtros, carreras, onAplicar }: Props) 
           onChange={(v) => cambiar('modalidad', v === TODOS ? '' : (v as FiltrosVacantes['modalidad']))}
         />
         <div className="flex flex-wrap items-end gap-2">
-          <Button type="submit">
+          <Button type="submit" className="shadow-card hover:shadow-lift">
             <Search aria-hidden="true" />
             Buscar
           </Button>

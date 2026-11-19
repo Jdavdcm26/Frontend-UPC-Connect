@@ -10,11 +10,12 @@ import type { RedPropia } from '@/features/red/tipos'
 type Props = {
   perfil: PerfilPublico
   contadores?: RedPropia
+  estadisticas?: { publicaciones?: number | null; habilidades?: number }
   // Seguir y bloquear, según quién mira.
   acciones?: ReactNode
 }
 
-export default function PublicProfileView({ perfil, contadores, acciones }: Props) {
+export default function PublicProfileView({ perfil, contadores, estadisticas, acciones }: Props) {
   const detalle = resumenAcademico({
     carrera: perfil.carreraNombre,
     semestre: perfil.semestre,
@@ -31,6 +32,7 @@ export default function PublicProfileView({ perfil, contadores, acciones }: Prop
         ciudad={perfil.ciudad}
         soloLectura
         contadores={contadores}
+        estadisticas={estadisticas}
         acciones={acciones}
       />
       <ProfileDetails

@@ -1,3 +1,4 @@
+import { BriefcaseBusiness } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
@@ -44,6 +45,8 @@ export default function VacantesPage() {
   return (
     <section className="space-y-6">
       <EncabezadoPagina
+        eyebrow="Oportunidades UPC"
+        icono={BriefcaseBusiness}
         titulo="Vacantes"
         descripcion="Encuentra vacantes, prácticas y pasantías. Filtra por ciudad, carrera, tipo de oferta y modalidad."
       />

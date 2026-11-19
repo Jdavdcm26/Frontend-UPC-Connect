@@ -4,8 +4,8 @@ import { RUTAS } from '@/shared/lib/rutas'
 // Pie de página de todas las pantallas. Solo lleva enlaces que existen en la app.
 export default function PiePagina() {
   return (
-    <footer className="relative border-t border-border/70 bg-background/60 backdrop-blur-xs">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-4 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+    <footer className="relative border-t border-border/60 bg-card/60 backdrop-blur-xs">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <p className="text-sm font-semibold text-foreground">Universidad Popular del Cesar · UPC Connect</p>

@@ -1,3 +1,4 @@
+import { Clock3 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import type { Autor } from '@/features/publicaciones/tipos'
 import { formatearFechaHora, formatearHace } from '@/shared/lib/fechas'
@@ -18,9 +19,11 @@ export default function PostAuthor({ autor, creadaEn, editadaEn, tamano = 'md' }
   const subtitulo = autor.titular || autor.carrera
   return (
     <div className="flex min-w-0 items-start gap-3">
-      <AvatarIniciales nombres={autor.nombres} apellidos={autor.apellidos} tamano={tamano} />
+      <span className="flex items-center justify-center rounded-full bg-linear-to-br from-primary/15 to-emerald-500/8 p-0.5 ring-1 ring-primary/15">
+        <AvatarIniciales nombres={autor.nombres} apellidos={autor.apellidos} tamano={tamano} />
+      </span>
       <div className="min-w-0 space-y-0.5">
-        <p className="break-words text-sm font-semibold">
+        <p className="break-words text-sm font-bold">
           {autor.slug ? (
             <Link
               to={rutaPerfilPublico(autor.slug)}
@@ -33,7 +36,8 @@ export default function PostAuthor({ autor, creadaEn, editadaEn, tamano = 'md' }
           )}
         </p>
         {subtitulo && <p className="break-words text-xs text-muted-foreground">{subtitulo}</p>}
-        <p className="text-xs text-muted-foreground">
+        <p className="flex items-center gap-1 text-xs text-muted-foreground">
+          <Clock3 aria-hidden="true" className="size-3" />
           <time dateTime={creadaEn} title={formatearFechaHora(creadaEn)}>
             {formatearHace(creadaEn)}
           </time>

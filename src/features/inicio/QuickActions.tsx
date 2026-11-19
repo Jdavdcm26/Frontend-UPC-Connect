@@ -1,4 +1,4 @@
-import type { LucideIcon } from 'lucide-react'
+import { ArrowUpRight, type LucideIcon } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 export type Acceso = {
@@ -12,24 +12,27 @@ export type Acceso = {
 export default function QuickActions({ accesos }: { accesos: Acceso[] }) {
   return (
     <nav aria-label="Accesos rápidos">
-      <ul className="grid grid-cols-[repeat(auto-fit,minmax(14rem,1fr))] gap-4">
-        {accesos.map(({ ruta, titulo, descripcion, icono: Icono }) => (
-          <li key={ruta}>
+      <ul className="grid gap-4 sm:grid-cols-3">
+        {accesos.map(({ ruta, titulo, descripcion, icono: Icono }, indice) => (
+          <li key={ruta} className="entrar" style={{ animationDelay: `${indice * 70}ms` }}>
             <Link
               to={ruta}
-              className="group flex h-full items-center gap-4 rounded-2xl border border-border/80 bg-card/95 p-4 shadow-xs outline-none backdrop-blur-xs sm:flex-col sm:items-start sm:gap-3.5 sm:p-6 transition-all duration-200 hover:-translate-y-1 hover:border-primary/40 hover:shadow-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+              className="tarjeta elevable group relative flex h-full min-h-36 flex-col justify-between gap-4 overflow-hidden p-5 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
-              <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-primary/15 to-emerald-500/10 text-primary border border-primary/20 shadow-2xs transition-transform duration-200 group-hover:scale-105 motion-reduce:transform-none">
-                <Icono aria-hidden="true" className="size-6" />
-              </span>
-              <span className="space-y-1">
-                <span className="block text-lg font-bold text-foreground transition-colors group-hover:text-primary">
+              <span aria-hidden="true" className="absolute -right-8 -top-10 size-28 rounded-full bg-primary/5 transition-transform duration-300 group-hover:scale-125 motion-reduce:transform-none" />
+              <div className="relative flex items-start justify-between gap-3">
+                <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl border border-primary/20 bg-linear-to-br from-primary/15 to-emerald-500/8 text-primary shadow-2xs transition-transform duration-200 group-hover:scale-105 motion-reduce:transform-none">
+                  <Icono aria-hidden="true" className="size-6" />
+                </span>
+                <span className="font-heading text-3xl font-extrabold text-foreground/10">0{indice + 1}</span>
+              </div>
+              <div className="relative space-y-1">
+                <span className="flex items-center gap-1.5 text-base font-bold text-foreground transition-colors group-hover:text-primary">
                   {titulo}
+                  <ArrowUpRight aria-hidden="true" className="size-4 opacity-0 transition-opacity group-hover:opacity-100 motion-reduce:transition-none" />
                 </span>
-                <span className="block text-xs leading-relaxed text-muted-foreground sm:text-sm">
-                  {descripcion}
-                </span>
-              </span>
+                <span className="block text-xs leading-relaxed text-muted-foreground sm:text-sm">{descripcion}</span>
+              </div>
             </Link>
           </li>
         ))}

@@ -7,6 +7,7 @@ import { useSession } from '@/features/auth/useSession'
 import { obtenerPerfilPublico, type PerfilPublicoConRed } from '@/features/perfil/perfilPublicoApi'
 import PublicProfileView from '@/features/perfil/PublicProfileView'
 import SeccionPublicacionesAutor from '@/features/publicaciones/SeccionPublicacionesAutor'
+import { useConteoPublicaciones } from '@/features/publicaciones/useConteoPublicaciones'
 import BlockButton from '@/features/red/BlockButton'
 import FollowButton from '@/features/red/FollowButton'
 import { ApiError } from '@/shared/api/apiError'
@@ -23,6 +24,7 @@ export default function PerfilPublicoPage() {
 function PerfilPublicoContenido({ slug }: { slug: string }) {
   const { usuario } = useSession()
   const [datos, setDatos] = useState<PerfilPublicoConRed>()
+  const publicaciones = useConteoPublicaciones(datos && !datos.red.loBloqueaste ? datos.red.usuarioId : undefined)
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState<unknown>()
   // Cambiar este número vuelve a pedir el perfil (después de bloquear o desbloquear).
@@ -102,6 +104,7 @@ function PerfilPublicoContenido({ slug }: { slug: string }) {
       <PublicProfileView
         perfil={perfil}
         contadores={{ seguidores: red.seguidores, seguidos: red.seguidos }}
+        estadisticas={{ publicaciones: publicaciones.total, habilidades: perfil.habilidades.length }}
         acciones={acciones}
       />
 

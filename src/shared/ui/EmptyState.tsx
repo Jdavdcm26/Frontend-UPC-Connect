@@ -11,8 +11,8 @@ type Props = {
 // una explicación y, si hace falta, la acción para salir del vacío.
 export default function EmptyState({ titulo, descripcion, accion }: Props) {
   return (
-    <div className="flex flex-col items-center gap-4 rounded-2xl border-[1.5px] border-dashed border-border bg-card/60 p-8 text-center backdrop-blur-xs sm:p-10">
-      <span className="flex size-12 items-center justify-center rounded-full bg-muted text-muted-foreground ring-1 ring-border">
+    <div className="tarjeta flex flex-col items-center gap-4 border-[1.5px] border-dashed border-border/80 bg-card/60 p-8 text-center backdrop-blur-xs sm:p-10">
+      <span className="flex size-14 items-center justify-center rounded-2xl bg-linear-to-br from-primary/12 to-emerald-500/8 text-primary ring-1 ring-primary/15">
         <Inbox aria-hidden="true" className="size-5.5" />
       </span>
       <div className="space-y-1.5">
