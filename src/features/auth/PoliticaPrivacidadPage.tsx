@@ -5,9 +5,9 @@ import AvisoInformativo from '@/shared/ui/AvisoInformativo'
 // El texto es provisional: falta el texto oficial de la UPC.
 export default function PoliticaPrivacidadPage() {
   return (
-    <article className="mx-auto max-w-2xl space-y-6 rounded-xl border bg-card p-5 shadow-sm sm:p-8">
+    <article className="mx-auto max-w-2xl space-y-6 rounded-2xl border border-border/80 bg-card/95 p-5 shadow-xs backdrop-blur-xs sm:p-8">
       <header className="space-y-1">
-        <h1 className="text-2xl font-bold sm:text-3xl">Política de privacidad</h1>
+        <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">Política de privacidad</h1>
         <p className="text-sm text-muted-foreground">Versión {VERSION_POLITICA}</p>
       </header>
       <AvisoInformativo>
@@ -15,13 +15,13 @@ export default function PoliticaPrivacidadPage() {
         se publicará aquí antes de abrir la plataforma al público.
       </AvisoInformativo>
       <section className="space-y-2">
-        <h2 className="text-lg font-semibold">Qué datos recogemos</h2>
+        <h2 className="text-lg font-bold tracking-tight">Qué datos recogemos</h2>
         <p className="text-muted-foreground">
           Tu correo institucional y los datos de tu perfil profesional que decidas completar.
         </p>
       </section>
       <section className="space-y-2">
-        <h2 className="text-lg font-semibold">Para qué los usamos</h2>
+        <h2 className="text-lg font-bold tracking-tight">Para qué los usamos</h2>
         <p className="text-muted-foreground">
           Para crear tu cuenta, conectar estudiantes y egresados con empresas, y enviarte avisos
           sobre tus postulaciones.
