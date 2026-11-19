@@ -25,7 +25,7 @@ export default function CatalogoPage() {
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
-      <h1 className="text-2xl font-bold">Catálogo de componentes</h1>
+      <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">Catálogo de componentes</h1>
 
       <Card>
         <CardHeader>
