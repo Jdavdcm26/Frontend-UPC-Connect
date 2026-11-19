@@ -172,8 +172,8 @@ export default function PostForm({ categorias, publicacion, seccionImagenes }: P
                       key={valor}
                       htmlFor={`tipo-${valor}`}
                       className={cn(
-                        'flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition-colors hover:bg-muted motion-reduce:transition-none',
-                        field.value === valor && 'border-primary bg-primary-soft hover:bg-primary-soft',
+                        'flex cursor-pointer items-start gap-3 rounded-xl border border-border/80 p-3 transition-colors hover:bg-muted motion-reduce:transition-none',
+                        field.value === valor && 'border-primary/50 bg-primary/10 hover:bg-primary/10',
                       )}
                     >
                       <RadioGroupItem id={`tipo-${valor}`} value={valor} className="mt-0.5" />
@@ -223,8 +223,8 @@ export default function PostForm({ categorias, publicacion, seccionImagenes }: P
         </FormField>
 
         {tipo === 'SERVICIO' && (
-          <div className="space-y-4 rounded-lg border bg-tint p-4">
-            <p className="text-sm font-medium">Datos del servicio</p>
+          <div className="space-y-4 rounded-xl border border-border/70 bg-muted/40 p-4">
+            <p className="text-sm font-semibold">Datos del servicio</p>
             <div className="grid gap-4 sm:grid-cols-2">
               <FormField id="area" etiqueta="Área" ayuda="Por ejemplo, Cálculo o Diseño gráfico." error={errors.area?.message}>
                 {(campo) => <Input {...campo} {...register('area')} />}
@@ -258,8 +258,8 @@ export default function PostForm({ categorias, publicacion, seccionImagenes }: P
         )}
 
         {tipo === 'BUSQUEDA_EQUIPO' && (
-          <div className="space-y-4 rounded-lg border bg-tint p-4">
-            <p className="text-sm font-medium">Datos de la búsqueda</p>
+          <div className="space-y-4 rounded-xl border border-border/70 bg-muted/40 p-4">
+            <p className="text-sm font-semibold">Datos de la búsqueda</p>
             <div className="grid gap-4 sm:grid-cols-[1fr_10rem]">
               <FormField id="proyecto" etiqueta="Proyecto" error={errors.proyecto?.message}>
                 {(campo) => <Input {...campo} {...register('proyecto')} />}

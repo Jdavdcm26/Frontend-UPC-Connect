@@ -79,9 +79,9 @@ export default function CommentSection({ publicacionId, puedeComentar, onTotalCa
   }
 
   return (
-    <section id="comentarios" aria-labelledby="titulo-comentarios" className="scroll-mt-24 rounded-xl border bg-card p-5 shadow-sm sm:p-6">
-      <h2 id="titulo-comentarios" className="flex items-center gap-2.5 text-xl font-semibold">
-        <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary">
+    <section id="comentarios" aria-labelledby="titulo-comentarios" className="scroll-mt-24 rounded-2xl border border-border/80 bg-card/95 p-5 shadow-xs backdrop-blur-xs sm:p-6">
+      <h2 id="titulo-comentarios" className="flex items-center gap-2.5 text-xl font-bold tracking-tight">
+        <span className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-primary/20 bg-linear-to-br from-primary/15 to-emerald-500/10 text-primary shadow-2xs">
           <MessageCircle aria-hidden="true" className="size-4.5" />
         </span>
         Comentarios
@@ -131,7 +131,7 @@ export default function CommentSection({ publicacionId, puedeComentar, onTotalCa
         </div>
       )}
 
-      <div className="mt-4 border-t pt-4">
+      <div className="mt-4 border-t border-border/70 pt-4">
         {puedeComentar ? (
           <FormularioComentario
             publicacionId={publicacionId}

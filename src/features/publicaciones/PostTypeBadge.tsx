@@ -4,9 +4,9 @@ import { ETIQUETA_TIPO_PUBLICACION, type TipoPublicacion } from '@/features/publ
 
 // Cada tipo tiene su color y su icono para reconocerlo de un vistazo; el texto siempre dice el tipo.
 const ESTILO: Record<TipoPublicacion, { clases: string; icono: LucideIcon }> = {
-  GENERAL: { clases: 'bg-estado-recibida-soft text-estado-recibida', icono: MessageSquareText },
-  SERVICIO: { clases: 'bg-primary-soft text-primary', icono: HandHelping },
-  BUSQUEDA_EQUIPO: { clases: 'bg-estado-entrevista-soft text-estado-entrevista', icono: UsersRound },
+  GENERAL: { clases: 'border border-estado-recibida/20 bg-estado-recibida-soft text-estado-recibida', icono: MessageSquareText },
+  SERVICIO: { clases: 'border border-primary/20 bg-primary/10 text-primary', icono: HandHelping },
+  BUSQUEDA_EQUIPO: { clases: 'border border-estado-entrevista/20 bg-estado-entrevista-soft text-estado-entrevista', icono: UsersRound },
 }
 
 // Etiqueta con el tipo de publicación: general, servicio o búsqueda de equipo.

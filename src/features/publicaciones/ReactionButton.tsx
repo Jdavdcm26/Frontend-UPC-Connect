@@ -54,7 +54,7 @@ export default function ReactionButton({ publicacionId, inicial, puedeReaccionar
       aria-pressed={estado.reaccione}
       disabled={enviando}
       onClick={() => void alternar()}
-      className={cn(estado.reaccione && 'bg-primary-soft font-semibold text-primary hover:bg-primary-soft hover:text-primary')}
+      className={cn(estado.reaccione && 'bg-primary/10 font-semibold text-primary hover:bg-primary/15 hover:text-primary')}
     >
       <ThumbsUp aria-hidden="true" className={cn(estado.reaccione && 'fill-current')} />
       Me gusta
