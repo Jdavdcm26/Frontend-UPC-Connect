@@ -4,9 +4,9 @@ import { ETIQUETA_TIPO, type TipoVacante } from '@/features/vacantes/tipos'
 
 // Cada tipo de oferta tiene su propio color para reconocerlo de un vistazo.
 const ESTILO: Record<TipoVacante, { clases: string; icono: LucideIcon }> = {
-  VACANTE: { clases: 'bg-estado-revision-soft text-estado-revision', icono: Briefcase },
-  PRACTICA: { clases: 'bg-primary-soft text-primary', icono: GraduationCap },
-  PASANTIA: { clases: 'bg-ambar-soft text-ambar', icono: Handshake },
+  VACANTE: { clases: 'border border-estado-revision/20 bg-estado-revision-soft text-estado-revision', icono: Briefcase },
+  PRACTICA: { clases: 'border border-primary/20 bg-primary/10 text-primary', icono: GraduationCap },
+  PASANTIA: { clases: 'border border-ambar/20 bg-ambar-soft text-ambar', icono: Handshake },
 }
 
 // Etiqueta con el tipo de oferta: vacante, práctica o pasantía.
