@@ -22,7 +22,7 @@ export default function Portada() {
 
         <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-[3.35rem] lg:leading-[1.12]">
           El puente entre el{' '}
-          <span className="bg-linear-to-r from-primary via-emerald-600 to-teal-700 bg-clip-text text-transparent">
+          <span className="bg-linear-to-r from-primary via-emerald-600 to-teal-700 bg-clip-text text-transparent dark:via-emerald-400 dark:to-teal-300">
             talento upecista
           </span>{' '}
           y el futuro profesional

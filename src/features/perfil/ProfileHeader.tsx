@@ -57,16 +57,16 @@ export default function ProfileHeader({
 
   return (
     <header className="tarjeta entrar overflow-hidden">
-      <div aria-hidden="true" className="degradado-institucional relative h-32 sm:h-36">
+      <div aria-hidden="true" className="degradado-institucional relative z-0 h-32 sm:h-36">
         <div className="rejilla-sutil absolute inset-0" />
         <div className="absolute -right-10 -top-16 size-56 rounded-full border border-white/12" />
         <div className="absolute right-16 top-6 size-20 rounded-full bg-emerald-300/15 blur-xl" />
       </div>
-      <div className="px-5 pb-6 sm:px-7 sm:pb-7">
+      <div className="relative z-10 px-5 pb-6 sm:px-7 sm:pb-7">
         <div className="-mt-14 flex flex-wrap items-end justify-between gap-4">
           <span
             aria-hidden="true"
-            className="flex size-28 items-center justify-center rounded-3xl bg-linear-to-br from-primary via-primary to-emerald-800 text-3xl font-extrabold text-white shadow-banner ring-4 ring-card sm:size-30"
+            className="flex size-28 items-center justify-center rounded-3xl bg-linear-to-br from-primary via-primary to-emerald-800 text-3xl font-extrabold text-white shadow-banner ring-4 ring-card sm:size-30 dark:from-emerald-800 dark:via-emerald-900 dark:to-emerald-950 dark:text-emerald-50"
           >
             {inicialesDeNombre(nombres, apellidos)}
           </span>

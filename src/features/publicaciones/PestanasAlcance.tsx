@@ -25,7 +25,7 @@ export default function PestanasAlcance({ filtros }: { filtros: FiltrosPublicaci
             aria-current={actual ? 'page' : undefined}
             className={cn(
               'inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring motion-reduce:transition-none',
-              actual ? 'bg-primary font-semibold text-white shadow-card' : 'font-medium text-muted-foreground hover:bg-primary/5 hover:text-primary',
+              actual ? 'bg-primary font-semibold text-primary-foreground shadow-card' : 'font-medium text-muted-foreground hover:bg-primary/5 hover:text-primary',
             )}
           >
             <Icono aria-hidden="true" className="size-4" />

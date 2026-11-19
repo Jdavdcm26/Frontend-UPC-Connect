@@ -7,9 +7,9 @@ type Tono = 'verde' | 'esmeralda' | 'indigo' | 'ambar'
 
 const TONOS: Record<Tono, string> = {
   verde: 'from-primary/18 to-emerald-500/8 text-primary ring-primary/20',
-  esmeralda: 'from-emerald-500/18 to-teal-500/8 text-emerald-700 ring-emerald-600/20',
-  indigo: 'from-indigo-500/16 to-violet-500/8 text-indigo-700 ring-indigo-600/20',
-  ambar: 'from-amber-500/18 to-orange-500/8 text-ambar ring-amber-600/20',
+  esmeralda: 'from-emerald-500/18 to-teal-500/8 text-emerald-700 ring-emerald-600/20 dark:text-emerald-300 dark:ring-emerald-400/25',
+  indigo: 'from-indigo-500/16 to-violet-500/8 text-indigo-700 ring-indigo-600/20 dark:text-indigo-300 dark:ring-indigo-400/25',
+  ambar: 'from-amber-500/18 to-orange-500/8 text-ambar ring-amber-600/20 dark:text-amber-300 dark:ring-amber-400/25',
 }
 
 type Props = {

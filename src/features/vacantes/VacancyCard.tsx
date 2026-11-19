@@ -77,7 +77,7 @@ export default function VacancyCard({ vacante, compact = false }: Props) {
           {!compact && <DatoIcono icono={MapPinned}>Cierra el {formatearDia(vacante.fechaCierre)}</DatoIcono>}
         </div>
       </div>
-      <span className="hidden size-9 shrink-0 items-center justify-center rounded-full bg-muted/60 text-muted-foreground transition-all duration-200 group-hover:bg-primary group-hover:text-white group-hover:translate-x-0.5 sm:flex motion-reduce:transform-none">
+      <span className="hidden size-9 shrink-0 items-center justify-center rounded-full bg-muted/60 text-muted-foreground transition-all duration-200 group-hover:bg-primary group-hover:text-primary-foreground group-hover:translate-x-0.5 sm:flex motion-reduce:transform-none">
         <ArrowRight aria-hidden="true" className="size-4" />
       </span>
     </article>

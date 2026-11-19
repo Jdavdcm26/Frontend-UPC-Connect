@@ -124,7 +124,6 @@
 .dark {
     --background: #0c1410;
     --foreground: #eaf3ed;
-    --color-canvas: #0a120e;
     --card: #121d17;
     --card-foreground: #eaf3ed;
     --popover: #121d17;
@@ -154,6 +153,33 @@
     --sidebar-accent-foreground: #d5f2e2;
     --sidebar-border: #2a4033;
     --sidebar-ring: #34d399;
+
+    /* Tokens propios del rediseño: el modo claro no basta para etiquetas y superficies. */
+    --color-canvas: #0a120e;
+    --color-tint: #1a2b21;
+    --color-tint-strong: #244031;
+    --color-primary-hover: #4ade80;
+    --color-primary-active: #22c55e;
+    --color-primary-soft: #1a2b21;
+    --color-ambar: #fbbf24;
+    --color-ambar-soft: #3b2a12;
+
+    /* Estados de postulación: texto claro sobre fondos oscuros (contraste AA). */
+    --color-estado-recibida: #cbd5e1;
+    --color-estado-recibida-soft: #1e293b;
+    --color-estado-revision: #a5b4fc;
+    --color-estado-revision-soft: #1e1b4b;
+    --color-estado-entrevista: #d8b4fe;
+    --color-estado-entrevista-soft: #2e1065;
+    --color-estado-seleccionado: #6ee7b7;
+    --color-estado-seleccionado-soft: #064e3b;
+    --color-estado-rechazado: #fca5a5;
+    --color-estado-rechazado-soft: #450a0a;
+
+    /* Sombras más contenidas: sobre fondo oscuro no deben parecer halos. */
+    --sombra-tarjeta: 0 1px 2px rgb(0 0 0 / 0.3), 0 12px 30px -18px rgb(0 0 0 / 0.7);
+    --sombra-elevada: 0 18px 40px -18px rgb(0 0 0 / 0.75), 0 0 0 1px rgb(52 211 153 / 0.08);
+    --sombra-banner: 0 26px 50px -26px rgb(0 0 0 / 0.8);
 }
 
 @layer base {

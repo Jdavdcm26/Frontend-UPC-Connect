@@ -40,7 +40,7 @@ export default function LlamadoFinal() {
         <div className="flex flex-wrap items-center gap-3.5 pt-3">
           <Link
             to={RUTAS.registro}
-            className={`inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-white px-6 text-sm font-bold text-primary shadow-sm shadow-black/10 transition-all hover:bg-emerald-50 hover:shadow-md hover:-translate-y-0.5 motion-reduce:transform-none ${FOCO}`}
+            className={`inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-white px-6 text-sm font-bold text-primary shadow-sm dark:text-emerald-900 shadow-black/10 transition-all hover:bg-emerald-50 hover:shadow-md hover:-translate-y-0.5 motion-reduce:transform-none ${FOCO}`}
           >
             Crear cuenta institucional
             <ArrowRight aria-hidden="true" className="size-4" />

@@ -53,7 +53,7 @@ export default function SeguimientoEjemplo() {
               <span
                 className={`absolute left-0 flex size-6 items-center justify-center rounded-full border text-[11px] font-bold transition-all ${
                   activo
-                    ? 'border-primary bg-primary text-white shadow-xs shadow-primary/30 ring-4 ring-primary/15'
+                    ? 'border-primary bg-primary text-primary-foreground shadow-xs shadow-primary/30 ring-4 ring-primary/15'
                     : completado
                       ? 'border-emerald-600 bg-emerald-600 text-white'
                       : 'border-border bg-muted/60 text-muted-foreground'

@@ -26,7 +26,7 @@ export default function ComunidadSidebar({ categorias, filtros, onCambiar, esCan
           <p className="relative mt-1 text-xs leading-relaxed text-white/80">
             Una idea, un servicio o un equipo: tu aporte puede abrirle puertas a otra persona.
           </p>
-          <Button asChild className="relative mt-4 w-full bg-white text-primary hover:bg-emerald-50">
+          <Button asChild className="relative mt-4 w-full bg-white text-primary hover:bg-emerald-50 dark:text-emerald-900">
             <Link to={RUTAS.nuevaPublicacion}>
               <PenSquare aria-hidden="true" />
               Publicar
@@ -70,7 +70,7 @@ export default function ComunidadSidebar({ categorias, filtros, onCambiar, esCan
                     className={cn(
                       'rounded-full border px-3 py-1.5 text-xs font-semibold outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-ring motion-reduce:transition-none',
                       activa
-                        ? 'border-primary/25 bg-primary text-white shadow-card'
+                        ? 'border-primary/25 bg-primary text-primary-foreground shadow-card'
                         : 'border-border/70 bg-background/70 text-muted-foreground hover:border-primary/30 hover:bg-primary/5 hover:text-primary',
                     )}
                   >

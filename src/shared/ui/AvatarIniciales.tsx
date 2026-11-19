@@ -16,7 +16,7 @@ const TAMANOS = {
 // Con correo es el avatar de la sesión (se anuncia); con nombre es decorativo, porque el nombre ya se lee al lado.
 export default function AvatarIniciales({ correo, nombres, apellidos, tamano = 'sm' }: Props) {
   const clases = cn(
-    'inline-flex shrink-0 items-center justify-center rounded-full bg-linear-to-br from-primary to-emerald-700 font-bold text-white shadow-xs shadow-primary/20',
+    'inline-flex shrink-0 items-center justify-center rounded-full bg-linear-to-br from-primary to-emerald-700 font-bold text-white shadow-xs shadow-primary/20 dark:from-emerald-700 dark:to-emerald-950 dark:text-emerald-50',
     TAMANOS[tamano],
   )
   if (correo !== undefined) {

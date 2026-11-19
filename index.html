@@ -5,10 +5,23 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
-    <meta name="theme-color" content="#006837" />
+    <meta name="theme-color" content="#f7f8f6" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0c1410" media="(prefers-color-scheme: dark)" />
     <meta name="description" content="Plataforma de networking y empleabilidad de la Universidad Popular del Cesar." />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>UPC Connect</title>
+    <script>
+      // El tema sigue solo la preferencia del sistema: sin botón ni persistencia.
+      // Va en <head> para que la clase exista antes del primer pintado.
+      ;(function () {
+        var consulta = window.matchMedia('(prefers-color-scheme: dark)')
+        function aplicar(evento) {
+          document.documentElement.classList.toggle('dark', evento.matches)
+        }
+        aplicar(consulta)
+        consulta.addEventListener('change', aplicar)
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>

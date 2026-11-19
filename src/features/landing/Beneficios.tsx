@@ -120,7 +120,7 @@ export default function Beneficios() {
 
           <Lista
             beneficios={PARA_CANDIDATOS}
-            colorClase="bg-primary/10 text-primary border-primary/20 group-hover/item:bg-primary group-hover/item:text-white group-hover/item:border-primary"
+            colorClase="bg-primary/10 text-primary border-primary/20 group-hover/item:bg-primary group-hover/item:text-primary-foreground group-hover/item:border-primary"
           />
 
           <div className="mt-auto pt-4 border-t border-border/60">

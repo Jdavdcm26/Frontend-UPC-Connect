@@ -60,7 +60,7 @@ export default function PostFilters({ filtros, categorias, onCambiar }: Props) {
               className={cn(
                 'rounded-full border px-3.5 py-1.5 text-xs font-semibold outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-ring motion-reduce:transition-none',
                 activa
-                  ? 'border-primary/25 bg-primary text-white shadow-card'
+                  ? 'border-primary/25 bg-primary text-primary-foreground shadow-card'
                   : 'border-border/70 bg-background/70 text-muted-foreground hover:border-primary/30 hover:bg-primary/5 hover:text-primary',
               )}
             >
