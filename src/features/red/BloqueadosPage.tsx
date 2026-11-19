@@ -68,8 +68,8 @@ export default function BloqueadosPage() {
 
       {cargando && (
         <div className="space-y-3" role="status" aria-label="Cargando cuentas bloqueadas">
-          <Skeleton className="h-20 w-full rounded-xl" />
-          <Skeleton className="h-20 w-full rounded-xl" />
+          <Skeleton className="h-20 w-full rounded-2xl" />
+          <Skeleton className="h-20 w-full rounded-2xl" />
         </div>
       )}
 
@@ -84,7 +84,7 @@ export default function BloqueadosPage() {
       {lista.length > 0 && (
         <ul className="space-y-3">
           {lista.map((cuenta) => (
-            <li key={cuenta.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border bg-card p-4 shadow-sm sm:p-5">
+            <li key={cuenta.id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border/80 bg-card/95 p-4 shadow-xs backdrop-blur-xs sm:p-5">
               <div className="min-w-0 space-y-0.5">
                 <p className="break-words font-semibold">
                   {cuenta.slug ? (
