@@ -6,7 +6,7 @@ import Portada from '@/features/landing/Portada'
 // Página de inicio (pública): portada, beneficios, cómo funciona y llamado a crear la cuenta.
 export default function HomePage() {
   return (
-    <div className="space-y-16 sm:space-y-24">
+    <div className="space-y-20 pb-12 sm:space-y-28 sm:pb-16">
       <Portada />
       <Beneficios />
       <ComoFunciona />
