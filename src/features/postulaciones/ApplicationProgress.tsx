@@ -34,7 +34,7 @@ export default function ApplicationProgress({ estado }: { estado: EstadoPostulac
                 alcanzada
                   ? 'bg-primary text-primary-foreground'
                   : 'border-2 border-input bg-background text-muted-foreground',
-                esActual && 'ring-4 ring-primary-soft',
+                esActual && 'ring-4 ring-primary/15',
               )}
             >
               {alcanzada ? <Check aria-hidden="true" className="size-3.5" /> : indice + 1}

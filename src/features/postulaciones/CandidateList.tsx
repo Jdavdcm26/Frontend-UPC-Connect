@@ -26,19 +26,19 @@ export default function CandidateList({ postulaciones, seleccionadaId, onSelecci
             <article
               aria-current={seleccionada ? 'true' : undefined}
               className={cn(
-                'flex flex-wrap items-center gap-4 rounded-xl border bg-card p-5 shadow-sm transition-colors',
-                seleccionada && 'border-primary bg-primary-soft/40 ring-1 ring-primary',
+                'group flex flex-wrap items-center gap-4 rounded-2xl border border-border/80 bg-card/95 p-5 shadow-xs backdrop-blur-xs transition-all duration-200 hover:border-primary/40 hover:shadow-md',
+                seleccionada && 'border-primary/50 bg-primary/[0.06] ring-1 ring-primary/30',
               )}
             >
-              <span className="hidden size-12 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary sm:flex">
+              <span className="hidden size-12 shrink-0 items-center justify-center rounded-xl border border-primary/20 bg-linear-to-br from-primary/15 to-emerald-500/10 text-primary shadow-2xs sm:flex">
                 <UserRound aria-hidden="true" className="size-6" />
               </span>
               <div className="min-w-0 flex-1 basis-60 space-y-1.5">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h2 className="break-words text-lg font-semibold">{postulacion.nombre}</h2>
+                  <h2 className="break-words text-lg font-bold tracking-tight">{postulacion.nombre}</h2>
                   <ApplicationStateBadge estado={postulacion.estado} />
                 </div>
-                <div className="flex flex-wrap gap-x-5 gap-y-1">
+                <div className="flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-muted-foreground">
                   <DatoIcono icono={GraduationCap}>{resumenAcademico(postulacion)}</DatoIcono>
                   <DatoIcono icono={CalendarDays}>Se postuló el {formatearFecha(postulacion.creadaEn)}</DatoIcono>
                 </div>

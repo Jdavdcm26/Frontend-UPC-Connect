@@ -140,8 +140,8 @@ function PostulacionesRecibidas({ id }: { id: string }) {
         <div className="space-y-4">
           {cargando && (
             <div className="space-y-4" role="status" aria-label="Cargando postulaciones">
-              <Skeleton className="h-28 w-full rounded-xl" />
-              <Skeleton className="h-28 w-full rounded-xl" />
+              <Skeleton className="h-28 w-full rounded-2xl" />
+              <Skeleton className="h-28 w-full rounded-2xl" />
             </div>
           )}
 

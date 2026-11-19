@@ -4,11 +4,11 @@ import { ETIQUETA_ESTADO_POSTULACION, type EstadoPostulacion } from '@/features/
 
 // Color e ícono de cada estado. El ícono es solo un apoyo: el texto siempre dice el estado.
 const ESTILO: Record<EstadoPostulacion, { clases: string; icono: LucideIcon }> = {
-  RECIBIDA: { clases: 'bg-estado-recibida-soft text-estado-recibida', icono: Inbox },
-  EN_REVISION: { clases: 'bg-estado-revision-soft text-estado-revision', icono: Search },
-  ENTREVISTA: { clases: 'bg-estado-entrevista-soft text-estado-entrevista', icono: CalendarClock },
-  SELECCIONADO: { clases: 'bg-estado-seleccionado-soft text-estado-seleccionado', icono: CircleCheck },
-  NO_SELECCIONADO: { clases: 'bg-estado-rechazado-soft text-estado-rechazado', icono: CircleX },
+  RECIBIDA: { clases: 'border border-estado-recibida/20 bg-estado-recibida-soft text-estado-recibida', icono: Inbox },
+  EN_REVISION: { clases: 'border border-estado-revision/20 bg-estado-revision-soft text-estado-revision', icono: Search },
+  ENTREVISTA: { clases: 'border border-estado-entrevista/20 bg-estado-entrevista-soft text-estado-entrevista', icono: CalendarClock },
+  SELECCIONADO: { clases: 'border border-estado-seleccionado/20 bg-estado-seleccionado-soft text-estado-seleccionado', icono: CircleCheck },
+  NO_SELECCIONADO: { clases: 'border border-estado-rechazado/20 bg-estado-rechazado-soft text-estado-rechazado', icono: CircleX },
 }
 
 // Etiqueta con el estado de una postulación (HU-46).
