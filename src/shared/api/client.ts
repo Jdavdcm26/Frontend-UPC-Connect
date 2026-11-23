@@ -1,40 +1,38 @@
 import { ApiError } from '@/shared/api/apiError'
 
-// Dirección base de la API (variable de entorno). En staging web y API comparten dominio.
+// Dirección base de la API (variable de entorno definida en Vercel).
 const BASE_URL: string = import.meta.env.VITE_API_URL ?? ''
+
+export const CLAVE_TOKEN = 'token'
+
+export function guardarToken(token: string): void {
+  localStorage.setItem(CLAVE_TOKEN, token)
+}
+
+export function borrarToken(): void {
+  localStorage.removeItem(CLAVE_TOKEN)
+}
+
+export function leerToken(): string | null {
+  return localStorage.getItem(CLAVE_TOKEN)
+}
 
 type Metodo = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 
 // Mensajes en español de Colombia que dicen cómo corregir (RNF-27).
-// Tienen prioridad sobre el texto del servidor (en 401, 403, 404 y 419 viene en inglés).
+// Tienen prioridad sobre el texto del servidor (en 401, 403 y 404 viene en inglés).
 const MENSAJES: Record<number, string> = {
   401: 'Debes iniciar sesión para continuar.',
   403: 'No tienes permiso para realizar esta acción.',
   404: 'No encontramos lo que buscas.',
-  419: 'Tu sesión venció. Inicia sesión de nuevo.',
   422: 'Revisa los datos del formulario.',
   429: 'Demasiadas peticiones. Intenta de nuevo en unos segundos.',
 }
 
-// Lee una cookie del navegador (Sanctum deja XSRF-TOKEN).
-function leerCookie(nombre: string): string | null {
-  const par = document.cookie.split('; ').find((c) => c.startsWith(`${nombre}=`))
-  return par ? decodeURIComponent(par.split('=')[1]) : null
-}
-
-// La sesión vence (401/419) y algún componente de más arriba (SessionProvider)
-// necesita enterarse sin que exista una caché global que lo avise sola.
+// El token dejó de ser válido y SessionProvider necesita enterarse sin caché global.
 let alSesionExpirada: (() => void) | null = null
 export function configurarSesionExpirada(fn: (() => void) | null): void {
   alSesionExpirada = fn
-}
-
-// Pide la cookie CSRF una sola vez, antes de la primera escritura.
-let csrfListo = false
-async function obtenerCsrf() {
-  if (csrfListo) return
-  await fetch(`${BASE_URL}/api/sanctum/csrf-cookie`, { credentials: 'include' })
-  csrfListo = true
 }
 
 // Convierte una respuesta con error en un ApiError normalizado.
@@ -58,23 +56,20 @@ async function crearError(respuesta: Response): Promise<ApiError> {
 }
 
 async function solicitar<T>(metodo: Metodo, ruta: string, cuerpo?: unknown): Promise<T> {
-  const esEscritura = metodo !== 'GET'
-  if (esEscritura) await obtenerCsrf()
-
   // Un FormData (archivos) viaja tal cual: el navegador pone el Content-Type multipart con su «boundary».
   // Cualquier otro cuerpo viaja como JSON.
   const esFormulario = cuerpo instanceof FormData
   const headers: Record<string, string> = { Accept: 'application/json' }
   if (cuerpo !== undefined && !esFormulario) headers['Content-Type'] = 'application/json'
-  const token = leerCookie('XSRF-TOKEN')
-  if (esEscritura && token) headers['X-XSRF-TOKEN'] = token
+
+  const token = leerToken()
+  if (token) headers['Authorization'] = `Bearer ${token}`
 
   let respuesta: Response
   try {
     respuesta = await fetch(`${BASE_URL}${ruta}`, {
       method: metodo,
       headers,
-      credentials: 'include', // envía la cookie de sesión
       body: esFormulario ? cuerpo : cuerpo !== undefined ? JSON.stringify(cuerpo) : undefined,
     })
   } catch {
@@ -82,10 +77,11 @@ async function solicitar<T>(metodo: Metodo, ruta: string, cuerpo?: unknown): Pro
   }
 
   if (!respuesta.ok) {
-    // Con 419 la cookie CSRF venció: se vuelve a pedir en la próxima escritura.
-    if (respuesta.status === 419) csrfListo = false
-    // 401/419: la sesión ya no es válida en el servidor. Se avisa para que la app pase a "sin sesión".
-    if (respuesta.status === 401 || respuesta.status === 419) alSesionExpirada?.()
+    // 401: el token ya no sirve. Se descarta y se avisa para pasar a "sin sesión".
+    if (respuesta.status === 401) {
+      borrarToken()
+      alSesionExpirada?.()
+    }
     throw await crearError(respuesta)
   }
   if (respuesta.status === 204) return undefined as T
@@ -99,7 +95,7 @@ export const api = {
   put: <T>(ruta: string, cuerpo?: unknown) => solicitar<T>('PUT', ruta, cuerpo),
   patch: <T>(ruta: string, cuerpo?: unknown) => solicitar<T>('PATCH', ruta, cuerpo),
   delete: <T>(ruta: string) => solicitar<T>('DELETE', ruta),
-  // Envía archivos (por ejemplo, imágenes) como multipart/form-data, con la misma cookie, CSRF y manejo de errores.
+  // Envía archivos (por ejemplo, imágenes) como multipart/form-data, con el mismo token y manejo de errores.
   // Solo POST: PHP no lee archivos que llegan en un PUT o PATCH multipart.
   postFormulario: <T>(ruta: string, formulario: FormData) => solicitar<T>('POST', ruta, formulario),
 }

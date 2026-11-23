@@ -1,10 +1,10 @@
 import { ApiError } from '@/shared/api/apiError'
-import { api } from '@/shared/api/client'
+import { api, borrarToken } from '@/shared/api/client'
 import type { Usuario } from '@/features/auth/tipos'
 import { usuarioDesdeServidor, type UsuarioServidor } from '@/features/auth/usuarioServidor'
 
 // Mientras el backend no esté listo, VITE_USAR_FIXTURES=true simula la sesión.
-// Solo es para desarrollo: con la API real la sesión es una cookie (no se guarda token).
+// Con la API real, la sesión es el token de Sanctum guardado en localStorage.
 export const USAR_FIXTURES = import.meta.env.VITE_USAR_FIXTURES === 'true'
 const CLAVE_DEMO = 'upc-sesion-demo'
 
@@ -24,11 +24,10 @@ export async function obtenerSesion(): Promise<Usuario | null> {
 }
 
 export async function cerrarSesionApi(): Promise<void> {
+  borrarToken()
   if (USAR_FIXTURES) {
     sessionStorage.removeItem(CLAVE_DEMO)
-    return
   }
-  await api.post('/api/v1/auth/logout')
 }
 
 // Solo para el modo demo: deja a un usuario de ejemplo con sesión iniciada.

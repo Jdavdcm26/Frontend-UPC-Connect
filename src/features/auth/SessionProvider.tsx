@@ -2,7 +2,8 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { SesionContexto } from '@/features/auth/SesionContexto'
 import { cerrarSesionApi, obtenerSesion } from '@/features/auth/sesionApi'
 import type { Usuario } from '@/features/auth/tipos'
-import { configurarSesionExpirada } from '@/shared/api/client'
+import { configurarSesionExpirada, leerToken } from '@/shared/api/client'
+import { RUTAS } from '@/shared/lib/rutas'
 
 // Consulta la sesión una vez y la comparte con toda la aplicación.
 export default function SessionProvider({ children }: { children: ReactNode }) {
@@ -11,9 +12,17 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let vigente = true
+    const teniaToken = leerToken() !== null
     obtenerSesion()
       .then((datos) => {
-        if (vigente) setUsuario(datos)
+        if (!vigente) {
+          return
+        }
+        setUsuario(datos)
+        // Un token guardado que /me rechaza se descarta y vuelve al login.
+        if (teniaToken && datos === null) {
+          window.location.replace(RUTAS.iniciarSesion)
+        }
       })
       .catch(() => {
         if (vigente) setUsuario(null)
@@ -26,7 +35,7 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  // Si cualquier petición responde 401/419, la app pasa a "sin sesión" y RequireAuth lleva a iniciar sesión.
+  // Si cualquier petición responde 401, la app pasa a "sin sesión" y RequireAuth lleva a iniciar sesión.
   useEffect(() => {
     configurarSesionExpirada(() => setUsuario(null))
     return () => configurarSesionExpirada(null)

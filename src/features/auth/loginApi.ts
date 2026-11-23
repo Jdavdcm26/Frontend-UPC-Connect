@@ -1,7 +1,7 @@
 import { iniciarSesionDemo, USAR_FIXTURES } from '@/features/auth/sesionApi'
 import type { LoginDatos } from '@/features/auth/loginEsquema'
 import type { Rol } from '@/features/auth/tipos'
-import { api } from '@/shared/api/client'
+import { api, guardarToken } from '@/shared/api/client'
 import { ApiError } from '@/shared/api/apiError'
 
 function mensajeBloqueo(segundos?: number): string {
@@ -19,7 +19,7 @@ function rolDemo(correo: string): Rol {
   return correo.includes('empresa') ? 'empresa' : 'candidato'
 }
 
-// Inicia sesión (HU-02 / FE-12). La sesión queda en una cookie, no en el navegador.
+// Inicia sesión (HU-02 / FE-12). El backend entrega un token de Sanctum que se guarda en localStorage.
 // Con fixtures: contraseña "incorrecta" falla y "bloqueada" simula el bloqueo de 5 intentos.
 export async function iniciarSesionApi(datos: LoginDatos): Promise<void> {
   if (USAR_FIXTURES) {
@@ -43,7 +43,12 @@ export async function iniciarSesionApi(datos: LoginDatos): Promise<void> {
     return
   }
   try {
-    await api.post('/api/v1/auth/login', { email: datos.correo, password: datos.contrasena })
+    const respuesta = await api.post<{ token?: string }>('/api/v1/auth/login', {
+      email: datos.correo,
+      password: datos.contrasena,
+    })
+    if (!respuesta.token) throw new ApiError(500, CONEXION_INVALIDA)
+    guardarToken(respuesta.token)
   } catch (error) {
     if (error instanceof ApiError) {
       if (error.status === 401) throw new ApiError(401, CREDENCIALES_INVALIDAS)
@@ -52,7 +57,7 @@ export async function iniciarSesionApi(datos: LoginDatos): Promise<void> {
       // El bloqueo por intentos (429) trae el tiempo de espera en errors.email.
       if (error.status === 429) throw new ApiError(429, error.campos.email?.[0] ?? error.message, {}, error.reintentarEn)
 
-      if(error.status === 500) throw new ApiError(500, CONEXION_INVALIDA) 
+      if(error.status === 500) throw new ApiError(500, CONEXION_INVALIDA)  
     }
     // Los demás errores llevan el mensaje del servidor tal cual.
     throw error
